@@ -40,6 +40,7 @@ public class Computer : IComputer
     private bool _psuEnabled;
     private SMBios _smbios;
     private bool _storageEnabled;
+    private bool _ring0Enabled = true;
 
     /// <summary>
     /// Creates a new <see cref="IComputer" /> instance with basic initial <see cref="Settings" />.
@@ -273,6 +274,16 @@ public class Computer : IComputer
         }
     }
 
+    /// <inheritdoc />
+    public bool IsRing0Enabled
+    {
+        get { return _ring0Enabled; }
+        set
+        {
+            _ring0Enabled = value;
+        }
+    }
+
     /// <summary>
     /// Contains computer information table read in accordance with <see href="https://www.dmtf.org/standards/smbios">System Management BIOS (SMBIOS) Reference Specification</see>.
     /// </summary>
@@ -486,7 +497,9 @@ public class Computer : IComputer
 
         _smbios = new SMBios();
 
-        Ring0.Open(portable);
+        if (IsRing0Enabled)
+            Ring0.Open(portable);
+
         Mutexes.Open();
         OpCode.Open();
 
