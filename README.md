@@ -30,7 +30,7 @@ You can see information about devices such as:
  - `Hide/Unhide` sensors to remove some data from UI and web server.
  - Multiple `Tray icons` and `Gadget` for selected sensor values.
  - `Light`/`Dark` themes with auto switching mode.
- - Custom `color-themes` from external files - You can find examples [here](https://github.com/HardwareMonitor/openhardwaremonitor/tree/dev/OpenHardwareMonitor/Resources/themes)
+ - Custom `color-themes` from external files - You can find examples [here](https://github.com/HardwareMonitor/openhardwaremonitor/tree/master/OpenHardwareMonitor/Resources/themes)
  - `Portable` mode for storing temporary driver file and settings configuration next to the executable file.
  - `Updated versions check` - manually from main menu.
 
@@ -48,7 +48,7 @@ The published version can be obtained from [releases](https://github.com/Hardwar
 ## Developer information
 **Integrate the library in own application**
 1. Add the [OpenHardwareMonitorLib](https://www.nuget.org/packages/OpenHardwareMonitorLib/) NuGet package to your application.
-2. Use the sample code below or the test console application from [here](https://github.com/HardwareMonitor/openhardwaremonitor/tree/dev/LibTest)
+2. Use the sample code below or the test console application from [here](https://github.com/HardwareMonitor/openhardwaremonitor/tree/master/LibTest)
 
 
 **Sample code**
