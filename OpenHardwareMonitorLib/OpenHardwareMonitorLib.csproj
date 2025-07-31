@@ -9,7 +9,7 @@
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyTitle>Open Hardware Monitor Lib</AssemblyTitle>
-    <AssemblyCompany>NewOpenHardwareMonitor</AssemblyCompany>
+    <AssemblyCompany>HardwareMonitor</AssemblyCompany>
     <AssemblyProduct>OpenHardwareMonitor</AssemblyProduct>
     <AssemblyCopyright>Copyright © 2022 Sergiy Egoshyn</AssemblyCopyright>
     <AssemblyVersion>1.0.9332</AssemblyVersion>
