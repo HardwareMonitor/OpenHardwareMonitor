@@ -2,7 +2,7 @@ name: Auto Build
 
 on:
   push:
-    branches: [dev]
+    branches: [master]
 
 jobs:
   build:
@@ -34,9 +34,9 @@ jobs:
       #     path: |
       #       OpenHardwareMonitor/bin/net472
 
-      - name: Publish Lib build
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenHardwareMonitorLib
-          path: |
-            OpenHardwareMonitorLib/bin
+      # - name: Publish Lib build
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: OpenHardwareMonitorLib
+      #     path: |
+      #       OpenHardwareMonitorLib/bin
