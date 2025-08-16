@@ -207,14 +207,6 @@ public class SensorNotifyIcon : IDisposable
         return new string(result.Take(3).ToArray());
     }
 
-    private bool IsFontInstalled(string fontName, float fontSize = 12)
-    {
-        using (Font fontTester = new Font(fontName, fontSize, FontStyle.Regular, GraphicsUnit.Pixel))
-        {
-            return fontTester.Name == fontName;
-        }
-    }
-
     private Icon CreateTransparentIcon()
     {
         string text = GetString();
@@ -349,7 +341,7 @@ public class SensorNotifyIcon : IDisposable
             case SensorType.Flow: format = "\n{0}: {1:F0} L/h"; break;
             case SensorType.Control: format = "\n{0}: {1:F1} %"; break;
             case SensorType.Level: format = "\n{0}: {1:F1} %"; break;
-            case SensorType.Power: format = "\n{0}: {1:F0} W"; break;
+            case SensorType.Power: format = "\n{0}: {1:F1} W"; break;
             case SensorType.Data: format = "\n{0}: {1:F0} GB"; break;
             case SensorType.Factor: format = "\n{0}: {1:F3}"; break;
             case SensorType.IntFactor: format = "\n{0}: {1:F0}"; break;
