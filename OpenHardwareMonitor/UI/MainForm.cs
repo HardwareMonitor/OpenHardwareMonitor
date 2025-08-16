@@ -997,6 +997,16 @@ public sealed partial class MainForm : Form
         }));
     }
 
+    private void ExpandAllNodes_Click(object sender, EventArgs e)
+    {
+        treeView.ExpandAll();
+    }
+
+    private void CollapsepAllNodes_Click(object sender, EventArgs e)
+    {
+        treeView.CollapseAll();
+    }
+
     private void MainForm_MoveOrResize(object sender, EventArgs e)
     {
         if (WindowState != FormWindowState.Minimized)

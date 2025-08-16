@@ -4,5 +4,6 @@
 [Oo]bj/
 .idea/
 .vs/
+.vscode/
 packages/
 FodyWeavers.xsd

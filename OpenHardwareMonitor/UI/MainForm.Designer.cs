@@ -59,6 +59,8 @@ namespace OpenHardwareMonitor.UI
       this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.viewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.resetMinMaxMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.expandAllNodesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.collpaseAllNodesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.hiddenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.percentageIconsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gadgetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -361,6 +363,8 @@ namespace OpenHardwareMonitor.UI
             this.themeMenuItem,
             this.temperatureUnitsMenuItem,
             this.resetMinMaxMenuItem,
+            this.expandAllNodesMenuItem,
+            this.collpaseAllNodesMenuItem,
             this.columnsMenuItem});
       this.viewMenuItem.Name = "viewMenuItem";
       this.viewMenuItem.Size = new System.Drawing.Size(44, 22);
@@ -372,6 +376,22 @@ namespace OpenHardwareMonitor.UI
       this.resetMinMaxMenuItem.Size = new System.Drawing.Size(188, 22);
       this.resetMinMaxMenuItem.Text = "Reset Min/Max";
       this.resetMinMaxMenuItem.Click += new System.EventHandler(this.ResetMinMaxMenuItem_Click);
+      //
+      // expandAllNodesMenuItem
+      //
+      this.expandAllNodesMenuItem.Name = "expandAllNodesMenuItem";
+      this.expandAllNodesMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.expandAllNodesMenuItem.Text = "Expand All Nodes";
+      this.expandAllNodesMenuItem.Click += new System.EventHandler(this.ExpandAllNodes_Click);
+      this.expandAllNodesMenuItem.Visible = false;
+      //
+      // collpaseAllNodesMenuItem
+      //
+      this.collpaseAllNodesMenuItem.Name = "collpaseAllNodesMenuItem";
+      this.collpaseAllNodesMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.collpaseAllNodesMenuItem.Text = "Collapse All Nodes";
+      this.collpaseAllNodesMenuItem.Click += new System.EventHandler(this.CollapsepAllNodes_Click);
+      this.collpaseAllNodesMenuItem.Visible = false;
       //
       // hiddenMenuItem
       //
@@ -1002,6 +1022,8 @@ namespace OpenHardwareMonitor.UI
         private ToolStripRadioButtonMenuItem fahrenheitMenuItem;
         private System.Windows.Forms.ToolStripSeparator MenuItem2;
         private System.Windows.Forms.ToolStripMenuItem resetMinMaxMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandAllNodesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem collpaseAllNodesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gadgetMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minCloseMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetMenuItem;
