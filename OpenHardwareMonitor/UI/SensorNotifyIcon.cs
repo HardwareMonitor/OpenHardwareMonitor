@@ -91,41 +91,21 @@ public class SensorNotifyIcon : IDisposable
         }
 
         // adjust the size of the icon to current dpi (default is 16x16 at 96 dpi)
-        int width = (int)Math.Round(16 * dpiX / 96);
-        int height = (int)Math.Round(16 * dpiY / 96);
-
-        // make sure it does never get smaller than 16x16
-        width = width < 16 ? 16 : width;
-        height = height < 16 ? 16 : height;
+        var width = Math.Max(16, (int)Math.Round(16 * dpiX / 96));
+        var height = Math.Max(16, (int)Math.Round(16 * dpiY / 96));
 
         // adjust the font size to the icon size
-        FontFamily family = SystemFonts.MessageBoxFont.FontFamily;
-        float baseSize;
-        if (IsFontInstalled("Calibri", 15))
-        {
-            family = new FontFamily("Calibri");
-            baseSize = 15;
-        }
-        else if (IsFontInstalled("Segoe UI", 15))
-        {
-            family = new FontFamily("Segoe UI");
-            baseSize = 15;
-        }
-        else
-        {
-            family = SystemFonts.MessageBoxFont.FontFamily;
-            baseSize = 14;
-        }
-
-        _font = new Font(family, baseSize * width / 16.0f, GraphicsUnit.Pixel);
-        _smallFont = new Font(family, 0.7f * baseSize * width / 16.0f, GraphicsUnit.Pixel);
+        _font = new Font("Arial", width == 16 ? 9.0F : 8.0F * dpiX / 96);
+        _smallFont = new Font("Arial", width == 16 ? 7.0F : 6.0F * dpiX / 96);
 
         _bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         _graphics = Graphics.FromImage(_bitmap);
         if (Environment.OSVersion.Version.Major > 5)
         {
-            _graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-            _graphics.SmoothingMode = SmoothingMode.HighQuality;
+            _graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            _graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            _graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            _graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
         }
     }
 
@@ -275,21 +255,19 @@ public class SensorNotifyIcon : IDisposable
             {
                 var bigPart = text.Substring(0, 1);
                 var smallPart = text.Substring(1);
-                var bigSize = TextRenderer.MeasureText(bigPart, _font);
-                var smallSize = TextRenderer.MeasureText(smallPart, _smallFont);
-                TextRenderer.DrawText(_graphics, bigPart, _font, new Point(-4, (_bitmap.Height - bigSize.Height) / 2), _color, defaultBackColor);
-                TextRenderer.DrawText(_graphics, smallPart, _smallFont, new Point(4 * (_bitmap.Width / 8 - 1), _bitmap.Height - smallSize.Height), _color, defaultBackColor);
+                TextRenderer.DrawText(_graphics, bigPart, _font, new Point(-_bitmap.Width / 4, _bitmap.Height / 2), _color, defaultBackColor, TextFormatFlags.VerticalCenter);
+                TextRenderer.DrawText(_graphics, smallPart, _smallFont, new Point(_bitmap.Width / 4, _bitmap.Height), _color, defaultBackColor, TextFormatFlags.Bottom);
             }
             else
             {
                 var size = TextRenderer.MeasureText(text, _smallFont);
-                TextRenderer.DrawText(_graphics, text, _smallFont, new Point((_bitmap.Width - size.Width) / 2, (_bitmap.Height - size.Height) / 2), _color, defaultBackColor);
+                TextRenderer.DrawText(_graphics, text, _smallFont, new Point((_bitmap.Width - size.Width) / 2, _bitmap.Height / 2), _color, defaultBackColor, TextFormatFlags.VerticalCenter);
             }
         }
         else
         {
             var size = TextRenderer.MeasureText(text, _font);
-            TextRenderer.DrawText(_graphics, text, _font, new Point((_bitmap.Width - size.Width) / 2, (_bitmap.Height - size.Height) / 2), _color, defaultBackColor);
+            TextRenderer.DrawText(_graphics, text, _font, new Point((_bitmap.Width - size.Width) / 2, _bitmap.Height / 2), _color, defaultBackColor, TextFormatFlags.VerticalCenter);
         }
 
         BitmapData data = _bitmap.LockBits(
