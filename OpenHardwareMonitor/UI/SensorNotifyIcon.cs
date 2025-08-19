@@ -95,8 +95,8 @@ public class SensorNotifyIcon : IDisposable
         var height = Math.Max(16, (int)Math.Round(16 * dpiY / 96));
 
         // adjust the font size to the icon size
-        _font = new Font("Arial", width == 16 ? 9.0F : 8.0F * dpiX / 96);
-        _smallFont = new Font("Arial", width == 16 ? 7.0F : 6.0F * dpiX / 96);
+        _font = new Font("Arial", width == 16 ? 10.0F : 8.0F * dpiX / 96);
+        _smallFont = new Font("Arial", width == 16 ? 8.0F : 6.0F * dpiX / 96);
 
         _bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         _graphics = Graphics.FromImage(_bitmap);
