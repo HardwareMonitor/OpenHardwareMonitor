@@ -1,7 +1,9 @@
 # Open hardware monitor
 [![Release](https://img.shields.io/github/v/release/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/releases/latest)
-![Downloads](https://img.shields.io/github/downloads/HardwareMonitor/openhardwaremonitor/total?color=ff4f42)
-![Last commit](https://img.shields.io/github/last-commit/HardwareMonitor/openhardwaremonitor?color=00AD00)
+[![Downloads](https://img.shields.io/github/downloads/HardwareMonitor/openhardwaremonitor/total?color=ff4f42)](https://github.com/HardwareMonitor/openhardwaremonitor/releases)
+[![Last commit](https://img.shields.io/github/last-commit/HardwareMonitor/openhardwaremonitor?color=00AD00)](https://github.com/HardwareMonitor/openhardwaremonitor/commits/master)
+[![](https://img.shields.io/badge/WINDOWS-7%20%E2%80%93%2011-blue)](https://endoflife.date/windows) 
+[![](https://img.shields.io/badge/SERVER-2012%20%E2%80%93%202025-blue)](https://endoflife.date/windows-server) 
 
 [![Nuget](https://img.shields.io/nuget/v/OpenHardwareMonitorLib)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 [![Nuget](https://img.shields.io/nuget/dt/OpenHardwareMonitorLib?label=nuget-downloads)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
