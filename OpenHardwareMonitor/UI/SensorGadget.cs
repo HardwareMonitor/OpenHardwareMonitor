@@ -347,11 +347,10 @@ public class SensorGadget : Gadget
         return _sensors.Values.Any(list => list.Contains(sensor));
     }
 
-    public void Add(ISensor sensor)
+    public bool Add(ISensor sensor)
     {
         if (Contains(sensor))
-            return;
-
+            return false;
 
         // get the right hardware
         IHardware hardware = sensor.Hardware;
@@ -374,6 +373,7 @@ public class SensorGadget : Gadget
 
         _settings.SetValue(new Identifier(sensor.Identifier, "gadget").ToString(), true);
         Resize();
+        return true;
     }
 
     public void Remove(ISensor sensor)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
 using OpenHardwareMonitor.Utilities;
@@ -74,7 +75,7 @@ public class SystemTray : IDisposable
     private void SensorAdded(ISensor sensor)
     {
         if (_settings.GetValue(new Identifier(sensor.Identifier, "tray").ToString(), false))
-            Add(sensor, false);
+            Add(sensor);
     }
 
     private void SensorRemoved(ISensor sensor)
@@ -96,23 +97,17 @@ public class SystemTray : IDisposable
             icon.Update(ShowPercentageIcons);
     }
 
-    public bool Contains(ISensor sensor)
-    {
-        foreach (SensorNotifyIcon icon in _sensorList)
-            if (icon.Sensor == sensor)
-                return true;
-        return false;
-    }
+    public bool Contains(ISensor sensor) => _sensorList.Any(icon => icon.Sensor == sensor);
 
-    public void Add(ISensor sensor, bool balloonTip)
+    public bool Add(ISensor sensor)
     {
         if (Contains(sensor))
-            return;
-
+            return false;
 
         _sensorList.Add(new SensorNotifyIcon(this, sensor, _settings));
         UpdateMainIconVisibility();
         _settings.SetValue(new Identifier(sensor.Identifier, "tray").ToString(), true);
+        return true;
     }
 
     public void Remove(ISensor sensor)

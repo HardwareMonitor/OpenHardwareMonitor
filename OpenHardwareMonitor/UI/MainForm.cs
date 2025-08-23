@@ -103,7 +103,7 @@ public sealed partial class MainForm : Form
 
         treeModel.Nodes.Add(_root);
         treeView.Model = treeModel;
-        treeView.DrawControl += (sender, args) =>
+        treeView.DrawControl += (_, args) =>
         {
             // if (args.Node.IsSelected)
             //     return;
@@ -265,7 +265,7 @@ public sealed partial class MainForm : Form
                 Server.StopHttpListener();
         };
 
-        openWebServerMenuItem.Click += (s, e) => {
+        openWebServerMenuItem.Click += (_, _) => {
             System.Diagnostics.Process.Start("http://localhost:" + Server.ListenerPort);
         };
 
@@ -293,7 +293,7 @@ public sealed partial class MainForm : Form
                                               },
                                               _settings);
 
-        _loggingInterval.Changed += (sender, e) =>
+        _loggingInterval.Changed += (_, _) =>
         {
             switch (_loggingInterval.Value)
             {
@@ -352,7 +352,7 @@ public sealed partial class MainForm : Form
                                              },
                                              _settings);
 
-        _updateInterval.Changed += (sender, e) =>
+        _updateInterval.Changed += (_, _) =>
         {
             switch (_updateInterval.Value)
             {
@@ -378,7 +378,7 @@ public sealed partial class MainForm : Form
         };
 
         _throttleAtaUpdate = new UserOption("throttleAtaUpdateMenuItem", false, throttleAtaUpdateMenuItem, _settings);
-        _throttleAtaUpdate.Changed += (sender, e) =>
+        _throttleAtaUpdate.Changed += (_, _) =>
         {
             switch (_throttleAtaUpdate.Value)
             {
@@ -413,7 +413,7 @@ public sealed partial class MainForm : Form
         perSessionFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.PerSession;
         dailyFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.Daily;
 
-        _sensorValuesTimeWindow.Changed += (sender, e) =>
+        _sensorValuesTimeWindow.Changed += (_, _) =>
         {
             TimeSpan timeWindow = TimeSpan.Zero;
             switch (_sensorValuesTimeWindow.Value)
@@ -453,7 +453,7 @@ public sealed partial class MainForm : Form
                     break;
             }
 
-            _computer.Accept(new SensorVisitor(delegate(ISensor sensor) { sensor.ValuesTimeWindow = timeWindow; }));
+            _computer.Accept(new SensorVisitor(delegate(ISensor s) { s.ValuesTimeWindow = timeWindow; }));
         };
 
         InitializeTheme();
@@ -680,15 +680,6 @@ public sealed partial class MainForm : Form
           Application.Exit
         );
 
-        //will display prompt only if update available & when main form displayed
-        var timer = new Timer();
-        timer.Interval = 3000;
-        timer.Tick += async (_, _) => {
-            timer.Enabled = false;
-            timer.Enabled = ! await Updater.CheckForUpdatesAsync(true);
-        };
-        timer.Enabled = true;
-
         FormClosed += MainForm_FormClosed;
     }
 
@@ -755,18 +746,35 @@ public sealed partial class MainForm : Form
         var node = treeView.SelectedNode;
         if (node is not {Tag: SensorNode sensorNode} || sensorNode.Sensor == null)
             return;
-        switch (e.KeyCode) {
-            case Keys.H:
-                sensorNode.IsVisible = !sensorNode.IsVisible;
-                treeView.SelectedNode = node.NextNode;
-                break;
-            case Keys.P:
-                ShowParameterForm(sensorNode.Sensor);
-                break;
-            case Keys.R:
-                sensorNode.PenColor = null;
-                treeView.SelectedNode = node.NextNode;
-                break;
+        if (e.KeyCode == Keys.H)
+        {
+            treeView.SelectedNode = node.NextNode ?? node.PreviousNode;
+            sensorNode.IsVisible = !sensorNode.IsVisible;
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+        }
+        else if (e.KeyCode == Keys.P)
+        {
+            ShowParameterForm(sensorNode.Sensor);
+        }
+        else if (e.KeyCode == Keys.R)
+        {
+            sensorNode.PenColor = null;
+            // treeView.SelectedNode = node.NextNode ?? node.PreviousNode;
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+        }
+        else if (e.KeyCode == Keys.T && e.Control)
+        {
+            if (!_systemTray.Add(sensorNode.Sensor))
+                _systemTray.Remove(sensorNode.Sensor);
+            e.Handled = true;
+        }
+        else if (e.KeyCode == Keys.G && e.Control)
+        {
+            if (!_gadget.Add(sensorNode.Sensor))
+                _gadget.Remove(sensorNode.Sensor);
+            e.Handled = true;
         }
     }
 
@@ -829,7 +837,7 @@ public sealed partial class MainForm : Form
                 treeContextMenu.Items.Add(item);
 
                 treeContextMenu.Items.Add(new ToolStripSeparator());
-                item = new ToolStripMenuItem("Show in Tray") { Checked = _systemTray.Contains(node.Sensor) };
+                item = new ToolStripMenuItem("Show in Tray (Ctrl+T)") { Checked = _systemTray.Contains(node.Sensor) };
                 item.Click += (s, _) =>
                 {
                     if (s is not ToolStripMenuItem menuItem)
@@ -837,13 +845,13 @@ public sealed partial class MainForm : Form
                     if (menuItem.Checked)
                         _systemTray.Remove(node.Sensor);
                     else
-                        _systemTray.Add(node.Sensor, true);
+                        _systemTray.Add(node.Sensor);
                 };
                 treeContextMenu.Items.Add(item);
 
                 if (_gadget != null)
                 {
-                    item = new ToolStripMenuItem("Show in Gadget") { Checked = _gadget.Contains(node.Sensor) };
+                    item = new ToolStripMenuItem("Show in Gadget (Ctrl+G)") { Checked = _gadget.Contains(node.Sensor) };
                     item.Click += (s, _) =>
                     {
                         if (s is not ToolStripMenuItem menuItem)
