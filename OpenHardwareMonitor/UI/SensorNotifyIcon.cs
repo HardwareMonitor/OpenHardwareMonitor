@@ -312,7 +312,6 @@ public class SensorNotifyIcon : IDisposable
     public void Update(bool showPercentageIcons)
     {
         Icon icon = _notifyIcon.Icon;
-
         switch (Sensor.SensorType)
         {
             case SensorType.Load:
@@ -324,10 +323,9 @@ public class SensorNotifyIcon : IDisposable
                 _notifyIcon.Icon = CreateTransparentIcon();
                 break;
         }
-
         icon?.Destroy();
 
-        string format = "";
+        string format;
         switch (Sensor.SensorType)
         {
             case SensorType.Voltage: format = "\n{0}: {1:F2} V"; break;
@@ -339,33 +337,36 @@ public class SensorNotifyIcon : IDisposable
             case SensorType.Flow: format = "\n{0}: {1:F0} L/h"; break;
             case SensorType.Control: format = "\n{0}: {1:F1} %"; break;
             case SensorType.Level: format = "\n{0}: {1:F1} %"; break;
-            case SensorType.Power: format = "\n{0}: {1:F1} W"; break;
-            case SensorType.Data: format = "\n{0}: {1:F0} GB"; break;
+            case SensorType.Power: format = "\n{0}: {1:F2} W"; break;
+            case SensorType.Data: format = "\n{0}: {1:F2} GB"; break;
             case SensorType.Factor: format = "\n{0}: {1:F3}"; break;
             case SensorType.IntFactor: format = "\n{0}: {1:F0}"; break;
             case SensorType.Energy: format = "\n{0}: {0:F0} mWh"; break;
             case SensorType.Noise: format = "\n{0}: {0:F0} dBA"; break;
             case SensorType.Conductivity: format = "\n{0}: {0:F1} µS/cm"; break;
             case SensorType.Humidity: format = "\n{0}: {0:F0} %"; break;
+            default: format = "\n{0}: {1}"; break;
         }
 
-        string formattedValue = string.Format(format, Sensor.Name, Sensor.Value);
-
+        string formattedValue;
         if (Sensor.SensorType == SensorType.Temperature && UnitManager.IsFahrenheitUsed)
         {
-            format = "\n{0}: {1:F1} °F";
-            formattedValue = string.Format(format, Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value));
+            formattedValue = string.Format("\n{0}: {1:F1} °F", Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value));
         }
         else if (Sensor.SensorType == SensorType.Throughput && !"Connection Speed".Equals(Sensor.Name))
         {
             formattedValue = $"\n{Sensor.Name}: {GetThroughputValue(Sensor.Value ?? 0, 0, true)}/s";
+        }
+        else
+        {
+            formattedValue = string.Format(format, Sensor.Name, Sensor.Value);
         }
 
         string hardwareName = Sensor.Hardware.Name;
         hardwareName = hardwareName.Substring(0, Math.Min(63 - formattedValue.Length, hardwareName.Length));
         string text = hardwareName + formattedValue;
         if (text.Length > 63)
-            text = null;
+            text = text.Substring(0, 63);
 
         _notifyIcon.Text = text;
         _notifyIcon.Visible = true;
