@@ -188,4 +188,10 @@ public static class IconFactory
         DestroyIcon(icon.Handle);
         icon.Dispose();
     }
+
+    public static string ToTrayValue(this float value)
+    {
+        double rounded1 = Math.Round(value, 1);
+        return rounded1 < 10 ? rounded1.ToString("0.0") : Math.Round(value).ToString("0");
+    }
 }

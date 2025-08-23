@@ -179,9 +179,7 @@ public class SensorNotifyIcon : IDisposable
             case SensorType.Energy:
             case SensorType.Power:
             case SensorType.Data:
-                return Sensor.Value.Value < 10
-            ? $"{Sensor.Value:0.00}".Substring(0, 3)
-            : $"{Sensor.Value:F0}";
+                return Sensor.Value.Value.ToTrayValue();
             default:
                 return "-";
         }
