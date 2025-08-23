@@ -43,7 +43,6 @@ public sealed partial class MainForm : Form
     private readonly UserOption _showGadget;
     private readonly StartupManager _startupManager = new();
     private readonly SystemTray _systemTray;
-    private readonly UnitManager _unitManager;
     private readonly UpdateVisitor _updateVisitor = new();
     private readonly WmiProvider _wmiProvider;
 
@@ -67,8 +66,6 @@ public sealed partial class MainForm : Form
         Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
         portableModeMenuItem.Checked = _settings.IsPortable;
         resetOnPowerChangedMenuItem.Checked = _settings.GetValue("resetOnPowerChangedMenuItem", false);
-
-        _unitManager = new UnitManager(_settings);
 
         // make sure the buffers used for double buffering are not disposed
         // after each draw call
@@ -116,7 +113,7 @@ public sealed partial class MainForm : Form
 
         _computer = new Computer(_settings);
 
-        _systemTray = new SystemTray(_computer, _settings, _unitManager);
+        _systemTray = new SystemTray(_computer, _settings);
         _systemTray.HideShowCommand += HideShowClick;
         _systemTray.ExitCommand += ExitClick;
 
@@ -134,7 +131,7 @@ public sealed partial class MainForm : Form
         {
             // Windows
             treeView.RowHeight = Math.Max(treeView.Font.Height + 1, 18);
-            _gadget = new SensorGadget(_computer, _settings, _unitManager);
+            _gadget = new SensorGadget(_computer, _settings);
             _gadget.HideShowCommand += HideShowClick;
             _wmiProvider = new WmiProvider(_computer);
         }
@@ -245,9 +242,6 @@ public sealed partial class MainForm : Form
             if (_gadget != null)
                 _gadget.Visible = _showGadget.Value;
         };
-
-        celsiusMenuItem.Checked = _unitManager.TemperatureUnit == TemperatureUnit.Celsius;
-        fahrenheitMenuItem.Checked = !celsiusMenuItem.Checked;
 
         Server = new HttpServer(_root,
                                 _settings.GetValue("listenerIp", "?"),
@@ -570,7 +564,7 @@ public sealed partial class MainForm : Form
 
     private void SubHardwareAdded(IHardware hardware, Node node)
     {
-        HardwareNode hardwareNode = new(hardware, _settings, _unitManager);
+        HardwareNode hardwareNode = new(hardware, _settings);
         InsertSorted(node.Nodes, hardwareNode);
         foreach (IHardware subHardware in hardware.SubHardware)
             SubHardwareAdded(subHardware, hardwareNode);
@@ -972,20 +966,6 @@ public sealed partial class MainForm : Form
     {
         if (e.Node.Tag is SensorNode node && node.Sensor != null && node.Sensor.Parameters.Count > 0)
             ShowParameterForm(node.Sensor);
-    }
-
-    private void CelsiusMenuItem_Click(object sender, EventArgs e)
-    {
-        celsiusMenuItem.Checked = true;
-        fahrenheitMenuItem.Checked = false;
-        _unitManager.TemperatureUnit = TemperatureUnit.Celsius;
-    }
-
-    private void FahrenheitMenuItem_Click(object sender, EventArgs e)
-    {
-        celsiusMenuItem.Checked = false;
-        fahrenheitMenuItem.Checked = true;
-        _unitManager.TemperatureUnit = TemperatureUnit.Fahrenheit;
     }
 
     private void ResetMinMaxMenuItem_Click(object sender, EventArgs e)

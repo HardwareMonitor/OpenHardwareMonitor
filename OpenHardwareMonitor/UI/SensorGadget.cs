@@ -17,7 +17,6 @@ public class SensorGadget : Gadget
     private const int LeftBorder = 6;
     private const int RightBorder = 7;
 
-    private readonly UnitManager _unitManager;
     private Image _back = EmbeddedResources.GetImage("gadget.png");
     private Image _image;
     private Image _fore;
@@ -46,9 +45,8 @@ public class SensorGadget : Gadget
     private StringFormat _trimStringFormat;
     private StringFormat _alignRightStringFormat;
 
-    public SensorGadget(IComputer computer, PersistentSettings settings, UnitManager unitManager)
+    public SensorGadget(IComputer computer, PersistentSettings settings)
     {
-        _unitManager = unitManager;
         _settings = settings;
         computer.HardwareAdded += HardwareAdded;
         computer.HardwareRemoved += HardwareRemoved;
@@ -655,7 +653,7 @@ public class SensorGadget : Gadget
                                     break;
                             }
 
-                            if (sensor.SensorType == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
+                            if (sensor.SensorType == SensorType.Temperature && UnitManager.IsFahrenheitUsed)
                             {
                                 formatted = $"{UnitManager.CelsiusToFahrenheit(sensor.Value):F1} °F";
                             }

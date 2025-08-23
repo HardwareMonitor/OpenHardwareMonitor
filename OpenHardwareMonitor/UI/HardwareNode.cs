@@ -1,5 +1,4 @@
 ﻿using OpenHardwareMonitor.Hardware;
-using OpenHardwareMonitor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,15 +8,13 @@ namespace OpenHardwareMonitor.UI;
 public class HardwareNode : Node, IExpandPersistNode
 {
     private readonly PersistentSettings _settings;
-    private readonly UnitManager _unitManager;
     private readonly List<TypeNode> _typeNodes = new List<TypeNode>();
     private readonly string _expandedIdentifier;
     private bool _expanded;
 
-    public HardwareNode(IHardware hardware, PersistentSettings settings, UnitManager unitManager)
+    public HardwareNode(IHardware hardware, PersistentSettings settings)
     {
         _settings = settings;
-        _unitManager = unitManager;
         _expandedIdentifier = new Identifier(hardware.Identifier, "expanded").ToString();
         Hardware = hardware;
         Image = HardwareTypeImage.Instance.GetImage(hardware.HardwareType);
@@ -122,7 +119,7 @@ public class HardwareNode : Node, IExpandPersistNode
         while (i < node.Nodes.Count && ((SensorNode)node.Nodes[i]).Sensor.Index < sensor.Index)
             i++;
 
-        SensorNode sensorNode = new SensorNode(sensor, _settings, _unitManager);
+        SensorNode sensorNode = new SensorNode(sensor, _settings);
         node.Nodes.Insert(i, sensorNode);
     }
 

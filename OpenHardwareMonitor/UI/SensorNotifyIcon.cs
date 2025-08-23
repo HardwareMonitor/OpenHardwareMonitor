@@ -13,7 +13,6 @@ namespace OpenHardwareMonitor.UI;
 
 public class SensorNotifyIcon : IDisposable
 {
-    private readonly UnitManager _unitManager;
     private readonly NotifyIconAdv _notifyIcon;
     private readonly Bitmap _bitmap;
     private readonly Graphics _graphics;
@@ -25,9 +24,8 @@ public class SensorNotifyIcon : IDisposable
     private readonly Font _font;
     private readonly Font _smallFont;
 
-    public SensorNotifyIcon(SystemTray sensorSystemTray, ISensor sensor, PersistentSettings settings, UnitManager unitManager)
+    public SensorNotifyIcon(SystemTray sensorSystemTray, ISensor sensor, PersistentSettings settings)
     {
-        _unitManager = unitManager;
         Sensor = sensor;
         _notifyIcon = new NotifyIconAdv();
 
@@ -154,7 +152,7 @@ public class SensorNotifyIcon : IDisposable
         switch (Sensor.SensorType)
         {
             case SensorType.Temperature:
-                return _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : $"{Sensor.Value:F0}";
+                return UnitManager.IsFahrenheitUsed ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : $"{Sensor.Value:F0}";
             case SensorType.TimeSpan:
                 return $"{TimeSpan.FromSeconds(Sensor.Value.Value):g}";
             case SensorType.Clock:
@@ -353,7 +351,7 @@ public class SensorNotifyIcon : IDisposable
 
         string formattedValue = string.Format(format, Sensor.Name, Sensor.Value);
 
-        if (Sensor.SensorType == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
+        if (Sensor.SensorType == SensorType.Temperature && UnitManager.IsFahrenheitUsed)
         {
             format = "\n{0}: {1:F1} °F";
             formattedValue = string.Format(format, Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value));

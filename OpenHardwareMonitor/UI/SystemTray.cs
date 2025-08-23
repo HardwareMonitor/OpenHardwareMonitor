@@ -8,20 +8,16 @@ namespace OpenHardwareMonitor.UI;
 
 public class SystemTray : IDisposable
 {
-    private IComputer _computer;
     private readonly PersistentSettings _settings;
-    private readonly UnitManager _unitManager;
     private readonly List<SensorNotifyIcon> _sensorList = new List<SensorNotifyIcon>();
     private bool _mainIconEnabled;
     private readonly NotifyIconAdv _mainIcon;
 
     public bool ShowPercentageIcons { get; set; }
 
-    public SystemTray(IComputer computer, PersistentSettings settings, UnitManager unitManager)
+    public SystemTray(IComputer computer, PersistentSettings settings)
     {
-        _computer = computer;
         _settings = settings;
-        _unitManager = unitManager;
         computer.HardwareAdded += HardwareAdded;
         computer.HardwareRemoved += HardwareRemoved;
 
@@ -114,7 +110,7 @@ public class SystemTray : IDisposable
             return;
 
 
-        _sensorList.Add(new SensorNotifyIcon(this, sensor, _settings, _unitManager));
+        _sensorList.Add(new SensorNotifyIcon(this, sensor, _settings));
         UpdateMainIconVisibility();
         _settings.SetValue(new Identifier(sensor.Identifier, "tray").ToString(), true);
     }

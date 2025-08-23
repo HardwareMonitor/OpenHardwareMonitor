@@ -74,9 +74,6 @@ namespace OpenHardwareMonitor.UI
       this.minCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.startupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.separatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
-      this.temperatureUnitsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.celsiusMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
-      this.fahrenheitMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
       this.themeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.logSeparatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
       this.logSensorsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -361,7 +358,6 @@ namespace OpenHardwareMonitor.UI
             this.gadgetMenuItem,
             this.separatorMenuItem,
             this.themeMenuItem,
-            this.temperatureUnitsMenuItem,
             this.resetMinMaxMenuItem,
             this.expandAllNodesMenuItem,
             this.collpaseAllNodesMenuItem,
@@ -487,31 +483,6 @@ namespace OpenHardwareMonitor.UI
       //
       this.separatorMenuItem.Name = "separatorMenuItem";
       this.separatorMenuItem.Size = new System.Drawing.Size(218, 6);
-      //
-      // temperatureUnitsMenuItem
-      //
-      this.temperatureUnitsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.celsiusMenuItem,
-            this.fahrenheitMenuItem});
-      this.temperatureUnitsMenuItem.Name = "temperatureUnitsMenuItem";
-      this.temperatureUnitsMenuItem.Size = new System.Drawing.Size(221, 22);
-      this.temperatureUnitsMenuItem.Text = "Temperature Unit";
-      //
-      // celsiusMenuItem
-      //
-      this.celsiusMenuItem.CheckOnClick = true;
-      this.celsiusMenuItem.Name = "celsiusMenuItem";
-      this.celsiusMenuItem.Size = new System.Drawing.Size(180, 22);
-      this.celsiusMenuItem.Text = "Celsius";
-      this.celsiusMenuItem.Click += new System.EventHandler(this.CelsiusMenuItem_Click);
-      //
-      // fahrenheitMenuItem
-      //
-      this.fahrenheitMenuItem.CheckOnClick = true;
-      this.fahrenheitMenuItem.Name = "fahrenheitMenuItem";
-      this.fahrenheitMenuItem.Size = new System.Drawing.Size(180, 22);
-      this.fahrenheitMenuItem.Text = "Fahrenheit";
-      this.fahrenheitMenuItem.Click += new System.EventHandler(this.FahrenheitMenuItem_Click);
       //
       // themeMenuItem
       //
@@ -1016,10 +987,7 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem valueMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minMenuItem;
         private System.Windows.Forms.ToolStripMenuItem maxMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem temperatureUnitsMenuItem;
         private System.Windows.Forms.ToolStripSeparator webMenuItemSeparator;
-        private ToolStripRadioButtonMenuItem celsiusMenuItem;
-        private ToolStripRadioButtonMenuItem fahrenheitMenuItem;
         private System.Windows.Forms.ToolStripSeparator MenuItem2;
         private System.Windows.Forms.ToolStripMenuItem resetMinMaxMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandAllNodesMenuItem;

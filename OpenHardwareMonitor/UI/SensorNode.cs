@@ -3,21 +3,18 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using OpenHardwareMonitor.Hardware;
-using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
 public class SensorNode : Node
 {
     private readonly PersistentSettings _settings;
-    private readonly UnitManager _unitManager;
     private Color? _penColor;
 
-    public SensorNode(ISensor sensor, PersistentSettings settings, UnitManager unitManager)
+    public SensorNode(ISensor sensor, PersistentSettings settings)
     {
         Sensor = sensor;
         _settings = settings;
-        _unitManager = unitManager;
 
         switch (sensor.SensorType)
         {
@@ -166,7 +163,7 @@ public class SensorNode : Node
         {
             switch (Sensor.SensorType)
             {
-                case SensorType.Temperature when _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit:
+                case SensorType.Temperature when UnitManager.IsFahrenheitUsed:
                     {
                         return $"{value * 1.8 + 32:F1} °F";
                     }
