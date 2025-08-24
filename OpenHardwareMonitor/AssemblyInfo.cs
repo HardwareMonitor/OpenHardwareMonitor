@@ -7,4 +7,4 @@ using System.Reflection;
 [assembly: AssemblyCompany("HardwareMonitor")]
 [assembly: AssemblyProduct("OpenHardwareMonitor")]
 [assembly: AssemblyCopyright("Copyright © 2022 Sergiy Egoshyn")]
-[assembly: AssemblyVersion("2025.2.*")]
+[assembly: AssemblyVersion("3.0.*")]

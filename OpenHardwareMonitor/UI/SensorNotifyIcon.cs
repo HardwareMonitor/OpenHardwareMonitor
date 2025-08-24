@@ -8,8 +8,16 @@ namespace OpenHardwareMonitor.UI;
 
 public class SensorNotifyIcon : IDisposable
 {
+    private enum IconKind
+    {
+        Regular,
+        Percent,
+        Pie,
+    }
+
     private readonly NotifyIconAdv _notifyIcon;
     private IconFactory _iconFactory;
+    private IconKind _iconKind;
 
     public SensorNotifyIcon(SystemTray sensorSystemTray, ISensor sensor, PersistentSettings settings)
     {
@@ -17,6 +25,12 @@ public class SensorNotifyIcon : IDisposable
         _notifyIcon = new NotifyIconAdv();
         _iconFactory = new IconFactory();
         _iconFactory.Color = settings.GetValue(new Identifier(sensor.Identifier, "traycolor").ToString(), _iconFactory.Color);
+        if (Enum.TryParse(settings.GetValue(new Identifier(sensor.Identifier, "iconKind").ToString(), IconKind.Regular.ToString()), out IconKind iconKind))
+            _iconKind = iconKind;
+        else
+        {
+            _iconKind = sensor.SensorType.ValueIsPercent() ? IconKind.Percent : IconKind.Regular;
+        }
 
         var contextMenuStrip = new ContextMenuStrip();
         contextMenuStrip.Renderer = new ThemedToolStripRenderer();
@@ -33,6 +47,27 @@ public class SensorNotifyIcon : IDisposable
             sensorSystemTray.Remove(Sensor);
         };
         contextMenuStrip.Items.Add(removeItem);
+
+        if (sensor.SensorType.ValueIsPercent())
+        {
+            var iconKindItem = new ToolStripMenuItem("Icon Kind");
+            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Value", null, (_, _) => { SetIconKind(IconKind.Regular); }) { Checked = _iconKind == IconKind.Regular });
+            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Percent", null, (_, _) => { SetIconKind(IconKind.Percent); }) { Checked = _iconKind == IconKind.Percent });
+            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Pie", null, (_, _) => { SetIconKind(IconKind.Pie); }) { Checked = _iconKind == IconKind.Pie });
+            void SetIconKind(IconKind iconKind)
+            {
+                _iconKind = iconKind;
+                for (int i = 0; i < iconKindItem.DropDownItems.Count; i++)
+                {
+                    if (iconKindItem.DropDownItems[i] is not ToolStripMenuItem menuItem) continue;
+                    menuItem.Checked = (int)_iconKind == i;
+                }
+                settings.SetValue(new Identifier(sensor.Identifier, "iconKind").ToString(), (int)_iconKind);
+                Update();
+            }
+            contextMenuStrip.Items.Add(iconKindItem);
+        }
+
         var colorItem = new ToolStripMenuItem("Change Color...");
         colorItem.Click += delegate
         {
@@ -129,7 +164,7 @@ public class SensorNotifyIcon : IDisposable
         return new string(result.Take(3).ToArray());
     }
 
-    public void Update(bool showPercentageIcons)
+    public void Update()
     {
         Icon icon = _notifyIcon.Icon;
         switch (Sensor.SensorType)
@@ -137,9 +172,12 @@ public class SensorNotifyIcon : IDisposable
             case SensorType.Load:
             case SensorType.Control:
             case SensorType.Level:
-                _notifyIcon.Icon = showPercentageIcons
-                    ? _iconFactory.CreatePercentageIcon(Sensor.Value.GetValueOrDefault())
-                    : _iconFactory.CreateTransparentIcon(GetString());
+                _notifyIcon.Icon = _iconKind switch
+                {
+                    IconKind.Percent => _iconFactory.CreatePercentageIcon(Sensor.Value.GetValueOrDefault()),
+                    IconKind.Pie => _iconFactory.CreatePercentagePieIcon((byte)Sensor.Value.GetValueOrDefault()),
+                    _ => _iconFactory.CreateTransparentIcon(GetString()),
+                };
                 break;
             default:
                 _notifyIcon.Icon = _iconFactory.CreateTransparentIcon(GetString());

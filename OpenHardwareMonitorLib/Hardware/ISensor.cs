@@ -31,6 +31,16 @@ public enum SensorType
     Humidity // %
 }
 
+public static class SensorTypeExtensions
+{
+    public static bool ValueIsPercent(this SensorType sensorType) =>
+        sensorType == SensorType.Load
+     || sensorType == SensorType.Control
+     || sensorType == SensorType.Level
+     || sensorType == SensorType.Humidity
+    ;
+}
+
 /// <summary>
 /// Stores the readed value and the time in which it was recorded.
 /// </summary>

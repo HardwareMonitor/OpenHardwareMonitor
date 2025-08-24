@@ -152,9 +152,6 @@ public sealed partial class MainForm : Form
         UserOption showHiddenSensors = new("hiddenMenuItem", false, hiddenMenuItem, _settings);
         showHiddenSensors.Changed += delegate { treeModel.ForceVisible = showHiddenSensors.Value; };
 
-        UserOption showPercentageIcons = new("showPercentageIcons", false, percentageIconsMenuItem, _settings);
-        showPercentageIcons.Changed += delegate { _systemTray.ShowPercentageIcons = showPercentageIcons.Value; };
-
         UserOption showValue = new("valueMenuItem", true, valueMenuItem, _settings);
         showValue.Changed += delegate { treeView.Columns[1].IsVisible = showValue.Value; };
 
@@ -415,44 +412,21 @@ public sealed partial class MainForm : Form
 
         _sensorValuesTimeWindow.Changed += (_, _) =>
         {
-            TimeSpan timeWindow = TimeSpan.Zero;
-            switch (_sensorValuesTimeWindow.Value)
+            TimeSpan timeWindow = _sensorValuesTimeWindow.Value switch
             {
-                case 0:
-                    timeWindow = new TimeSpan(0, 0, 30);
-                    break;
-                case 1:
-                    timeWindow = new TimeSpan(0, 1, 0);
-                    break;
-                case 2:
-                    timeWindow = new TimeSpan(0, 2, 0);
-                    break;
-                case 3:
-                    timeWindow = new TimeSpan(0, 5, 0);
-                    break;
-                case 4:
-                    timeWindow = new TimeSpan(0, 10, 0);
-                    break;
-                case 5:
-                    timeWindow = new TimeSpan(0, 30, 0);
-                    break;
-                case 6:
-                    timeWindow = new TimeSpan(1, 0, 0);
-                    break;
-                case 7:
-                    timeWindow = new TimeSpan(2, 0, 0);
-                    break;
-                case 8:
-                    timeWindow = new TimeSpan(6, 0, 0);
-                    break;
-                case 9:
-                    timeWindow = new TimeSpan(12, 0, 0);
-                    break;
-                case 10:
-                    timeWindow = new TimeSpan(24, 0, 0);
-                    break;
-            }
-
+                0 => new TimeSpan(0, 0, 30),
+                1 => new TimeSpan(0, 1, 0),
+                2 => new TimeSpan(0, 2, 0),
+                3 => new TimeSpan(0, 5, 0),
+                4 => new TimeSpan(0, 10, 0),
+                5 => new TimeSpan(0, 30, 0),
+                6 => new TimeSpan(1, 0, 0),
+                7 => new TimeSpan(2, 0, 0),
+                8 => new TimeSpan(6, 0, 0),
+                9 => new TimeSpan(12, 0, 0),
+                10 => new TimeSpan(24, 0, 0),
+                _ => TimeSpan.Zero,
+            };
             _computer.Accept(new SensorVisitor(delegate(ISensor s) { s.ValuesTimeWindow = timeWindow; }));
         };
 
@@ -466,6 +440,10 @@ public sealed partial class MainForm : Form
             {
                 WindowState = FormWindowState.Minimized;
                 Show();
+            }
+            else
+            {
+                Timer_Tick(null, EventArgs.Empty);
             }
         }
         else
