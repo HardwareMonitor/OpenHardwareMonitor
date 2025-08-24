@@ -126,31 +126,19 @@ public class SensorGadget : Gadget
         contextMenuStrip.Renderer = new ThemedToolStripRenderer();
         ToolStripMenuItem hardwareNamesItem = new ToolStripMenuItem("Hardware Names");
         contextMenuStrip.Items.Add(hardwareNamesItem);
-        ToolStripMenuItem fontSizeMenu = new ToolStripMenuItem("Font Size");
-        for (int i = 0; i < 4; i++)
+        contextMenuStrip.Items.Add(new ToolStripMenuItem("Decrease Font Size", null, (_, _) =>
         {
-            float size;
-            string name;
-            switch (i)
-            {
-                case 0: size = 6.5f; name = "Small"; break;
-                case 1: size = 7.5f; name = "Medium"; break;
-                case 2: size = 9f; name = "Large"; break;
-                case 3: size = 11f; name = "Very Large"; break;
-                default: throw new NotImplementedException();
-            }
-
-            ToolStripItem item = new ToolStripMenuItem(name) { Checked = _fontSize == size };
-            item.Click += delegate
-            {
-                SetFontSize(size);
-                settings.SetValue("sensorGadget.FontSize", size);
-                foreach (ToolStripMenuItem mi in fontSizeMenu.DropDownItems)
-                    mi.Checked = mi == item;
-            };
-            fontSizeMenu.DropDownItems.Add(item);
-        }
-        contextMenuStrip.Items.Add(fontSizeMenu);
+            float newSize = _fontSize - 1;
+            if (newSize <= 0) return;
+            SetFontSize(newSize);
+            settings.SetValue("sensorGadget.FontSize", newSize);
+        }));
+        contextMenuStrip.Items.Add(new ToolStripMenuItem("Increase Font Size", null, (_, _) =>
+        {
+            float newSize = _fontSize + 1;
+            SetFontSize(newSize);
+            settings.SetValue("sensorGadget.FontSize", newSize);
+        }));
 
         Color fontColor = settings.GetValue("sensorGadget.FontColor", Color.White);
         int fontColorArgb = fontColor.ToArgb();
@@ -425,6 +413,8 @@ public class SensorGadget : Gadget
     private void SetFontSize(float size)
     {
         _fontSize = size;
+        _largeFont?.Dispose();
+        _smallFont?.Dispose();
         _largeFont = CreateFont(_fontSize, FontStyle.Bold);
         _smallFont = CreateFont(_fontSize, FontStyle.Regular);
 

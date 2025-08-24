@@ -67,22 +67,14 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
         NativeMethods.SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
     }
 
-    private CreateParams CreateParams
+    private CreateParams CreateParams => new CreateParams
     {
-        get
-        {
-            CreateParams cp = new CreateParams
-            {
-                Width = 4096,
-                Height = 4096,
-                X = _location.X,
-                Y = _location.Y,
-                ExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW
-            };
-
-            return cp;
-        }
-    }
+        Width = 4096,
+        Height = 4096,
+        X = _location.X,
+        Y = _location.Y,
+        ExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW
+    };
 
     protected override void WndProc(ref Message message)
     {
@@ -212,9 +204,7 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
         IntPtr hBmp = NativeMethods.CreateDIBSection(_handleBitmapDC, ref info, 0, out IntPtr _, IntPtr.Zero, 0);
         IntPtr hBmpOld = NativeMethods.SelectObject(_handleBitmapDC, hBmp);
         NativeMethods.DeleteObject(hBmpOld);
-
         _graphics = Graphics.FromHdc(_handleBitmapDC);
-
         if (Environment.OSVersion.Version.Major > 5)
         {
             _graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -256,10 +246,7 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
 
     public byte Opacity
     {
-        get
-        {
-            return _opacity;
-        }
+        get => _opacity;
         set
         {
             if (_opacity != value)
@@ -273,17 +260,13 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
 
     public bool Visible
     {
-        get
-        {
-            return _visible;
-        }
+        get => _visible;
         set
         {
             if (_visible != value)
             {
                 _visible = value;
                 NativeMethods.SetWindowPos(Handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | (value ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
-
                 if (value)
                 {
                     if (!_alwaysOnTop)
@@ -303,27 +286,21 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
 
     public bool AlwaysOnTop
     {
-        get
-        {
-            return _alwaysOnTop;
-        }
+        get => _alwaysOnTop;
         set
         {
             if (value != _alwaysOnTop)
             {
                 _alwaysOnTop = value;
-
                 if (_alwaysOnTop)
                 {
                     if (_visible)
                         ShowDesktop.Instance.ShowDesktopChanged -= ShowDesktopChanged;
-
                     MoveToTopMost(Handle);
                 }
                 else
                 {
                     MoveToBottom(Handle);
-
                     if (_visible)
                         ShowDesktop.Instance.ShowDesktopChanged += ShowDesktopChanged;
                 }
@@ -333,10 +310,7 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
 
     public Size Size
     {
-        get
-        {
-            return _size;
-        }
+        get => _size;
         set
         {
             if (_size != value)
@@ -350,10 +324,7 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
 
     public Point Location
     {
-        get
-        {
-            return _location;
-        }
+        get => _location;
         set
         {
             if (_location != value)
@@ -461,25 +432,10 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
     /// </summary>
     private static class Macros
     {
-        public static ushort LOWORD(IntPtr l)
-        {
-            return (ushort)((ulong)l & 0xFFFF);
-        }
-
-        public static ushort HIWORD(IntPtr l)
-        {
-            return (ushort)(((ulong)l >> 16) & 0xFFFF);
-        }
-
-        public static int GET_X_LPARAM(IntPtr lp)
-        {
-            return (short)LOWORD(lp);
-        }
-
-        public static int GET_Y_LPARAM(IntPtr lp)
-        {
-            return (short)HIWORD(lp);
-        }
+        public static ushort LOWORD(IntPtr l) => (ushort)((ulong)l & 0xFFFF);
+        public static ushort HIWORD(IntPtr l) => (ushort)(((ulong)l >> 16) & 0xFFFF);
+        public static int GET_X_LPARAM(IntPtr lp) => (short)LOWORD(lp);
+        public static int GET_Y_LPARAM(IntPtr lp) => (short)HIWORD(lp);
     }
 
     /// <summary>

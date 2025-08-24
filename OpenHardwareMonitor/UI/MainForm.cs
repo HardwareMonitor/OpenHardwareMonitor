@@ -746,18 +746,18 @@ public sealed partial class MainForm : Form
         var node = treeView.SelectedNode;
         if (node is not {Tag: SensorNode sensorNode} || sensorNode.Sensor == null)
             return;
-        if (e.KeyCode == Keys.H)
+        if (e.KeyCode == Keys.H && e.Control)
         {
             treeView.SelectedNode = node.NextNode ?? node.PreviousNode;
             sensorNode.IsVisible = !sensorNode.IsVisible;
             e.SuppressKeyPress = true;
             e.Handled = true;
         }
-        else if (e.KeyCode == Keys.P)
+        else if (e.KeyCode == Keys.P && e.Control)
         {
             ShowParameterForm(sensorNode.Sensor);
         }
-        else if (e.KeyCode == Keys.R)
+        else if (e.KeyCode == Keys.R && e.Control)
         {
             sensorNode.PenColor = null;
             // treeView.SelectedNode = node.NextNode ?? node.PreviousNode;
@@ -794,7 +794,7 @@ public sealed partial class MainForm : Form
                 treeContextMenu.Items.Clear();
                 if (node.Sensor.Parameters.Count > 0)
                 {
-                    item = new ToolStripMenuItem("Parameters... (P)");
+                    item = new ToolStripMenuItem("Parameters... (Ctrl+P)");
                     item.Click += delegate { ShowParameterForm(node.Sensor); };
                     treeContextMenu.Items.Add(item);
                 }
@@ -808,13 +808,13 @@ public sealed partial class MainForm : Form
 
                 if (node.IsVisible)
                 {
-                    item = new ToolStripMenuItem("Hide (H)");
+                    item = new ToolStripMenuItem("Hide (Ctrl+H)");
                     item.Click += delegate { node.IsVisible = false; };
                     treeContextMenu.Items.Add(item);
                 }
                 else
                 {
-                    item = new ToolStripMenuItem("Unhide (H)");
+                    item = new ToolStripMenuItem("Unhide (Ctrl+H)");
                     item.Click += delegate { node.IsVisible = true; };
                     treeContextMenu.Items.Add(item);
                 }
@@ -832,7 +832,7 @@ public sealed partial class MainForm : Form
                 };
                 treeContextMenu.Items.Add(item);
 
-                item = new ToolStripMenuItem("Reset Pen Color (R)");
+                item = new ToolStripMenuItem("Reset Pen Color (Ctrl+R)");
                 item.Click += delegate { node.PenColor = null; };
                 treeContextMenu.Items.Add(item);
 

@@ -263,7 +263,7 @@ namespace OpenHardwareMonitor.UI
       //
       this.resetMenuItem.Name = "resetMenuItem";
       this.resetMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.resetMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+      this.resetMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
       this.resetMenuItem.Text = "Reset";
       this.resetMenuItem.Click += new System.EventHandler(this.ResetClick);
       //
