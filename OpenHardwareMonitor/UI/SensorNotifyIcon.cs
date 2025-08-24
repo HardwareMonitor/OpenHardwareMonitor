@@ -54,9 +54,9 @@ public class SensorNotifyIcon : IDisposable
             iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Value", null, (_, _) => { SetIconKind(IconKind.Regular); }) { Checked = _iconKind == IconKind.Regular });
             iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Percent", null, (_, _) => { SetIconKind(IconKind.Percent); }) { Checked = _iconKind == IconKind.Percent });
             iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Pie", null, (_, _) => { SetIconKind(IconKind.Pie); }) { Checked = _iconKind == IconKind.Pie });
-            void SetIconKind(IconKind iconKind)
+            void SetIconKind(IconKind kind)
             {
-                _iconKind = iconKind;
+                _iconKind = kind;
                 for (int i = 0; i < iconKindItem.DropDownItems.Count; i++)
                 {
                     if (iconKindItem.DropDownItems[i] is not ToolStripMenuItem menuItem) continue;

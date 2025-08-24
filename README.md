@@ -38,9 +38,15 @@ You can see information about devices such as:
 
  Note: Some sensors are only available when running the application as administrator.
 
-### UI example with `Light`/`Dark` themes
+### What does it look like?
+
+Here's a preview of the app's UI with `Light`/`Dark` themes running on Windows 10:
 
 [<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/themes.png" alt="Themes" width="300"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/themes.png)
+
+Here's a preview of the tray icons and gadget (in Windows 10):
+
+[<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png" alt="Themes" width="300"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png)
 
 ## Download
 
