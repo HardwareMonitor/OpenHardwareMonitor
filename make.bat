@@ -5,10 +5,23 @@ SET msbuild="%%F"
 )
 ECHO %msbuild%
 
-@%msbuild% OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true
-@%msbuild% OpenHardwareMonitor.sln /t:Rebuild /p:DebugType=None /p:Configuration=Release
-
+@%msbuild% OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform="Any CPU"
 if errorlevel 1 goto error
+@%msbuild% OpenHardwareMonitor.sln /t:Rebuild /p:Configuration=Release /p:Platform="Any CPU"
+if errorlevel 1 goto error
+
+if [%1]==[all]  (
+
+@%msbuild% OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform="x64"
+if errorlevel 1 goto error
+@%msbuild% OpenHardwareMonitor.sln /t:Rebuild /p:Configuration=Release /p:Platform="x64"
+if errorlevel 1 goto error
+
+@%msbuild% OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform="x86"
+if errorlevel 1 goto error
+@%msbuild% OpenHardwareMonitor.sln /t:Rebuild /p:Configuration=Release /p:Platform="x86"
+if errorlevel 1 goto error
+)
 
 goto exit
 :error

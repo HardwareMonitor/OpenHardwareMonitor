@@ -25,7 +25,7 @@ jobs:
         run: nuget restore OpenHardwareMonitor.sln
 
       - name: Build
-        run: msbuild OpenHardwareMonitor.sln -p:Configuration=Release -m
+        run: msbuild OpenHardwareMonitor.sln -p:Configuration=Release -p:Platform="Any CPU" -m
 
       # - name: Publish build
       #   uses: actions/upload-artifact@v4
