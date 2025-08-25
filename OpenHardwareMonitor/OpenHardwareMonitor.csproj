@@ -53,6 +53,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="sergiye.Common" Version="1.*" />
     <PackageReference Include="sergiye.Common.UI" Version="1.*" />
     <PackageReference Include="Costura.Fody" Version="4.1.0">
       <PrivateAssets>all</PrivateAssets>
