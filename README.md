@@ -2,13 +2,13 @@
 [![Release](https://img.shields.io/github/v/release/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/HardwareMonitor/openhardwaremonitor/total?color=ff4f42)](https://github.com/HardwareMonitor/openhardwaremonitor/releases)
 [![Last commit](https://img.shields.io/github/last-commit/HardwareMonitor/openhardwaremonitor?color=00AD00)](https://github.com/HardwareMonitor/openhardwaremonitor/commits/master)
-[![](https://img.shields.io/badge/WINDOWS-7%20%E2%80%93%2011-blue)](https://endoflife.date/windows) 
-[![](https://img.shields.io/badge/SERVER-2012%20%E2%80%93%202025-blue)](https://endoflife.date/windows-server) 
+[![](https://img.shields.io/badge/WINDOWS-7%20%E2%80%93%2011-blue)](https://endoflife.date/windows)
+[![](https://img.shields.io/badge/SERVER-2012%20%E2%80%93%202025-blue)](https://endoflife.date/windows-server)
 
 [![Nuget](https://img.shields.io/nuget/v/OpenHardwareMonitorLib)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 [![Nuget](https://img.shields.io/nuget/dt/OpenHardwareMonitorLib?label=nuget-downloads)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 
-Open hardware monitor - is free software that can monitor the temperature sensors, fan speeds, voltages, load and clock speeds of your computer.
+Open hardware monitor is free software that can monitor the temperature sensors, fan speeds, voltages, load and clock speeds of your computer.
 
 This application is based on the "original" [openhardwaremonitor](https://github.com/openhardwaremonitor/openhardwaremonitor) project.
 
@@ -52,6 +52,27 @@ Here's a preview of the tray icons and gadget (in Windows 10):
 
 The published version can be obtained from [releases](https://github.com/HardwareMonitor/openhardwaremonitor/releases).
 
+> [!WARNING]
+>Microsoft and other major antivirus vendors may have flagged OpenHardwareMonitor as malware. This is a false positive and is not related to a virus or anything similar. Signals from Microsoft usually extend to other antivirus vendors as well.
+>OpenHardwareMonitor has a history of being falsely flagged as malware by antivirus vendors (including Defender). This is likely due to its behavior, such as creating a task with administrator privileges to auto-start the application after login, or storing an internal driver in a temporary folder to gain access to hardware resources.
+
+Currently, Defender does not flag this release, but it is likely that future updates may be flagged by Defender's machine learning-based detection systems within a few days of release.
+
+> [!IMPORTANT]
+>If Defender or another antivirus detects any part of OpenHardwareMonitor as malware, it may prevent proper work or cause application to fail to start.
+> OpenHardwareMonitor will not start if this file exists but is blocked from being loaded.
+>We strongly recommend excluding OpenHardwareMonitor's binaries from antivirus scans
+
+> [!TIP]
+> You can include the app folder in your antivirus' exclusion list to prevent issues due to antivirus detections
+
+For Defender, you can run the following script in PowerShell as an administrator:
+`Add-MpPreference -ExclusionPath "folder_with_app_binaries"`
+
+
+> [!CAUTION]
+> If your antivirus deletes the downloaded app file, you may need to temporarily disable real-time protection or save the file in an excluded folder.
+> If you are not comfortable with this process or your antivirus is managed by your company, we do not recommend using OpenHardwareMonitor. Please consider alternative solutions instead.
 
 ## Developer information
 **Integrate the library in own application**

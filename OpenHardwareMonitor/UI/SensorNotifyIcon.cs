@@ -10,8 +10,8 @@ public class SensorNotifyIcon : IDisposable
 {
     private enum IconKind
     {
-        Regular,
-        Percent,
+        Value,
+        Bar,
         Pie,
     }
 
@@ -25,11 +25,11 @@ public class SensorNotifyIcon : IDisposable
         _notifyIcon = new NotifyIconAdv();
         _iconFactory = new IconFactory();
         _iconFactory.Color = settings.GetValue(new Identifier(sensor.Identifier, "traycolor").ToString(), _iconFactory.Color);
-        if (Enum.TryParse(settings.GetValue(new Identifier(sensor.Identifier, "iconKind").ToString(), IconKind.Regular.ToString()), out IconKind iconKind))
+        if (Enum.TryParse(settings.GetValue(new Identifier(sensor.Identifier, "iconKind").ToString(), IconKind.Value.ToString()), out IconKind iconKind))
             _iconKind = iconKind;
         else
         {
-            _iconKind = sensor.SensorType.ValueIsPercent() ? IconKind.Percent : IconKind.Regular;
+            _iconKind = sensor.SensorType.ValueIsPercent() ? IconKind.Bar : IconKind.Value;
         }
 
         var contextMenuStrip = new ContextMenuStrip();
@@ -51,8 +51,8 @@ public class SensorNotifyIcon : IDisposable
         if (sensor.SensorType.ValueIsPercent())
         {
             var iconKindItem = new ToolStripMenuItem("Icon Kind");
-            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Value", null, (_, _) => { SetIconKind(IconKind.Regular); }) { Checked = _iconKind == IconKind.Regular });
-            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Percent", null, (_, _) => { SetIconKind(IconKind.Percent); }) { Checked = _iconKind == IconKind.Percent });
+            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Value", null, (_, _) => { SetIconKind(IconKind.Value); }) { Checked = _iconKind == IconKind.Value });
+            iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Bar", null, (_, _) => { SetIconKind(IconKind.Bar); }) { Checked = _iconKind == IconKind.Bar });
             iconKindItem.DropDownItems.Add(new ToolStripMenuItem("Pie", null, (_, _) => { SetIconKind(IconKind.Pie); }) { Checked = _iconKind == IconKind.Pie });
             void SetIconKind(IconKind kind)
             {
@@ -149,7 +149,7 @@ public class SensorNotifyIcon : IDisposable
         {
             SensorType.Load or SensorType.Control or SensorType.Level => _iconKind switch
             {
-                IconKind.Percent => _iconFactory.CreatePercentageIcon(Sensor.Value.GetValueOrDefault()),
+                IconKind.Bar => _iconFactory.CreatePercentageIcon(Sensor.Value.GetValueOrDefault()),
                 IconKind.Pie => _iconFactory.CreatePercentagePieIcon((byte)Sensor.Value.GetValueOrDefault()),
                 _ => _iconFactory.CreateTransparentIcon(GetString()),
             },
