@@ -112,15 +112,11 @@ public class SensorNotifyIcon : IDisposable
 
         return Sensor.SensorType switch
         {
-            SensorType.Temperature => UnitManager.IsFahrenheitUsed ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : $"{Sensor.Value:F0}",
+            SensorType.Temperature => UnitManager.IsFahrenheitUsed ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : Sensor.Value.Value.ToTrayValue(),
             SensorType.TimeSpan => $"{TimeSpan.FromSeconds(Sensor.Value.Value):g}",
             SensorType.Clock or SensorType.Fan or SensorType.Flow => $"{1e-3f * Sensor.Value:F1}",
-            SensorType.Voltage or SensorType.Current or SensorType.SmallData or SensorType.Factor or SensorType.Conductivity => $"{Sensor.Value:F1}",
-            SensorType.IntFactor => $"{Sensor.Value:F0}",
             SensorType.Throughput => GetThroughputValue(Sensor.Value ?? 0),
-            SensorType.Control or SensorType.Frequency or SensorType.Level or SensorType.Load or SensorType.Noise or SensorType.Humidity => $"{Sensor.Value:F0}",
-            SensorType.Energy or SensorType.Power or SensorType.Data => Sensor.Value.Value.ToTrayValue(),
-            _ => "-",
+            _ => Sensor.Value.Value.ToTrayValue(),
         };
     }
 
