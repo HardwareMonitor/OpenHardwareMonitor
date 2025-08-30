@@ -126,9 +126,9 @@ You can check if it works properly on your motherboard. For many manufacturers, 
 
 Also, don't forget to star the repository to help other people find it.
 
-<!-- [![Star History Chart](https://api.star-history.com/svg?repos=HardwareMonitor/openhardwaremonitor&type=Date)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date) -->
+[![Star History Chart](https://api.star-history.com/svg?repos=HardwareMonitor/openhardwaremonitor&type=Date)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date)
 
-<!-- [![Stargazers repo roster for @HardwareMonitor/openhardwaremonitor](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/stargazers) -->
+[![Stargazers repo roster for @HardwareMonitor/openhardwaremonitor](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/stargazers)
 
 ## Donate!
 Every [cup of coffee](https://patreon.com/SergiyE) you donate will help this app become better and let me know that this project is in demand.
