@@ -72,6 +72,7 @@ namespace OpenHardwareMonitor.UI
       this.minTrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.minCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.startupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.autoUpdateAppMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.separatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
       this.themeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.logSeparatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -347,7 +348,7 @@ namespace OpenHardwareMonitor.UI
       this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
       this.exitMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W;
       this.exitMenuItem.Text = "Exit";
-      this.exitMenuItem.Click += new System.EventHandler(this.ExitClick);
+      this.exitMenuItem.Click += new System.EventHandler(this.CloseApplication);
       //
       // viewMenuItem
       //
@@ -434,6 +435,7 @@ namespace OpenHardwareMonitor.UI
             this.minTrayMenuItem,
             this.minCloseMenuItem,
             this.startupMenuItem,
+            this.autoUpdateAppMenuItem,
             this.logSeparatorMenuItem,
             this.logSensorsMenuItem,
             this.loggingIntervalMenuItem,
@@ -470,6 +472,12 @@ namespace OpenHardwareMonitor.UI
       this.startupMenuItem.Name = "startupMenuItem";
       this.startupMenuItem.Size = new System.Drawing.Size(221, 22);
       this.startupMenuItem.Text = "Run On Windows Startup";
+      //
+      // autoUpdateAppMenuItem
+      //
+      this.autoUpdateAppMenuItem.Name = "autoUpdateAppMenuItem";
+      this.autoUpdateAppMenuItem.Size = new System.Drawing.Size(221, 22);
+      this.autoUpdateAppMenuItem.Text = "Auto-Update Application";
       //
       // separatorMenuItem
       //
@@ -971,6 +979,7 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ContextMenuStrip treeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem startMinMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startupMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoUpdateAppMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripMenuItem hiddenMenuItem;

@@ -18,6 +18,7 @@ namespace OpenHardwareMonitor.UI;
 public sealed partial class MainForm : Form
 {
     private readonly UserOption _autoStart;
+    private readonly UserOption _autoUpdate;
     private readonly Computer _computer;
     private readonly SensorGadget _gadget;
     private readonly Logger _logger;
@@ -48,20 +49,21 @@ public sealed partial class MainForm : Form
 
     private int _delayCount;
     private bool _selectionDragging;
+    private DateTime _nextUpdateCheckTime;
 
     public MainForm()
     {
         InitializeComponent();
 
-        this.sensor.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.sensor); };
-        this.value.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.value); };
-        this.min.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.min); };
-        this.max.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.max); };
+        sensor.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.sensor); };
+        value.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.value); };
+        min.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.min); };
+        max.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.max); };
 
         _settings = new PersistentSettings();
         _settings.Load();
 
-        this.MinimumSize = new Size(400, 200);
+        MinimumSize = new Size(400, 200);
         Text = Updater.ApplicationTitle;
         Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
         portableModeMenuItem.Checked = _settings.IsPortable;
@@ -115,7 +117,7 @@ public sealed partial class MainForm : Form
 
         _systemTray = new SystemTray(_computer, _settings);
         _systemTray.HideShowCommand += HideShowClick;
-        _systemTray.ExitCommand += ExitClick;
+        _systemTray.ExitCommand += CloseApplication;
 
         if (OperatingSystemHelper.IsUnix)
         {
@@ -172,6 +174,11 @@ public sealed partial class MainForm : Form
         _minimizeToTray.Changed += delegate { _systemTray.IsMainIconEnabled = _minimizeToTray.Value; };
 
         _minimizeOnClose = new UserOption("minCloseMenuItem", false, minCloseMenuItem, _settings);
+
+        _autoUpdate = new UserOption("autoUpdateAppMenuItem", false, autoUpdateAppMenuItem, _settings);
+        _autoUpdate.Changed += delegate {
+            _nextUpdateCheckTime = _autoUpdate.Value ? DateTime.Now.AddSeconds(3) : DateTime.MinValue;
+        };
 
         _autoStart = new UserOption(null, _startupManager.Startup, startupMenuItem, _settings);
         _autoStart.Changed += delegate
@@ -233,7 +240,6 @@ public sealed partial class MainForm : Form
         // Prevent Menu From Closing When UnClicking Hardware Items
         menuItemFileHardware.DropDown.Closing += StopFileHardwareMenuFromClosing;
 
-
         _showGadget.Changed += delegate
         {
             if (_gadget != null)
@@ -292,48 +298,22 @@ public sealed partial class MainForm : Form
 
         _loggingInterval.Changed += (_, _) =>
         {
-            switch (_loggingInterval.Value)
+            _logger.LoggingInterval = _loggingInterval.Value switch
             {
-                case 0:
-                    _logger.LoggingInterval = new TimeSpan(0, 0, 1);
-                    break;
-                case 1:
-                    _logger.LoggingInterval = new TimeSpan(0, 0, 2);
-                    break;
-                case 2:
-                    _logger.LoggingInterval = new TimeSpan(0, 0, 5);
-                    break;
-                case 3:
-                    _logger.LoggingInterval = new TimeSpan(0, 0, 10);
-                    break;
-                case 4:
-                    _logger.LoggingInterval = new TimeSpan(0, 0, 30);
-                    break;
-                case 5:
-                    _logger.LoggingInterval = new TimeSpan(0, 1, 0);
-                    break;
-                case 6:
-                    _logger.LoggingInterval = new TimeSpan(0, 2, 0);
-                    break;
-                case 7:
-                    _logger.LoggingInterval = new TimeSpan(0, 5, 0);
-                    break;
-                case 8:
-                    _logger.LoggingInterval = new TimeSpan(0, 10, 0);
-                    break;
-                case 9:
-                    _logger.LoggingInterval = new TimeSpan(0, 30, 0);
-                    break;
-                case 10:
-                    _logger.LoggingInterval = new TimeSpan(1, 0, 0);
-                    break;
-                case 11:
-                    _logger.LoggingInterval = new TimeSpan(2, 0, 0);
-                    break;
-                case 12:
-                    _logger.LoggingInterval = new TimeSpan(6, 0, 0);
-                    break;
-            }
+                0 => new TimeSpan(0, 0, 1),
+                1 => new TimeSpan(0, 0, 2),
+                2 => new TimeSpan(0, 0, 5),
+                3 => new TimeSpan(0, 0, 10),
+                4 => new TimeSpan(0, 0, 30),
+                5 => new TimeSpan(0, 1, 0),
+                6 => new TimeSpan(0, 2, 0),
+                7 => new TimeSpan(0, 5, 0),
+                8 => new TimeSpan(0, 10, 0),
+                9 => new TimeSpan(0, 30, 0),
+                10 => new TimeSpan(1, 0, 0),
+                11 => new TimeSpan(2, 0, 0),
+                _ => new TimeSpan(6, 0, 0),
+            };
         };
 
         _updateInterval = new UserRadioGroup("updateIntervalMenuItem",
@@ -351,27 +331,15 @@ public sealed partial class MainForm : Form
 
         _updateInterval.Changed += (_, _) =>
         {
-            switch (_updateInterval.Value)
+            timer.Interval = _updateInterval.Value switch
             {
-                case 0:
-                    timer.Interval = 250;
-                    break;
-                case 1:
-                    timer.Interval = 500;
-                    break;
-                case 2:
-                    timer.Interval = 1000;
-                    break;
-                case 3:
-                    timer.Interval = 2000;
-                    break;
-                case 4:
-                    timer.Interval = 5000;
-                    break;
-                case 5:
-                    timer.Interval = 10000;
-                    break;
-            }
+                0 => 250,
+                1 => 500,
+                2 => 1000,
+                3 => 2000,
+                4 => 5000,
+                _ => 10000,
+            };
         };
 
         _throttleAtaUpdate = new UserOption("throttleAtaUpdateMenuItem", false, throttleAtaUpdateMenuItem, _settings);
@@ -451,17 +419,18 @@ public sealed partial class MainForm : Form
             Show();
         }
 
-        // Create a handle, otherwise calling Close() does not fire FormClosed
-
+        Updater.Subscribe(
+            (message, isError) => {
+                MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+            },
+            (message) => {
+                return MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
+            },
+            () => CloseApplication(null, EventArgs.Empty)
+        );
+        FormClosed += CloseApplication;
         // Make sure the settings are saved when the user logs off
-        Microsoft.Win32.SystemEvents.SessionEnded += delegate
-        {
-            _computer.Close();
-            SaveConfiguration();
-            if (_runWebServer.Value)
-                Server.Quit();
-        };
-
+        Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
         Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
@@ -586,11 +555,6 @@ public sealed partial class MainForm : Form
         e.Cancel = !(treeView.CurrentNode != null && (treeView.CurrentNode.Tag is SensorNode || treeView.CurrentNode.Tag is HardwareNode));
     }
 
-    private void ExitClick(object sender, EventArgs e)
-    {
-        CloseApplication();
-    }
-
     private void Timer_Tick(object sender, EventArgs e)
     {
         treeView.Invalidate();
@@ -602,6 +566,12 @@ public sealed partial class MainForm : Form
             backgroundUpdater.RunWorkerAsync();
 
         RestoreCollapsedNodeState(treeView);
+
+        if (_nextUpdateCheckTime != DateTime.MinValue && _nextUpdateCheckTime < DateTime.Now)
+        {
+            _ = Updater.CheckForUpdatesAsync(Updater.CheckUpdatesMode.AutoUpdate);
+            _nextUpdateCheckTime = _autoUpdate.Value ? DateTime.Now.AddHours(24) : DateTime.MinValue;
+        }
     }
 
     private void SaveConfiguration()
@@ -647,18 +617,6 @@ public sealed partial class MainForm : Form
 
         RestoreCollapsedNodeState(treeView);
         treeView.Width += 1; //just to apply column auto-resize
-
-        Updater.Subscribe(
-          (message, isError) => {
-              MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
-          },
-          (message) => {
-              return MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
-          },
-          Application.Exit
-        );
-
-        FormClosed += MainForm_FormClosed;
     }
 
     private void RestoreCollapsedNodeState(TreeViewAdv treeViewAdv)
@@ -674,28 +632,33 @@ public sealed partial class MainForm : Form
         }
     }
 
-    private void CloseApplication()
+    private void CloseApplication(object sender, EventArgs e)
     {
-        FormClosed -= MainForm_FormClosed;
+        FormClosed -= CloseApplication;
+        if (InvokeRequired)
+        {
+            Invoke(new EventHandler(CloseApplication), sender, e);
+            return;
+        }
 
         Visible = false;
-        _systemTray.IsMainIconEnabled = false;
+
+        backgroundUpdater?.Dispose();
         timer.Enabled = false;
-        _computer.Close();
-        SaveConfiguration();
+        timer?.Dispose();
+
+        _systemTray.IsMainIconEnabled = false;
+        _systemTray?.Dispose();
+
         if (_runWebServer.Value)
-            Server.Quit();
+            Server?.Quit();
 
-        _systemTray.Dispose();
-        timer.Dispose();
-        backgroundUpdater.Dispose();
+        _computer?.Close();
 
+        SaveConfiguration();
+
+        Close();
         Application.Exit();
-    }
-
-    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-    {
-        CloseApplication();
     }
 
     private void menuItemSite_Click(object sender, EventArgs e)
@@ -705,7 +668,7 @@ public sealed partial class MainForm : Form
 
     private void menuItemCheckUpdates_Click(object sender, EventArgs e)
     {
-        Updater.CheckForUpdates(false);
+        Updater.CheckForUpdates(Updater.CheckUpdatesMode.AllMessages);
     }
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
