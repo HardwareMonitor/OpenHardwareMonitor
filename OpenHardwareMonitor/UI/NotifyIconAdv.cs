@@ -388,6 +388,8 @@ public class NotifyIconAdv : IDisposable
         private bool _doubleClickDown;
         private bool _visible;
         private readonly MethodInfo _commandDispatch;
+        private DateTime _lastClickTime = DateTime.MinValue;
+        private readonly int _doubleClickThreshold = SystemInformation.DoubleClickTime;
 
         public event EventHandler BalloonTipClicked;
         public event EventHandler BalloonTipClosed;
@@ -635,6 +637,21 @@ public class NotifyIconAdv : IDisposable
 
         private void ProcessMouseDown(MouseButtons button, bool doubleClick)
         {
+            doubleClick = false;
+            if (button == MouseButtons.Left)
+            {
+                DateTime now = DateTime.Now;
+                if ((now - _lastClickTime).TotalMilliseconds <= _doubleClickThreshold)
+                {
+                    _lastClickTime = DateTime.MinValue;
+                    doubleClick = true; //real double-click
+                }
+                else
+                {
+                    _lastClickTime = now;
+                }
+            }
+
             if (doubleClick)
             {
                 DoubleClick?.Invoke(this, new MouseEventArgs(button, 2, 0, 0, 0));
