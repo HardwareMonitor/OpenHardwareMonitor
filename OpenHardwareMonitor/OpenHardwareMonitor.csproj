@@ -15,6 +15,7 @@
     <Deterministic>false</Deterministic>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Configurations>Debug;Release</Configurations>
+<!--    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>-->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
@@ -62,6 +63,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+<!--    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />-->
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration.Install" />

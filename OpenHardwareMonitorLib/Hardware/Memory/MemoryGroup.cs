@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,10 +39,7 @@ internal class MemoryGroup : IGroup, IHardwareChanged
             return;
         }
 
-        if (!TryAddDimms(settings))
-        {
-            StartRetryTask(settings);
-        }
+        StartRetryTask(settings);
     }
 
     public event HardwareEventHandler HardwareAdded;
@@ -119,19 +115,14 @@ internal class MemoryGroup : IGroup, IHardwareChanged
     private void StartRetryTask(ISettings settings)
     {
         _cancellationTokenSource = new CancellationTokenSource();
-
         Task.Run(async () =>
         {
             int retryRemaining = 5;
-
             while (!_cancellationTokenSource.IsCancellationRequested && --retryRemaining > 0)
             {
-                await Task.Delay(TimeSpan.FromSeconds(2.5), _cancellationTokenSource.Token).ConfigureAwait(false);
-
                 if (TryAddDimms(settings))
-                {
                     break;
-                }
+                await Task.Delay(TimeSpan.FromSeconds(2.5), _cancellationTokenSource.Token).ConfigureAwait(false);
             }
         }, _cancellationTokenSource.Token);
     }
