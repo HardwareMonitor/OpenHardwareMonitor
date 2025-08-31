@@ -143,6 +143,10 @@ public sealed partial class MainForm : Form
         nodeTextBoxText.ToolTipProvider = tooltipProvider;
         nodeTextBoxValue.ToolTipProvider = tooltipProvider;
         _logger = new Logger(_computer);
+        var saved = _settings.GetValue("logger.fileRotation", 0); // 0 = PerSession, 1 = Daily.
+        _logger.FileRotationMethod = (LoggerFileRotation)Math.Max(0, Math.Min(saved, 1));
+        perSessionFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.PerSession;
+        dailyFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.Daily;
 
         _computer.HardwareAdded += HardwareAdded;
         _computer.HardwareRemoved += HardwareRemoved;
@@ -1020,6 +1024,7 @@ public sealed partial class MainForm : Form
         dailyFileRotationMenuItem.Checked = false;
         perSessionFileRotationMenuItem.Checked = true;
         _logger.FileRotationMethod = LoggerFileRotation.PerSession;
+        _settings.SetValue("logger.fileRotation", (int)LoggerFileRotation.PerSession);
     }
 
     private void dailyFileRotationMenuItem_Click(object sender, EventArgs e)
@@ -1027,6 +1032,7 @@ public sealed partial class MainForm : Form
         dailyFileRotationMenuItem.Checked = true;
         perSessionFileRotationMenuItem.Checked = false;
         _logger.FileRotationMethod = LoggerFileRotation.Daily;
+        _settings.SetValue("logger.fileRotation", (int)LoggerFileRotation.Daily);
     }
 
     private void PortableModeMenu_Click(object sender, EventArgs e)
