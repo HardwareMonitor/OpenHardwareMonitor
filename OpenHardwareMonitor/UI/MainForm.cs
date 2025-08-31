@@ -870,7 +870,7 @@ public sealed partial class MainForm : Form
 
     protected override void WndProc(ref Message m)
     {
-        if (_minimizeToTray.Value && m.Msg == WinApiHelper.WM_SYS_COMMAND && m.WParam.ToInt64() == WinApiHelper.SC_MINIMIZE)
+        if (_minimizeToTray.Value && m.Msg == WinApiConstants.WM_SYS_COMMAND && m.WParam.ToInt64() == WinApiConstants.SC_MINIMIZE)
         {
             SysTrayHideShow();
         }
@@ -878,7 +878,7 @@ public sealed partial class MainForm : Form
         //{
         //    Theme.SetAutoTheme();
         //}
-        else if (_minimizeOnClose.Value && m.Msg == WinApiHelper.WM_SYS_COMMAND && m.WParam.ToInt64() == WinApiHelper.SC_CLOSE)
+        else if (_minimizeOnClose.Value && m.Msg == WinApiConstants.WM_SYS_COMMAND && m.WParam.ToInt64() == WinApiConstants.SC_CLOSE)
         {
             //Apparently the user wants to minimize rather than close
             //Now we still need to check if we're going to the tray or not
