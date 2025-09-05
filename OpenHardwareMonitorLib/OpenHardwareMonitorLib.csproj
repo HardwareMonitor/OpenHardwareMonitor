@@ -94,7 +94,7 @@
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="SergiyE.Common" Version="1.*" />
     <PackageReference Include="System.Management" Version="9.0.8" />
-    <PackageReference Include="RAMSPDToolkit-NDD" Version="1.2.1" />
+    <PackageReference Include="RAMSPDToolkit-NDD" Version="1.2.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
   </ItemGroup>
