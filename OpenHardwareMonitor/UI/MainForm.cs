@@ -250,6 +250,10 @@ public sealed partial class MainForm : Form
                 _gadget.Visible = _showGadget.Value;
         };
 
+        UnitManager.IsFahrenheitUsed = _settings.GetValue("TemperatureInFahrenheit", UnitManager.IsFahrenheitUsed);
+        fahrenheitMenuItem.Checked = UnitManager.IsFahrenheitUsed;
+        celsiusMenuItem.Checked= !fahrenheitMenuItem.Checked;
+
         Server = new HttpServer(_root,
                                 _settings.GetValue("listenerIp", "?"),
                                 _settings.GetValue("listenerPort", 8085),
@@ -919,6 +923,20 @@ public sealed partial class MainForm : Form
     {
         if (e.Node.Tag is SensorNode node && node.Sensor != null && node.Sensor.Parameters.Count > 0)
             ShowParameterForm(node.Sensor);
+    }
+
+    private void CelsiusMenuItem_Click(object sender, EventArgs e)
+    {
+        celsiusMenuItem.Checked = true;
+        UnitManager.IsFahrenheitUsed = fahrenheitMenuItem.Checked = false;
+        _settings.SetValue("TemperatureInFahrenheit", UnitManager.IsFahrenheitUsed);
+    }
+
+    private void FahrenheitMenuItem_Click(object sender, EventArgs e)
+    {
+        celsiusMenuItem.Checked = false;
+        UnitManager.IsFahrenheitUsed = fahrenheitMenuItem.Checked = true;
+        _settings.SetValue("TemperatureInFahrenheit", UnitManager.IsFahrenheitUsed);
     }
 
     private void ResetMinMaxMenuItem_Click(object sender, EventArgs e)

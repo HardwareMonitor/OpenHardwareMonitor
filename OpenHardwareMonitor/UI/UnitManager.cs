@@ -2,7 +2,7 @@
 
 public static class UnitManager
 {
-    public static bool IsFahrenheitUsed => !OperatingSystemHelper.IsMetricSystemUsed;
+    public static bool IsFahrenheitUsed { get; set; } = !OperatingSystemHelper.IsMetricSystemUsed;
 
     public static float? CelsiusToFahrenheit(float? valueInCelsius)
     {
