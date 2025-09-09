@@ -114,6 +114,7 @@ public class SensorNotifyIcon : IDisposable
         {
             SensorType.Temperature => UnitManager.IsFahrenheitUsed ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : Sensor.Value.Value.ToTrayValue(),
             SensorType.TimeSpan => $"{TimeSpan.FromSeconds(Sensor.Value.Value):g}",
+            SensorType.Timing => $"{Sensor.Value.Value:F3}",
             SensorType.Clock or SensorType.Fan or SensorType.Flow => $"{1e-3f * Sensor.Value:F1}",
             SensorType.Throughput => GetThroughputValue(Sensor.Value ?? 0),
             _ => Sensor.Value.Value.ToTrayValue(),
@@ -171,6 +172,7 @@ public class SensorNotifyIcon : IDisposable
             SensorType.Noise => "\n{0}: {0:F0} dBA",
             SensorType.Conductivity => "\n{0}: {0:F1} µS/cm",
             SensorType.Humidity => "\n{0}: {0:F0} %",
+            SensorType.Timing => "\n{0}: {0:F3} ns",
             _ => "\n{0}: {1}",
         };
         string formattedValue = Sensor.SensorType switch

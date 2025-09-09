@@ -25,6 +25,7 @@ public enum SensorType
     SmallData, // MB = 2^20 Bytes
     Throughput, // B/s
     TimeSpan, // Seconds 
+    Timing, // ns
     Energy, // milliwatt-hour (mWh)
     Noise, // dBA
     Conductivity, // µS/cm
