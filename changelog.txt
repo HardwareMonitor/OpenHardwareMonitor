@@ -1,0 +1,286 @@
+3.0.9380 (hotfix) Latest
+restored menu for selecting temperature units #9
+
+3.0.9378
+NotifyIcon "Percent" mode renamed to "Bar"
+NotifyIcon decimal values format fixed
+add Auto-Update Application option
+fix memoryGroup initialization delay (app start delay removed)
+tray icon accidental double click problem fixed
+Menu checkboxes draw style changed
+Dark theme colors adjusted
+Fix issues with missing samsung nvme data
+Fix missing DIMM temperature sensors
+Fix possible collection was modified exception
+
+3.0.9367
+removed temperature unit menu -> get from current RegionInfo
+show in tray (Ctrl+T) hotkey;
+show in gadget (Ctrl+G) hotkey;
+fixed 'Hide/show' sensor hotkey next node selection;
+'Reset pen color' hotkey fix: next node selection disabled
+removed auto-updates check in background
+tray hint decimal digits fix for Power & Data
+round tray value for data sensors
+gadget background changed to solid black
+Font size menu items replaced with Decrease/Increase Font Size
+Keyboard shortcuts have been changed to not conflict with search
+use IconFactory from common lib
+add IconKind tray menu item with options for % sensors: Regular, Percent, Pie
+"Show Percentage Icons" main menu item removed
+build perapate x64 & x86 versions
+app 'company' renamed to 'HardwareMonitor'
+fix StartupManager & TaskScheduler (task name fix for multi-user systems)
+SensorNotifyIcon digits draw fix
+tray icon: decimals added for Power hint
+tray icon: text size increased for screens with normal dpi (no zoom)
+Add support for MSI PRO Z890 WIFI (Nuvoton NCT6687D)
+Restore fan control for IT8696E + make the 0 values array specific to the X870 Aorus elite WIFI7
+
+2025.2.9342
+dark themes Background changed to be more like win10 dark
+Fix null reference in MemoryGroup when Ring0 is disabled
+Added support for three additional MSI motherboards
+Added support for Asus ROG STRIX X870-I Gaming WIFI
+GIGABYTE X870 AORUS ELITE WIFI7 (ITE IT8696E, ITE IT87952E)
+
+2025.2.9307
+few ShortcutKeys added; default outputs restored
+menu rendering has been reworked; optimization of rendering resources
+Themes initialization simplified; main menu items reordered
+add "Site" menu item
+CheckRunningInstances fix: when launching another instance of the application, the old one will be displayed
+Fix crash when a USB device doesn't have a product name and HidSharp triggers an IOException (IOException)
+Add support for ROG STRIX B760-I GAMING WIFI
+Add support for Asrock B450M Pro4 R2.0
+Add DIMM Temperature
+Samsung NVME now being detected properly
+released OHMLib 1.0.9307
+
+2025.2.9300
+fix for auto theme switching
+Add Support for ASUS STRIX Z790-E WIFI II
+UI optimizations & fixes
+
+2025.1.9292
+auto switch Light/Dark theme in 'Auto' mode when system colors changed
+fix theme support for notify icon context menu
+fix theme support for gadget context menu
+
+2025.1.9270
+UI fixes: menu item checked state
+Add Support for MSI B840 PRO WIFI
+Add support for Gigabyte B360M H
+Add support for MSI B850M Mortar
+
+2025.1.9258
+check for updates asynchronously (to avoid freezing the main form)
+Add support for MSI MPG B850 EDGE TI WIFI
+Add support for MSI Pro Z890-A WiFi (MS-7E32)
+Add support for ROG STRIX B850-I GAMING WIFI and fix for NCT6701D
+Implemented storage update interval at the UI side - "Throttle ATA Storage" menu item (30 seconds)
+
+2025.1.9250
+UI - fix bug in getVisibleNodes
+OpenHardwareMonitorLib fixes for linux
+GenericLinuxMemory adjusted to have same sensor names as WindowsMemory
+Add support for a number of X870 and Z890 MSI Motherboards using NCT6687D chips
+Remove B650 Edge board, as it's fine with existing implementation.
+Removed forced update interval for storage devices
+Add Identification Support for 15 new MSI AM5/LGA1851 Motherboards with the NCT6687D SIO Controller
+Fix Aquacomputer Farbwerk sensor data out of sync (& out of date) + add farbwerk 360 support
+Partial support of Gigabyte X670E AORUS XTREME
+Add ASRock B850M Steel Legend Wifi support
+
+2025.1.9233
+fix current theme menu item selection on start
+add 'Show Percentage Icons' menu item
+add support for kraken elite
+Added motherboard Gigabyte B650 Gaming X AX
+code cleanup & optimizations
+
+2025.1.9200
+themes menu items order redesigned (default themes first)
+add 'White' theme
+auto resize view when min/max column visibility changes
+check for updates in main thread (message box appearance fix)
+open the running application if trying to start another instance
+nuget package released (and used in the app)
+sign app with private certificate
+
+2025.1.9195
+additional themes added as built-in to the executable, external custom themes are still supported
+code fixes and optimizations
+
+2025.1.9194
+theme fix for dialogs
+
+2025.1.9193
+add hotkeys to sensor node menu actions
+add custom themes support (separate archive included)
+fixed hidden sensors for web server (remove empty nodes)
+autoupdate fix
+
+2025.1.9190
+add 'open' menu for web server
+remove hidden sensors from web server data
+optimize app embedded resources
+node pen color fixed
+fixed battery name retrieving & custom name load/save
+add new memory sensors & reorganize old
+Zen5 cpu fix
+add Intel Panther Lake & Intel Arrow Lake U
+Added Gigabyte X870E Aorus Xtreme AI Top motherboard, based on the existing Gigabyte X870E motherboards already added
+
+2025.1.9177
+resources optimized (app size decreased)
+the application icon has been replaced with a new one
+added compatibility check by region
+Add support for ASUS ROG Crosshair X870E Hero motherboard
+Add CPU Package temperature sensor.
+Aligning W_PUMP+ naming to others
+Sensor Statistic NaN Fix (When a Nan or infinity value is added, the Min/Max function is not working)
+SAPPHIRERAPIDS support added
+Intel Arrow Lake 200 added
+Gigabyte X79 UD3 - Fan control support and missing fan added
+Add support for ASUS PRIME X870-P (Nuvoton NCT6701D)
+Work done to support ROG STRIX X870E-E
+Update fan hierarchy for X870-P motherboard
+Fixed some existing voltages
+Added some voltages
+Added VRM temperature readout
+Removed debug fan lines
+IT87 voltage registers update
+The embedded switch on the model has no default and would break out of the manufacturer switch if the model wasn't Z790_Taichi
+Fix the voltage registers for IT87
+Proart x870e creator wifi
+Add Support For ASUS ROG STRIX X870E-E GAMING WIFI Fan Sensors And Control
+Fix B650M_AORUS_PRO_AX AVCC3 voltage
+Tidy Asus ProArt X870E CREATOR WIFI misconfigurations
+Moved out of Gigabyte models and under Asus
+Fixed comment noting Super I/O chip as ITE IT8696E instead of NCT6701D
+added support for Intel ElkhartLake (#1625)
+Ryzen 9000 Core Frequency Bugfix (Zen5 (Ryzen 9000) has a changed register mapping for readout core frequency)
+Update Ryzen 9000 and Core Clock
+fixed Package Power and Core power Calculation, use ESU for power scaling
+Added Effective core clock
+Added Average Core clock and Average effective clock
+Remove Effective clock from SMU (Core effective clock is now calculated in Amd17Cpu/Core)
+Fix Clock Ratio calculation. (Ratio > 1 is not possible)
+More precise system utilization
+The current method usually indicates a load that is too low
+SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION idle time error in Windows11 22H2 is fixed
+consistent with Process Explorer, Hwinfo, SIV
+Add fix for old Windows 11 Versions 22H2 and 23H2
+Additional error checks for load calculation
+Intel Ultra 9 200 Series ArrowLake Added
+NCT610XD bugfix register and temperature read
+Supermicro X11SWN-E support
+
+2025.1.9135
+remove admin permissions requirements to start the app (some sensors will not be available)
+fix application auto-start for UAC enabled environments (scheduler for admin, registry for users)
+
+2024.11.9127
+fixed "Run on windows startup" menu item checked status on app start
+
+2024.11.9121 (hotfix)
+remove task schedulled autostart to use only registry way
+
+2024.11.9108
+add "Reset on power changed" mode & main menu item
+
+2024.11.9102 (hotfix)
+remove 'update-check' delay on first form show
+fixup for the issue of battery sensor disappearance when switching power modes has been fixed
+
+2024.11.9100
+The issue of battery sensor disappearance when switching power modes has been fixed.
+check for update on first show
+add battery "Charge-Discharge Cycle Count" sensor
+add Lithium polymer battery type & fix battery sensors activation
+UI stability fixes
+
+2024.11.9096
+Adjust icon data for Throughput sensors (up/down network speed)
+Add auto-reset on power mode changed (fix for dynamically switching GPU on some laptops)
+Add support for battery temperature monitoring
+Check whether battery values are available
+Include the battery device name and tag in the hardware identifier
+Fix temperature conversion
+Disable sensors that have a "null" value
+Add Selectable Network Interface in Web Server Form
+Add ISA bridge support for Intel based Gigabyte MB
+Add support for ASRock Z790 Nova WiFi
+Add Gigabyte X870E AORUS PRO (ICE) (ITE IT8696E, ITE IT87952E)
+UI stability fixes
+
+2024.11.9087
+restore collapsed nodes after reset fixed
+settings saving significally optimized
+fix for expacd/collapse nodes by keyboard/mouse
+portable mode fix
+UI controls stability fixes
+code optimizations
+
+2024.11.9086
+Theme menu items style changed to radio buttons
+fixed bug with double click to expand/collapse tree node
+
+2024.11.9083
+merged new features from LibreHardwareMonitor project (many thanks to all LHW contributors)
+improved portabe mode (enabled by default)
+added auto crash reports to a text file
+optimizations and fixes
+
+1.0.9077
+Intel Core i3, i5, i7, i9 12xxx AlderLake support added
+
+1.0.8912
+fixed load settings
+use app folder as initial directory in export settings save file dialog
+auto set portable mode on export settings
+
+1.0.8864
+Export Settings (from 'File' menu)
+portable mode (no registry)
+minor optimizations + fixes
+
+1.0.8855
+save settings improved (save after each cnange)
+minor optimization + fixes
+
+1.0.8822
+add crash form for detailed error reports
+minor optimization + fixes
+
+1.0.8806
+portability fixes:
+store settings in registry;
+store .sys file in temp folder;
+
+0.9.8802 Pre-release
+.net upgraded to 4.8;
+small text position fix in tray icon
+
+0.9.8450 Pre-release
+fixed notifyicon text for 16x16 and 32x32 mode
+
+0.9.8404 Pre-release
+
+0.9.8389 Pre-release
+PercentageIcon style improved (memory + cpu load)
+
+0.9.8291 Pre-release
+notify icon font and size changed
+
+0.9.8276 Pre-release
+transparent taskbar icon improved
+config file format changes from xml to json
+
+0.9.8271 Pre-release
+transparent icon for sensors
+
+0.9.8262.26 Pre-release
+0.9.8261 Pre-release
+0.9.7 Pre-release
