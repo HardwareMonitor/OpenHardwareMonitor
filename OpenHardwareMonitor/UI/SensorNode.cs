@@ -15,76 +15,32 @@ public class SensorNode : Node
     {
         Sensor = sensor;
         _settings = settings;
-
-        switch (sensor.SensorType)
+        Format = sensor.SensorType switch
         {
-            case SensorType.Voltage:
-                Format = "{0:F3} V";
-                break;
-            case SensorType.Current:
-                Format = "{0:F3} A";
-                break;
-            case SensorType.Clock:
-                Format = "{0:F1} MHz";
-                break;
-            case SensorType.Load:
-                Format = "{0:F1} %";
-                break;
-            case SensorType.Temperature:
-                Format = "{0:F1} °C";
-                break;
-            case SensorType.Fan:
-                Format = "{0:F0} RPM";
-                break;
-            case SensorType.Flow:
-                Format = "{0:F1} L/h";
-                break;
-            case SensorType.Control:
-                Format = "{0:F1} %";
-                break;
-            case SensorType.Level:
-                Format = "{0:F1} %";
-                break;
-            case SensorType.Power:
-                Format = "{0:F1} W";
-                break;
-            case SensorType.Data:
-                Format = "{0:F1} GB";
-                break;
-            case SensorType.SmallData:
-                Format = "{0:F1} MB";
-                break;
-            case SensorType.Factor:
-                Format = "{0:F3}";
-                break;
-            case SensorType.IntFactor:
-                Format = "{0:F0}";
-                break;
-            case SensorType.Frequency:
-                Format = "{0:F1} Hz";
-                break;
-            case SensorType.Throughput:
-                Format = "{0:F1} B/s";
-                break;
-            case SensorType.TimeSpan:
-                Format = "{0:g}";
-                break;
-            case SensorType.Timing:
-                Format = "{0:F3} ns";
-                break;
-            case SensorType.Energy:
-                Format = "{0:F0} mWh";
-                break;
-            case SensorType.Noise:
-                Format = "{0:F0} dBA";
-                break;
-            case SensorType.Conductivity:
-                Format = "{0:F1} µS/cm";
-                break;
-            case SensorType.Humidity:
-                Format = "{0:F0} %";
-                break;
-        }
+            SensorType.Voltage => "{0:0.###} V",
+            SensorType.Current => "{0:0.###} A",
+            SensorType.Clock => "{0:0.#} MHz",
+            SensorType.Load => "{0:0.#} %",
+            SensorType.Temperature => "{0:0.#} °C",
+            SensorType.Fan => "{0:F0} RPM",
+            SensorType.Flow => "{0:0.#} L/h",
+            SensorType.Control => "{0:0.#} %",
+            SensorType.Level => "{0:0.#} %",
+            SensorType.Power => "{0:0.#} W",
+            SensorType.Data => "{0:0.#} GB",
+            SensorType.SmallData => "{0:0.#} MB",
+            SensorType.Factor => "{0:0.###}",
+            SensorType.IntFactor => "{0:F0}",
+            SensorType.Frequency => "{0:0.#} Hz",
+            SensorType.Throughput => "{0:0.#} B/s",
+            SensorType.TimeSpan => "{0:g}",
+            SensorType.Timing => "{0:0.###} ns",
+            SensorType.Energy => "{0:F0} mWh",
+            SensorType.Noise => "{0:F0} dBA",
+            SensorType.Conductivity => "{0:0.#} µS/cm",
+            SensorType.Humidity => "{0:F0} %",
+            _ => Format
+        };
 
         bool hidden = settings.GetValue(new Identifier(sensor.Identifier, "hidden").ToString(), sensor.IsDefaultHidden);
         base.IsVisible = !hidden;
@@ -168,7 +124,7 @@ public class SensorNode : Node
             {
                 case SensorType.Temperature when UnitManager.IsFahrenheitUsed:
                     {
-                        return $"{value * 1.8 + 32:F1} °F";
+                        return $"{value * 1.8 + 32:0.#} °F";
                     }
                 case SensorType.Throughput:
                     {
@@ -194,11 +150,11 @@ public class SensorNode : Node
                                                 if (value < 1024)
                                                     result = $"{value:F0} bps";
                                                 else if (value < 1048576)
-                                                    result = $"{value / 1024:F1} Kbps";
+                                                    result = $"{value / 1024:0.#} Kbps";
                                                 else if (value < 1073741824)
-                                                    result = $"{value / 1048576:F1} Mbps";
+                                                    result = $"{value / 1048576:0.#} Mbps";
                                                 else
-                                                    result = $"{value / 1073741824:F1} Gbps";
+                                                    result = $"{value / 1073741824:0.#} Gbps";
                                             }
 
                                             break;
@@ -210,7 +166,7 @@ public class SensorNode : Node
                                 {
                                     const int _1MB = 1048576;
 
-                                    result = value < _1MB ? $"{value / 1024:F1} KB/s" : $"{value / _1MB:F1} MB/s";
+                                    result = value < _1MB ? $"{value / 1024:0.#} KB/s" : $"{value / _1MB:0.#} MB/s";
 
                                     break;
                                 }

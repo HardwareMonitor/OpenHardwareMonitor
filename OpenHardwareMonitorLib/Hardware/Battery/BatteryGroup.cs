@@ -175,7 +175,7 @@ internal class BatteryGroup : IGroup
                          .Append(" Chemistry: ").AppendLine(chemistry);
 
             if (bat.DegradationLevel.HasValue)
-                reportBuilder.Append(" Degradation Level: ").AppendFormat("{0:F2}", bat.DegradationLevel).AppendLine(" %");
+                reportBuilder.Append(" Degradation Level: ").AppendFormat("{0:0.##}", bat.DegradationLevel).AppendLine(" %");
 
             if (bat.DesignedCapacity.HasValue)
                 reportBuilder.Append(" Designed Capacity: ").Append(bat.DesignedCapacity).AppendLine(" mWh");
@@ -187,13 +187,13 @@ internal class BatteryGroup : IGroup
                 reportBuilder.Append(" Remaining Capacity: ").Append(bat.RemainingCapacity).AppendLine(" mWh");
 
             if (bat.ChargeLevel.HasValue)
-                reportBuilder.Append(" Charge Level: ").AppendFormat("{0:F2}", bat.ChargeLevel).AppendLine(" %");
+                reportBuilder.Append(" Charge Level: ").AppendFormat("{0:0.##}", bat.ChargeLevel).AppendLine(" %");
 
             if (bat.Voltage.HasValue)
-                reportBuilder.Append(" Voltage: ").AppendFormat("{0:F3}", bat.Voltage).AppendLine(" V");
+                reportBuilder.Append(" Voltage: ").AppendFormat("{0:0.###}", bat.Voltage).AppendLine(" V");
 
             if (bat.Temperature.HasValue)
-                reportBuilder.Append(" Temperature: ").AppendFormat("{0:F3}", bat.Temperature).AppendLine(" ºC");
+                reportBuilder.Append(" Temperature: ").AppendFormat("{0:0.###}", bat.Temperature).AppendLine(" ºC");
 
             if (bat.RemainingTime.HasValue)
                 reportBuilder.Append(" Remaining Time (Estimated): ").AppendFormat("{0:g}", TimeSpan.FromSeconds(bat.RemainingTime.Value)).AppendLine();
@@ -217,10 +217,10 @@ internal class BatteryGroup : IGroup
             }
 
             if (bat.ChargeDischargeRate.HasValue)
-                reportBuilder.Append(cdRateSensorName).AppendFormat("{0:F1}", Math.Abs(bat.ChargeDischargeRate.Value)).AppendLine(" W");
+                reportBuilder.Append(cdRateSensorName).AppendFormat("{0:0.#}", Math.Abs(bat.ChargeDischargeRate.Value)).AppendLine(" W");
 
             if (bat.ChargeDischargeCurrent.HasValue)
-                reportBuilder.Append(cdCurrentSensorName).AppendFormat("{0:F3}", Math.Abs(bat.ChargeDischargeCurrent.Value)).AppendLine(" A");
+                reportBuilder.Append(cdCurrentSensorName).AppendFormat("{0:0.###}", Math.Abs(bat.ChargeDischargeCurrent.Value)).AppendLine(" A");
 
             reportBuilder.AppendLine();
             count++;

@@ -590,65 +590,31 @@ public class SensorGadget : Gadget
 
                         if (sensor.Value.HasValue)
                         {
-                            string format = "";
-                            switch (sensor.SensorType)
+                            string format = sensor.SensorType switch
                             {
-                                case SensorType.Voltage:
-                                    format = "{0:F3} V";
-                                    break;
-                                case SensorType.Current:
-                                    format = "{0:F3} A";
-                                    break;
-                                case SensorType.Clock:
-                                    format = "{0:F0} MHz";
-                                    break;
-                                case SensorType.Frequency:
-                                    format = "{0:F0} Hz";
-                                    break;
-                                case SensorType.Temperature:
-                                    format = "{0:F1} °C";
-                                    break;
-                                case SensorType.Fan:
-                                    format = "{0:F0} RPM";
-                                    break;
-                                case SensorType.Flow:
-                                    format = "{0:F0} L/h";
-                                    break;
-                                case SensorType.Power:
-                                    format = "{0:F1} W";
-                                    break;
-                                case SensorType.Data:
-                                    format = "{0:F1} GB";
-                                    break;
-                                case SensorType.SmallData:
-                                    format = "{0:F0} MB";
-                                    break;
-                                case SensorType.Factor:
-                                    format = "{0:F3}";
-                                    break;
-                                case SensorType.IntFactor:
-                                    format = "{0:F0}";
-                                    break;
-                                case SensorType.TimeSpan:
-                                    format = "{0:g}";
-                                    break;
-                                case SensorType.Timing:
-                                    format = "{0:F3} ns";
-                                    break;
-                                case SensorType.Energy:
-                                    format = "{0:F0} mWh";
-                                    break;
-                                case SensorType.Noise:
-                                    format = "{0:F0} dBA";
-                                    break;
-                                case SensorType.Conductivity:
-                                    format = "{0:F1} µS/cm";
-                                    break;
-                            }
+                                SensorType.Voltage => "{0:0.###} V",
+                                SensorType.Current => "{0:0.###} A",
+                                SensorType.Clock => "{0:F0} MHz",
+                                SensorType.Frequency => "{0:F0} Hz",
+                                SensorType.Temperature => "{0:0.#} °C",
+                                SensorType.Fan => "{0:F0} RPM",
+                                SensorType.Flow => "{0:F0} L/h",
+                                SensorType.Power => "{0:0.#} W",
+                                SensorType.Data => "{0:0.#} GB",
+                                SensorType.SmallData => "{0:F0} MB",
+                                SensorType.Factor => "{0:0.###}",
+                                SensorType.IntFactor => "{0:F0}",
+                                SensorType.TimeSpan => "{0:g}",
+                                SensorType.Timing => "{0:0.###} ns",
+                                SensorType.Energy => "{0:F0} mWh",
+                                SensorType.Noise => "{0:F0} dBA",
+                                SensorType.Conductivity => "{0:0.#} µS/cm",
+                                _ => ""
+                            };
 
                             if (sensor.SensorType == SensorType.Temperature && UnitManager.IsFahrenheitUsed)
                             {
-                                formatted = $"{UnitManager.CelsiusToFahrenheit(sensor.Value):F1} °F";
+                                formatted = $"{UnitManager.CelsiusToFahrenheit(sensor.Value):0.#} °F";
                             }
                             else if (sensor.SensorType == SensorType.Throughput)
                             {
@@ -670,11 +636,11 @@ public class SensorGadget : Gadget
                                                         if (sensor.Value < 1024)
                                                             result = $"{sensor.Value:F0} bps";
                                                         else if (sensor.Value < 1048576)
-                                                            result = $"{sensor.Value / 1024:F1} Kbps";
+                                                            result = $"{sensor.Value / 1024:0.#} Kbps";
                                                         else if (sensor.Value < 1073741824)
-                                                            result = $"{sensor.Value / 1048576:F1} Mbps";
+                                                            result = $"{sensor.Value / 1048576:0.#} Mbps";
                                                         else
-                                                            result = $"{sensor.Value / 1073741824:F1} Gbps";
+                                                            result = $"{sensor.Value / 1073741824:0.#} Gbps";
                                                     }
                                                     break;
                                             }
@@ -683,9 +649,9 @@ public class SensorGadget : Gadget
                                     default:
                                         {
                                             if (sensor.Value < 1048576)
-                                                result = $"{sensor.Value / 1024:F1} KB/s";
+                                                result = $"{sensor.Value / 1024:0.#} KB/s";
                                             else
-                                                result = $"{sensor.Value / 1048576:F1} MB/s";
+                                                result = $"{sensor.Value / 1048576:0.#} MB/s";
                                         }
                                         break;
                                 }
