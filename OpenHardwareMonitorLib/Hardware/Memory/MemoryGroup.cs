@@ -91,15 +91,8 @@ internal class MemoryGroup : IGroup, IHardwareChanged
             lock (_lock)
             {
                 if (_disposed)
-                {
                     return false;
-                }
-
-                if (DetectThermalSensors(out List<SPDAccessor> accessors))
-                {
-                    AddDimms(accessors, settings);
-                    return true;
-                }
+                return AddDimms(settings);
             }
         }
         catch (Exception ex)
@@ -107,7 +100,6 @@ internal class MemoryGroup : IGroup, IHardwareChanged
             _lastException = ex;
             Debug.Assert(false, "Exception while detecting RAM: " + ex.Message);
         }
-
         return false;
     }
 
@@ -126,41 +118,25 @@ internal class MemoryGroup : IGroup, IHardwareChanged
         }, _cancellationTokenSource.Token);
     }
 
-    private static bool DetectThermalSensors(out List<SPDAccessor> accessors)
+    private bool AddDimms(ISettings settings)
     {
-        accessors = [];
-
+        List<SPDAccessor> accessors = [];
         bool ramDetected = false;
-
         SMBusManager.DetectSMBuses();
-
-        //Go through detected SMBuses
         foreach (SMBusInterface smbus in SMBusManager.RegisteredSMBuses)
         {
-            //Go through possible RAM slots
             for (byte i = SPDConstants.SPD_BEGIN; i <= SPDConstants.SPD_END; ++i)
             {
-                //Detect type of RAM, if available
                 SPDDetector detector = new(smbus, i);
-
-                //RAM available and detected
                 if (detector.Accessor != null)
                 {
-                    //Add all detected modules
                     accessors.Add(detector.Accessor);
-
                     ramDetected = true;
                 }
             }
         }
 
-        return ramDetected;
-    }
-
-    private void AddDimms(List<SPDAccessor> accessors, ISettings settings)
-    {
         List<Hardware> additions = [];
-
         foreach (SPDAccessor ram in accessors)
         {
             //Default value
@@ -177,5 +153,7 @@ internal class MemoryGroup : IGroup, IHardwareChanged
         _hardware = [.. _hardware, .. additions];
         foreach (Hardware hardware in additions)
             HardwareAdded?.Invoke(hardware);
+
+        return ramDetected;
     }
 }
