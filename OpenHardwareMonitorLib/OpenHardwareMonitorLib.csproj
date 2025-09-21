@@ -13,7 +13,7 @@
     <AssemblyCompany>HardwareMonitor</AssemblyCompany>
     <AssemblyProduct>OpenHardwareMonitor</AssemblyProduct>
     <AssemblyCopyright>Copyright © 2022 Sergiy Egoshyn</AssemblyCopyright>
-    <AssemblyVersion>1.0.9386</AssemblyVersion>
+    <AssemblyVersion>1.0.9395</AssemblyVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <Deterministic>true</Deterministic>
     <Platforms>AnyCPU;x64;x86</Platforms>

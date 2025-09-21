@@ -1,4 +1,14 @@
-3.0.9380 (hotfix) Latest
+3.0.9395
+FIX RTX 50XX Memory junction temp reading (update NvidiaGpu, enhance 50 series detection logic)
+support ASUS ROG Crosshair X870E Apex (remove unnecessary HashSet, adjust Temperature Sensor Mapping)
+data formats have been adjusted to reduce the amount of useless digits in floating point numbers with zeros
+Added RAM timings sensors
+Workaround for page changing on DDR5 systems with SPD Write Protection active has been implemented in new version of RAMSPDToolkit
+Add sensors to aquacomputer D5Next
+new version of OpenHardwareMonitorLib released
+checkboxes rendering improved
+
+3.0.9380 (hotfix)
 restored menu for selecting temperature units #9
 
 3.0.9378
