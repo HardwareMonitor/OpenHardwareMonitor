@@ -9,3 +9,14 @@ for /f "delims=" %%e in ('dir /A:D /S /B *.vs^|find /i "\.vs"') do @if exist "%%
 
 del /s OpenHardwareMonitor\FodyWeavers.xsd
 del /s OpenHardwareMonitor.sln.DotSettings.user
+
+git reflog expire --expire=1.days.ago --expire-unreachable=now --all
+if errorlevel 1 goto error
+
+git gc
+if errorlevel 1 goto error
+
+goto exit
+:error
+pause
+:exit
