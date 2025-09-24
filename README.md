@@ -124,11 +124,13 @@ Some sensors require administrator privileges to access the data. Restart your I
 The OpenHardwareMonitor team welcomes feedback and contributions!<br/>
 You can check if it works properly on your motherboard. For many manufacturers, the way of reading data differs a bit, so if you notice any inaccuracies, please send us a pull request. If you have any suggestions or improvements, don't hesitate to create an issue.
 
-Also, don't forget to star the repository to help other people find it.
+Also, don't forget to ★ star ★ the repository to help other people find it.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=HardwareMonitor/openhardwaremonitor&type=Date)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date)
+<!-- [![Star History Chart](https://api.star-history.com/svg?repos=HardwareMonitor/openhardwaremonitor&type=Date)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date) -->
 
-[![Stargazers repo roster for @HardwareMonitor/openhardwaremonitor](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/stargazers)
+[![Stargazers](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date)
+
+[![Forkers](https://reporoster.com/forks/HardwareMonitor/OpenHardwareMonitor)](https://github.com/HardwareMonitor/OpenHardwareMonitor/network/members)
 
 ## Donate!
 Every [cup of coffee](https://patreon.com/SergiyE) you donate will help this app become better and let me know that this project is in demand.
