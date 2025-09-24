@@ -191,11 +191,12 @@ public class Motherboard : IHardware
     /// </summary>
     public void Close()
     {
-        _lmSensors?.Close();
         foreach (IHardware iHardware in SubHardware)
         {
             if (iHardware is Hardware hardware)
                 hardware.Close();
         }
+
+        _lmSensors?.Close();
     }
 }
