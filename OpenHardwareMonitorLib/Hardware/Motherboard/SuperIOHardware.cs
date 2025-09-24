@@ -2426,6 +2426,37 @@ internal sealed class SuperIOHardware : Hardware
 
                         break;
 
+                    case Model.X670_AORUS_ELITE_AX:
+                       v.Add(new Voltage("Vcore", 0, 0, 1));
+                       v.Add(new Voltage("+3.3V", 1, 6.49F, 10));
+                       v.Add(new Voltage("+12V", 2, 5, 1));
+                       v.Add(new Voltage("+5V", 3, 1.5F, 1));
+                       v.Add(new Voltage("Vcore SoC", 4, 0, 1));
+                       v.Add(new Voltage("Vcore Misc", 5, 0, 1));
+                       v.Add(new Voltage("CPU VDDIO Memory", 6, 0, 1));
+                       v.Add(new Voltage("+3V Standby", 7, 10, 10, 0));
+                       v.Add(new Voltage("CMOS Battery", 8, 10, 10));
+
+                       t.Add(new Temperature("System #1", 0));
+                       t.Add(new Temperature("PCH", 1));
+                       t.Add(new Temperature("CPU", 2));
+                       t.Add(new Temperature("PCIe x16", 3));
+                       t.Add(new Temperature("VRM MOS", 4));
+
+                       f.Add(new Fan("CPU Fan", 0));
+                       f.Add(new Fan("System Fan #1", 1));
+                       f.Add(new Fan("System Fan #2", 2));
+                       f.Add(new Fan("System Fan #3", 3));
+                       f.Add(new Fan("CPU Optional Fan", 4));
+
+                       c.Add(new Control("CPU Fan", 0));
+                       c.Add(new Control("System Fan #1", 1));
+                       c.Add(new Control("System Fan #2", 2));
+                       c.Add(new Control("System Fan #3", 3));
+                       c.Add(new Control("CPU Optional Fan", 4));
+
+                       break;
+
                     default:
                         v.Add(new Voltage("Voltage #1", 0, true));
                         v.Add(new Voltage("Voltage #2", 1, true));
@@ -4950,6 +4981,48 @@ internal sealed class SuperIOHardware : Hardware
                         for (int i = 0; i < superIO.Controls.Length; i++)
                             c.Add(new Control("Fan #" + (i + 1), i));
 
+                        break;
+
+                    case Model.PROART_B760_CREATOR_D4: // NCT6798D
+                        v.Add(new Voltage("Vcore", 0));
+                        v.Add(new Voltage("+5V", 1, 4, 1));
+                        v.Add(new Voltage("AVSB", 2, 34, 34));
+                        v.Add(new Voltage("3VCC", 3, 34, 34));
+                        v.Add(new Voltage("+12V", 4, 11, 1));
+                        v.Add(new Voltage("IVR Atom L2 Cluster #1", 5));
+                        v.Add(new Voltage("Voltage #7", 6));
+                        v.Add(new Voltage("+3V Standby", 7, 34, 34));
+                        v.Add(new Voltage("CMOS Battery", 8, 34, 34));
+                        v.Add(new Voltage("CPU Termination", 9, 1, 1));
+                        v.Add(new Voltage("Voltage #11", 10));
+                        v.Add(new Voltage("IVR Atom L2 Cluster #0", 11, 1, 1));
+                        v.Add(new Voltage("PCH", 12));
+                        v.Add(new Voltage("Voltage #14", 13));
+                        v.Add(new Voltage("Voltage #15", 14));
+                        
+                        t.Add(new Temperature("CPU Package", 0)); // PECI_0, CPU Package
+                        t.Add(new Temperature("CPU", 1)); // CPUTIN, CPU
+                        t.Add(new Temperature("Motherboard", 2)); // SYSTIN, MOTHERBOARD
+                        t.Add(new Temperature("T Sensor", 8)); // TSENSOR
+                        t.Add(new Temperature("PCH", 13)); // PCH_CHIP_TEMP
+                        t.Add(new Temperature("PECI 0 Calibrated", 22)); // PECI_0_CAL, CPU
+                        
+                        f.Add(new Fan("Chassis Fan #1", 0)); // CHA_FAN_1
+                        f.Add(new Fan("CPU Fan", 1)); // CPU_FAN
+                        f.Add(new Fan("Chassis Fan #2", 2)); // CHA_FAN_2
+                        f.Add(new Fan("Chassis Fan #3", 3)); // CHA_FAN_3
+                        f.Add(new Fan("Chassis Fan #4", 4)); // CHA_FAN_4
+                        f.Add(new Fan("CPU Optional Fan", 5)); // CPU_OPT
+                        f.Add(new Fan("AIO Pump", 6)); // AIO_PUMP
+
+                        c.Add(new Control("Chassis Fan #1", 0)); // CHA_FAN_1
+                        c.Add(new Control("CPU Fan", 1)); // CPU_FAN
+                        c.Add(new Control("Chassis Fan #2", 2)); // CHA_FAN_2
+                        c.Add(new Control("Chassis Fan #3", 3)); // CHA_FAN_3
+                        c.Add(new Control("Chassis Fan #4", 4)); // CHA_FAN_4
+                        c.Add(new Control("CPU Optional Fan", 5)); // CPU_OPT
+                        c.Add(new Control("AIO Pump", 6)); // AIO_PUMP
+                        
                         break;
 
                     case Model.ROG_STRIX_B850_I_GAMING_WIFI: // NCT6701D
