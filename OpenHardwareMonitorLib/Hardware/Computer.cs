@@ -17,6 +17,7 @@ using OpenHardwareMonitor.Hardware.Motherboard;
 using OpenHardwareMonitor.Hardware.Network;
 using OpenHardwareMonitor.Hardware.Psu.Corsair;
 using OpenHardwareMonitor.Hardware.Storage;
+using OpenHardwareMonitor.Hardware.Psu.Msi;
 
 namespace OpenHardwareMonitor.Hardware;
 
@@ -245,10 +246,12 @@ public class Computer : IComputer
                 if (value)
                 {
                     Add(new CorsairPsuGroup(_settings));
+                    Add(new MsiPsuGroup(_settings));
                 }
                 else
                 {
                     RemoveType<CorsairPsuGroup>();
+                    RemoveType<MsiPsuGroup>();
                 }
             }
 
@@ -543,7 +546,10 @@ public class Computer : IComputer
             Add(new NetworkGroup(_settings));
 
         if (_psuEnabled)
+        {
             Add(new CorsairPsuGroup(_settings));
+            Add(new MsiPsuGroup(_settings));
+        }
 
         if (_batteryEnabled)
             Add(new BatteryGroup(_settings));
