@@ -88,12 +88,13 @@
     <EmbeddedResource Include="Resources\WinRing0x64.gz" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HidSharp" Version="2.6.2" />
+    <PackageReference Include="HidSharp" Version="2.6.3" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.IO.Ports" Version="9.0.9" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="SergiyE.Common" Version="1.*" />
     <PackageReference Include="System.Management" Version="9.0.9" />
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
     <PackageReference Include="RAMSPDToolkit-NDD" Version="1.2.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
