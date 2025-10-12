@@ -1,3 +1,27 @@
+3.0.9416
+Intel discrete GPU support through Intel GCL library
+added support for MSI PRO B850-S WIFI6E
+added B850S_PRO_WIFI6E to the list of models that get the NCT6687DR instead of NCT6687D
+Add support for ASUS TUF GAMING B450 PLUS II and fixes for some ITE
+Improved and more correct IT8665 fixes
+Fix DimmMemory concatenated identifier
+RazerGroup exception fix
+Added base support Asus ROG Crosshair X670E Hero and PSU MSI MEG Ai1300P
+Mutexes fixed
+Changed NvApi lifecycle
+Add missing sensors for Asus ROG X670E-HERO / GENE
+Record RTX 50XX gpu core temp with decimal precision
+Clean up CorsairPsu
+Added support for Lenovo V50t Gen 2
+upgrade HidSharp to 2.6.2
+Updater messages invocation fix
+Add MS-7C35 motherboards
+PROART_B760_CREATOR_D4 & X670_AORUS_ELITE_AX motherboards
+Rename 'CPU VDDIO / MC' to 'CPU VDDIO Memory'
+Add support for Asrock X870E Taichi (lite) 
+Fix RTX 40 Series Hot Spot and Memory Junction sensor not reading
+close lmsensors after hardware.close()
+
 3.0.9395
 FIX RTX 50XX Memory junction temp reading (update NvidiaGpu, enhance 50 series detection logic)
 support ASUS ROG Crosshair X870E Apex (remove unnecessary HashSet, adjust Temperature Sensor Mapping)
