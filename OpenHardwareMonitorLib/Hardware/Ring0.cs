@@ -20,7 +20,6 @@ internal static class Ring0
     internal static KernelDriver KernelDriver => _driver;
 
     public static void Open(bool portable)
-
     {
         // no implementation for unix systems
         if (OperatingSystemHelper.IsUnix)

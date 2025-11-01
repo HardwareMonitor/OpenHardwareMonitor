@@ -149,7 +149,7 @@ internal sealed class Battery : Hardware
         Kernel32.BATTERY_WAIT_STATUS bws = default;
         bws.BatteryTag = _batteryTag;
         Kernel32.BATTERY_STATUS batteryStatus = default;
-        if (Kernel32.DeviceIoControl(_batteryHandle,
+        if (!_batteryHandle.IsClosed && Kernel32.DeviceIoControl(_batteryHandle,
                                      Kernel32.IOCTL.IOCTL_BATTERY_QUERY_STATUS,
                                      ref bws,
                                      Marshal.SizeOf(bws),
@@ -213,7 +213,7 @@ internal sealed class Battery : Hardware
         Kernel32.BATTERY_QUERY_INFORMATION bqi = default;
         bqi.BatteryTag = _batteryTag;
         bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryEstimatedTime;
-        if (Kernel32.DeviceIoControl(_batteryHandle,
+        if (!_batteryHandle.IsClosed && Kernel32.DeviceIoControl(_batteryHandle,
                                      Kernel32.IOCTL.IOCTL_BATTERY_QUERY_INFORMATION,
                                      ref bqi,
                                      Marshal.SizeOf(bqi),
@@ -234,7 +234,7 @@ internal sealed class Battery : Hardware
 
         uint temperature = 0;
         bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryTemperature;
-        if (Kernel32.DeviceIoControl(_batteryHandle,
+        if (!_batteryHandle.IsClosed && Kernel32.DeviceIoControl(_batteryHandle,
                                      Kernel32.IOCTL.IOCTL_BATTERY_QUERY_INFORMATION,
                                      ref bqi,
                                      Marshal.SizeOf(bqi),
@@ -252,7 +252,7 @@ internal sealed class Battery : Hardware
 
         bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryInformation;
         Kernel32.BATTERY_INFORMATION bi = default;
-        if (Kernel32.DeviceIoControl(_batteryHandle,
+        if (!_batteryHandle.IsClosed && Kernel32.DeviceIoControl(_batteryHandle,
                                      Kernel32.IOCTL.IOCTL_BATTERY_QUERY_INFORMATION,
                                      ref bqi,
                                      Marshal.SizeOf(bqi),

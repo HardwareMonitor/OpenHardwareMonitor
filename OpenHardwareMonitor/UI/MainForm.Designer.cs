@@ -42,7 +42,6 @@ namespace OpenHardwareMonitor.UI
       this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.saveReportMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.portableModeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.resetOnPowerChangedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.MenuItem2 = new System.Windows.Forms.ToolStripSeparator();
       this.resetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.menuItemFileHardware = new System.Windows.Forms.ToolStripMenuItem();
@@ -228,7 +227,6 @@ namespace OpenHardwareMonitor.UI
             this.portableModeMenuItem,
             this.MenuItem2,
             this.resetMenuItem,
-            this.resetOnPowerChangedMenuItem,
             this.menuItemFileHardware,
             this.menuItem6,
             this.exitMenuItem});
@@ -249,13 +247,6 @@ namespace OpenHardwareMonitor.UI
       this.portableModeMenuItem.Size = new System.Drawing.Size(152, 22);
       this.portableModeMenuItem.Text = "Portable mode";
       this.portableModeMenuItem.Click += new System.EventHandler(this.PortableModeMenu_Click);
-      //
-      // resetOnPowerChangedMenuItem
-      //
-      this.resetOnPowerChangedMenuItem.Name = "resetOnPowerChangedMenuItem";
-      this.resetOnPowerChangedMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.resetOnPowerChangedMenuItem.Text = "Reset on power changed";
-      this.resetOnPowerChangedMenuItem.Click += new System.EventHandler(this.ResetOnPowerChangedMenuItem_Click);
       //
       // MenuItem2
       //
@@ -1000,7 +991,6 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveReportMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portableModeMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resetOnPowerChangedMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hddMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minTrayMenuItem;

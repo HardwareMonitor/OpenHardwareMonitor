@@ -67,7 +67,6 @@ public sealed partial class MainForm : Form
         Text = Updater.ApplicationTitle;
         Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
         portableModeMenuItem.Checked = _settings.IsPortable;
-        resetOnPowerChangedMenuItem.Checked = _settings.GetValue("resetOnPowerChangedMenuItem", false);
 
         // make sure the buffers used for double buffering are not disposed
         // after each draw call
@@ -286,8 +285,7 @@ public sealed partial class MainForm : Form
 
         _loggingInterval = new UserRadioGroup("loggingInterval",
                                               0,
-                                              new[]
-                                              {
+                                              [
                                                   log1sMenuItem,
                                                   log2sMenuItem,
                                                   log5sMenuItem,
@@ -301,7 +299,7 @@ public sealed partial class MainForm : Form
                                                   log1hMenuItem,
                                                   log2hMenuItem,
                                                   log6hMenuItem
-                                              },
+                                              ],
                                               _settings);
 
         _loggingInterval.Changed += (_, _) =>
@@ -326,15 +324,14 @@ public sealed partial class MainForm : Form
 
         _updateInterval = new UserRadioGroup("updateIntervalMenuItem",
                                              2,
-                                             new[]
-                                             {
+                                             [
                                                  updateInterval250msMenuItem,
                                                  updateInterval500msMenuItem,
                                                  updateInterval1sMenuItem,
                                                  updateInterval2sMenuItem,
                                                  updateInterval5sMenuItem,
                                                  updateInterval10sMenuItem
-                                             },
+                                             ],
                                              _settings);
 
         _updateInterval.Changed += (_, _) =>
@@ -367,8 +364,7 @@ public sealed partial class MainForm : Form
 
         _sensorValuesTimeWindow = new UserRadioGroup("sensorValuesTimeWindow",
                                                      10,
-                                                     new[]
-                                                     {
+                                                     [
                                                          timeWindow30sMenuItem,
                                                          timeWindow1minMenuItem,
                                                          timeWindow2minMenuItem,
@@ -380,7 +376,7 @@ public sealed partial class MainForm : Form
                                                          timeWindow6hMenuItem,
                                                          timeWindow12hMenuItem,
                                                          timeWindow24hMenuItem
-                                                     },
+                                                     ],
                                                      _settings);
 
         perSessionFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.PerSession;
@@ -442,7 +438,7 @@ public sealed partial class MainForm : Form
         FormClosed += CloseApplication;
         // Make sure the settings are saved when the user logs off
         Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
-        Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
+        //Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -474,16 +470,12 @@ public sealed partial class MainForm : Form
 
     private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
     {
-        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || resetOnPowerChangedMenuItem.Checked)
+        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume && _computer.IsBatteryEnabled)
         {
-            _computer.Reset();
+            _computer.IsBatteryEnabled = false;
+            _computer.IsBatteryEnabled = true;
+            //_computer.Reset();
         }
-    }
-
-    private void ResetOnPowerChangedMenuItem_Click(object sender, EventArgs eventArgs)
-    {
-        resetOnPowerChangedMenuItem.Checked = !resetOnPowerChangedMenuItem.Checked;
-        _settings.SetValue("resetOnPowerChangedMenuItem", resetOnPowerChangedMenuItem.Checked);
     }
 
     private void InitializeTheme()
@@ -535,14 +527,10 @@ public sealed partial class MainForm : Form
 
     private void HardwareRemoved(IHardware hardware)
     {
-        List<HardwareNode> nodesToRemove = new();
-        foreach (Node node in _root.Nodes)
-        {
-            if (node is HardwareNode hardwareNode && hardwareNode.Hardware == hardware)
-                nodesToRemove.Add(hardwareNode);
-        }
-
-        foreach (HardwareNode hardwareNode in nodesToRemove)
+        var nodesToRemove = _root.Nodes
+            .Where(node => node is HardwareNode hardwareNode && hardwareNode.Hardware == hardware)
+            .ToArray();
+        foreach (var hardwareNode in nodesToRemove)
         {
             _root.Nodes.Remove(hardwareNode);
         }

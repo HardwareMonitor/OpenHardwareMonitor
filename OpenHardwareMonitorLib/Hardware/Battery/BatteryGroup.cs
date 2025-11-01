@@ -8,9 +8,9 @@ using Microsoft.Win32.SafeHandles;
 
 namespace OpenHardwareMonitor.Hardware.Battery;
 
-internal class BatteryGroup : IGroup
+internal class BatteryGroup : IGroup, IHardwareChanged
 {
-    private readonly List<Battery> _hardware = new();
+    private readonly List<Battery> _hardware = [];
 
     static bool QueryStringFromBatteryInfo(SafeFileHandle battery, Kernel32.BATTERY_QUERY_INFORMATION bqi, out string value)
     {
@@ -40,6 +40,9 @@ internal class BatteryGroup : IGroup
         Marshal.FreeHGlobal(ptrString);
         return result;
     }
+
+    public event HardwareEventHandler HardwareAdded;
+    public event HardwareEventHandler HardwareRemoved;
 
     public unsafe BatteryGroup(ISettings settings)
     {
@@ -136,6 +139,7 @@ internal class BatteryGroup : IGroup
 
             SetupApi.SetupDiDestroyDeviceInfoList(hdev);
         }
+        _hardware.ForEach(h => HardwareAdded?.Invoke(h));
     }
 
     /// <inheritdoc />
@@ -144,6 +148,7 @@ internal class BatteryGroup : IGroup
     /// <inheritdoc />
     public void Close()
     {
+        _hardware.ForEach(h => HardwareRemoved?.Invoke(h));
         foreach (Battery battery in _hardware)
             battery.Close();
     }

@@ -91,7 +91,13 @@ public class SystemTray : IDisposable
 
     public void Redraw()
     {
-        foreach (SensorNotifyIcon icon in _sensorList)
+        SensorNotifyIcon[] sensorsToRedraw;
+        lock (_sensorList)
+        {
+            sensorsToRedraw = _sensorList.ToArray();
+        }
+
+        foreach (SensorNotifyIcon icon in sensorsToRedraw)
             icon.Update();
     }
 
@@ -120,15 +126,13 @@ public class SystemTray : IDisposable
             _settings.Remove(new Identifier(sensor.Identifier, "tray").ToString());
             _settings.Remove(new Identifier(sensor.Identifier, "traycolor").ToString());
         }
-        SensorNotifyIcon instance = null;
-        foreach (SensorNotifyIcon icon in _sensorList)
-        {
-            if (icon.Sensor == sensor)
-                instance = icon;
-        }
+        SensorNotifyIcon instance;
+        lock(_sensorList)
+            instance = _sensorList.FirstOrDefault(icon => icon.Sensor == sensor);
         if (instance != null)
         {
-            _sensorList.Remove(instance);
+            lock (_sensorList)
+                _sensorList.Remove(instance);
             UpdateMainIconVisibility();
             instance.Dispose();
         }
