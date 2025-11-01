@@ -67,7 +67,6 @@ public sealed partial class MainForm : Form
         Text = Updater.ApplicationTitle;
         Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
         portableModeMenuItem.Checked = _settings.IsPortable;
-        resetOnPowerChangedMenuItem.Checked = _settings.GetValue("resetOnPowerChangedMenuItem", false);
 
         // make sure the buffers used for double buffering are not disposed
         // after each draw call
@@ -442,7 +441,6 @@ public sealed partial class MainForm : Form
         FormClosed += CloseApplication;
         // Make sure the settings are saved when the user logs off
         Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
-        Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -470,20 +468,6 @@ public sealed partial class MainForm : Form
 
         if (_delayCount < 4)
             _delayCount++;
-    }
-
-    private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
-    {
-        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || resetOnPowerChangedMenuItem.Checked)
-        {
-            _computer.Reset();
-        }
-    }
-
-    private void ResetOnPowerChangedMenuItem_Click(object sender, EventArgs eventArgs)
-    {
-        resetOnPowerChangedMenuItem.Checked = !resetOnPowerChangedMenuItem.Checked;
-        _settings.SetValue("resetOnPowerChangedMenuItem", resetOnPowerChangedMenuItem.Checked);
     }
 
     private void InitializeTheme()
