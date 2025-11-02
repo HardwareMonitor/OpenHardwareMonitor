@@ -50,6 +50,7 @@ public sealed partial class MainForm : Form
     private int _delayCount;
     private bool _selectionDragging;
     private DateTime _nextUpdateCheckTime;
+    private DateTime _nextAutoResetTime;
 
     public MainForm()
     {
@@ -151,7 +152,6 @@ public sealed partial class MainForm : Form
         _computer.HardwareRemoved += HardwareRemoved;
         _computer.Open(_settings.IsPortable);
 
-        backgroundUpdater.DoWork += BackgroundUpdater_DoWork;
         timer.Enabled = true;
 
         UserOption showHiddenSensors = new("hiddenMenuItem", false, hiddenMenuItem, _settings);
@@ -438,7 +438,7 @@ public sealed partial class MainForm : Form
         FormClosed += CloseApplication;
         // Make sure the settings are saved when the user logs off
         Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
-        //Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
+        Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -457,24 +457,11 @@ public sealed partial class MainForm : Form
 
     public HttpServer Server { get; }
 
-    private void BackgroundUpdater_DoWork(object sender, DoWorkEventArgs e)
-    {
-        _computer.Accept(_updateVisitor);
-
-        if (_logSensors != null && _logSensors.Value && _delayCount >= 4)
-            _logger.Log();
-
-        if (_delayCount < 4)
-            _delayCount++;
-    }
-
     private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
     {
-        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume && _computer.IsBatteryEnabled)
+        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || _computer.IsBatteryEnabled)
         {
-            _computer.IsBatteryEnabled = false;
-            _computer.IsBatteryEnabled = true;
-            //_computer.Reset();
+            _nextAutoResetTime = DateTime.Now.AddSeconds(3);
         }
     }
 
@@ -556,13 +543,22 @@ public sealed partial class MainForm : Form
 
     private void Timer_Tick(object sender, EventArgs e)
     {
+        if (_nextAutoResetTime != DateTime.MinValue && _nextAutoResetTime < DateTime.Now)
+        {
+            _nextAutoResetTime = DateTime.MinValue;
+            _computer.Reset();
+        }
+
         treeView.Invalidate();
         _systemTray.Redraw();
         _gadget?.Redraw();
         _wmiProvider?.Update();
 
-        if (!backgroundUpdater.IsBusy)
-            backgroundUpdater.RunWorkerAsync();
+        _computer.Accept(_updateVisitor);
+        if (_logSensors != null && _logSensors.Value && _delayCount >= 4)
+            _logger.Log();
+        if (_delayCount < 4)
+            _delayCount++;
 
         RestoreCollapsedNodeState(treeView);
 
@@ -642,7 +638,6 @@ public sealed partial class MainForm : Form
 
         Visible = false;
 
-        backgroundUpdater?.Dispose();
         timer.Enabled = false;
         timer?.Dispose();
 
