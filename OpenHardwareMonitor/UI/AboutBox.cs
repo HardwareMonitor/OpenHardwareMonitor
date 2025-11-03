@@ -15,8 +15,9 @@ public sealed partial class AboutBox : Form
         lblCopyright.Text = $"Copyright © {Updater.ApplicationName}";
         Font = SystemFonts.MessageBoxFont;
         lblVersion.Text = $"Version {Application.ProductVersion} {(Environment.Is64BitProcess ? "x64" : "x86")}";
-        //pictureBox1.Image = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation).ToBitmap();
-        picLogo.Image = EmbeddedResources.GetIcon("icon.ico").ToBitmap();
+        //using (var icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation))
+        using (var icon = EmbeddedResources.GetIcon("icon.ico"))
+            picLogo.Image = icon.GetLargestBitmap();
         picLogo.SizeMode = PictureBoxSizeMode.StretchImage;
         projectLinkLabel.Links.Remove(projectLinkLabel.Links[0]);
         projectLinkLabel.Links.Add(0, projectLinkLabel.Text.Length, $"https://github.com/{Updater.ApplicationCompany}/{Updater.ApplicationName}");
