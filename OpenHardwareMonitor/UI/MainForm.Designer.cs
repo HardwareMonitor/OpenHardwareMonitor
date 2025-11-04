@@ -130,6 +130,7 @@ namespace OpenHardwareMonitor.UI
       this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
       this.timer = new System.Windows.Forms.Timer(this.components);
       this.treeView = new Aga.Controls.Tree.TreeViewAdv();
+      this.backgroundUpdater = new System.ComponentModel.BackgroundWorker();
       this.mainMenu.SuspendLayout();
       this.SuspendLayout();
       //
@@ -1067,6 +1068,7 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem authWebServerMenuItem;
         private System.Windows.Forms.ToolStripMenuItem psuMenuItem;
         private System.Windows.Forms.ToolStripMenuItem batteryMenuItem;
+        private System.ComponentModel.BackgroundWorker backgroundUpdater;
         private System.Windows.Forms.ToolStripMenuItem fileRotationMethod;
         private ToolStripRadioButtonMenuItem perSessionFileRotationMenuItem;
         private ToolStripRadioButtonMenuItem dailyFileRotationMenuItem;
