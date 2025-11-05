@@ -1,11 +1,11 @@
 {
     "DisplayName": "Kelly Green",
     "DarkMode": true,
-    "BackgroundColor": "#2B2B2B",
+    "BackgroundColor": "#1E1E1E",
     "ForegroundColor": "#E9E9E9",
     "HyperlinkColor": "#90DCE8",
     "SelectedBackgroundColor": "#4CBB17",
     "SelectedForegroundColor": "#000000",
-    "LineColor": "#303030",
+    "LineColor": "#262626",
     "StrongLineColor": "#454545"
 }

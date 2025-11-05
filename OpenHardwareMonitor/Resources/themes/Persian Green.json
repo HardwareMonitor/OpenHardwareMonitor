@@ -1,11 +1,11 @@
 {
     "DisplayName": "Persian Green",
     "DarkMode": true,
-    "BackgroundColor": "#2B2B2B",
+    "BackgroundColor": "#000000",
     "ForegroundColor": "#E9E9E9",
     "HyperlinkColor": "#90DCE8",
-    "SelectedBackgroundColor": "#00A693",
-    "SelectedForegroundColor": "#000000",
-    "LineColor": "#303030",
+    "SelectedBackgroundColor": "#009687",
+    "SelectedForegroundColor": "#FFFFFF",
+    "LineColor": "#101010",
     "StrongLineColor": "#454545"
 }
