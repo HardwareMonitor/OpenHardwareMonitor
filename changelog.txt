@@ -1,3 +1,16 @@
+3.0.9440
+Fixed an issue with the system tray icon rendering in some scaling modes
+Added a 5-second delay when auto-launching a program as admin at Windows startup.
+added architecture compatibility check on app start
+"Reset on power changed" menu item removed as not relevant anymore
+app icon replaced
+upgraded HidSharp, System.IO.Ports, System.Management & System.Threading
+hide IntelGpu if CPU monitoring is not enabled
+added support to Gigabyte b650i AX
+added Gigabyte X870 AORUS ELITE WIFI7 ICE support
+added Information for Gigabyte GA-MA790X-DS4 motherboard
+added support for MSI B850M GAMING PLUS WIFI6E
+
 3.0.9416
 Intel discrete GPU support through Intel GCL library
 added support for MSI PRO B850-S WIFI6E
