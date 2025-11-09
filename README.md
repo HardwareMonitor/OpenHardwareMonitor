@@ -32,11 +32,30 @@ You can see information about devices such as:
  - `Hide/Unhide` sensors to remove some data from UI and web server.
  - Multiple `Tray icons` and `Gadget` for selected sensor values.
  - `Light`/`Dark` themes with auto switching mode.
- - Custom `color-themes` from external files - You can find examples [here](https://github.com/HardwareMonitor/openhardwaremonitor/tree/master/OpenHardwareMonitor/Resources/themes)
+ - Custom `color-themes` from external files.
  - `Portable` mode for storing temporary driver file and settings configuration next to the executable file.
  - `Updated versions check` - manually from main menu.
 
  Note: Some sensors are only available when running the application as administrator.
+
+To add custom theme to the app, just create a `themes` folder next to the executable file and place any {themeName}.json files there.
+Custom theme.json file content example:
+```json
+{
+  "DisplayName": "Custom Theme",
+  "DarkMode": true,
+  "BackgroundColor": "#1E1E1E",
+  "ForegroundColor": "#E9E9E9",
+  "HyperlinkColor": "#00D980",
+  "SelectedBackgroundColor": "#4CBB17",
+  "SelectedForegroundColor": "#000000",
+  "LineColor": "#262626",
+  "StrongLineColor": "#454545",
+  "WarnColor": "#FF4500"
+}
+```
+Don't forget to restart the app to scan for new theme files!
+
 
 ### What does it look like?
 
