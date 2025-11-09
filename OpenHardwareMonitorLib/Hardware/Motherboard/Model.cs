@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OpenHardwareMonitor.Hardware.Motherboard;
 
@@ -37,6 +37,7 @@ public enum Model
     H61M_DGS,
     B850M_STEEL_LEGEND_WIFI,
     X870E_TAICHI,
+    X870E_NOVA_WIFI,
 
     // ASUS
     CROSSHAIR_III_FORMULA,

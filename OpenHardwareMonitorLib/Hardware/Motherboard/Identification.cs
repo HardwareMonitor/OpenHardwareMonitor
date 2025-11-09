@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace OpenHardwareMonitor.Hardware.Motherboard;
 
@@ -710,6 +710,8 @@ internal class Identification
             case var _ when name.Equals("X870E Taichi", StringComparison.OrdinalIgnoreCase):
             case var _ when name.Equals("X870E Taichi Lite", StringComparison.OrdinalIgnoreCase):
                 return Model.X870E_TAICHI;
+            case var _ when name.Equals("X870E Nova WiFi", StringComparison.OrdinalIgnoreCase):
+                return Model.X870E_NOVA_WIFI;
             case var _ when name.Equals("X670 AORUS ELITE AX", StringComparison.OrdinalIgnoreCase):
                 return Model.X670_AORUS_ELITE_AX;
             case var _ when name.Equals("PROART B760-CREATOR D4", StringComparison.OrdinalIgnoreCase):

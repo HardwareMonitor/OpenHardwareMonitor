@@ -361,7 +361,15 @@ internal class LpcIO
                         logicalDeviceNumber = WINBOND_NUVOTON_HARDWARE_MONITOR_LDN;
                         break;
                     case 0x2A:
-                        chip = Chip.NCT6796DR;
+                        switch (motherboard.Model)
+                        {
+                            case Model.X870E_NOVA_WIFI:
+                                chip = Chip.NCT5585D;
+                                break;
+                            default:
+                                chip = Chip.NCT6796DR;
+                                break;
+                        }
                         logicalDeviceNumber = WINBOND_NUVOTON_HARDWARE_MONITOR_LDN;
                         break;
                     case 0x51:
@@ -424,7 +432,16 @@ internal class LpcIO
                 switch (revision)
                 {
                     case 0x02:
-                        chip = Chip.NCT6799D;
+                        switch (motherboard.Model)
+                        {
+                            case Model.X870E_NOVA_WIFI:
+                                chip = Chip.NCT6796DS;
+                                break;
+                            default:
+                                chip = Chip.NCT6799D;
+                                break;
+                        }
+
                         logicalDeviceNumber = WINBOND_NUVOTON_HARDWARE_MONITOR_LDN;
                         break;
                     case 0x06:
@@ -455,7 +472,7 @@ internal class LpcIO
 
             // disable the hardware monitor i/o space lock on NCT679XD chips
             if (address == verify &&
-                chip is Chip.NCT6791D or Chip.NCT6792D or Chip.NCT6792DA or Chip.NCT6793D or Chip.NCT6795D or Chip.NCT6796D or Chip.NCT6796DR or Chip.NCT6798D or Chip.NCT6797D or Chip.NCT6799D or Chip.NCT6701D)
+                chip is Chip.NCT6791D or Chip.NCT6792D or Chip.NCT6792DA or Chip.NCT6793D or Chip.NCT6795D or Chip.NCT6796D or Chip.NCT6796DR or Chip.NCT6796DS or Chip.NCT6798D or Chip.NCT6797D or Chip.NCT6799D or Chip.NCT6701D)
             {
                 port.NuvotonDisableIOSpaceLock();
             }
@@ -515,6 +532,7 @@ internal class LpcIO
                 case Chip.NCT6795D:
                 case Chip.NCT6796D:
                 case Chip.NCT6796DR:
+                case Chip.NCT6796DS:
                 case Chip.NCT6797D:
                 case Chip.NCT6798D:
                 case Chip.NCT6799D:
@@ -523,7 +541,8 @@ internal class LpcIO
                 case Chip.NCT6687DR:
                 case Chip.NCT6683D:
                 case Chip.NCT6701D:
-                    _superIOs.Add(new Nct677X(chip, revision, address, port));
+                case Chip.NCT5585D:
+                    _superIOs.Add(new Nct677X(port, chip, revision, address));
                     break;
 
                 case Chip.F71858:
