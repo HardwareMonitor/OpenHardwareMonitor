@@ -344,7 +344,7 @@ internal class Nct677X : ISuperIO
                 Fans = new float?[16];
                 Controls = new float?[8];
                 Voltages = new float?[14];
-                Temperatures = new float?[7];
+                Temperatures = new float?[11];
 
                 // CPU
                 // System
@@ -353,6 +353,10 @@ internal class Nct677X : ISuperIO
                 // CPU Socket
                 // PCIE_1
                 // M2_1
+                // PCIE_1
+                // PCIE_2
+                // M2_1
+                // M2_4
                 _temperaturesSource = new TemperatureSourceData[] {
                     new(null, 0x100),
                     new(null, 0x102),
@@ -360,7 +364,11 @@ internal class Nct677X : ISuperIO
                     new(null, 0x106),
                     new(null, 0x108),
                     new(null, 0x10A),
-                    new(null, 0x10C)
+                    new(null, 0x10C),
+                    new(null, 0x10E),
+                    new(null, 0x110),
+                    new(null, 0x112),
+                    new(null, 0x114)
                 };
 
                 // VIN0 +12V
