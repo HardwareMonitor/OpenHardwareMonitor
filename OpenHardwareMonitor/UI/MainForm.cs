@@ -478,6 +478,7 @@ public sealed partial class MainForm : Form
 
     private void InitializeTheme()
     {
+        ToolStripRadioButtonMenuItem.DisplayAsCheckboxes = true;
         mainMenu.Renderer = new ThemedToolStripRenderer();
         treeContextMenu.Renderer = new ThemedToolStripRenderer();
         ThemedVScrollIndicator.AddToControl(treeView);
