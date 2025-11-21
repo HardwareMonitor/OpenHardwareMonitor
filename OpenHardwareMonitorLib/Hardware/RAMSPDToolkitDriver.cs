@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using RAMSPDToolkit.Windows.Driver;
+using RAMSPDToolkit.Windows.Driver.Interfaces;
 
 using IOCC = OpenHardwareMonitor.Interop.Ring0;
 
@@ -8,7 +8,7 @@ namespace OpenHardwareMonitor.Hardware
     /// <summary>
     /// Implementation of <see cref="IDriver"/> interface for RAMSPDToolkit.
     /// </summary>
-    internal class RAMSPDToolkitDriver : IDriver
+    internal class RAMSPDToolkitDriver : IWinRing0Driver
     {
         private KernelDriver _kernelDriver;
 
