@@ -20,7 +20,7 @@ You can see information about devices such as:
  - Motherboards
  - Intel and AMD processors
  - RAM
- - NVIDIA and AMD graphics cards
+ - NVIDIA, AMD and Intel graphics cards
  - HDD, SSD and NVMe hard drives
  - Network cards
  - Power suppliers
