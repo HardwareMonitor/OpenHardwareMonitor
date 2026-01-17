@@ -1,3 +1,50 @@
+3.0.9513
+icon text size fixed for 175% scaling
+themes colors adjusted
+Add ASRock X870E Nova WiFi Support
+Support X870E Apex CPU Sensor Index for BIOS 1804+
+Add limited support for MSI MEG Z790 GODLIKE MAX
+Display ToolStrip RadioButton menu items as checkboxes
+Update RAMSPDToolkit to most recent version
+Add VRAM memory and bandwidth sensors for Intel discrete GPUs
+FIX Correctly Initialize NCT67XX registries 
+upgrade nuget dependencies
+Re-Structure Fan and Control Register Layout for NCT6687DR, Support 10 new MSI Motherboards
+Add missing T_Sensor from NCT6799D
+Add support for Gigabyte A320M-S2H
+Add ASUS ROG STRIX B850-E GAMING WIFI support
+Add ASUS TUF GAMING B760M-PLUS WIFI D4 support
+Show Performance & Efficient Core instead of Core; 
+Change Voltages, Temperatures to P/E Core; 
+Use independent counter for P/E Core.
+Support Gigabyte B650 EAGLE AX
+Add support for MSI Z390 EDGE AC (NCT6797D)
+Add support for ASUS TUF GAMING B850M-PLUS II
+Add support for MSI MAG X870E TOMAHAWK MAX WIFI PZ
+Add limited support for “ASUS ROG STRIX Z690-G GAMING WIFI”
+Add MAG B850M MORTAR (MS-7E61)
+EC support for TUF_Gaming-X870_Plus_WIFI
+Add support for three additional MSI Motherboards:
+- Support for 10 new MSI motherboards with NCT6687D-R SIO controller
+- Support for newly established fan and control register structure
+Add support for X870E Tomahawk WIFI, fix B850 Gaming Plus WIFI PZ identification
+Add support for B850M Gaming Plus WIFI and Z890 Unify-X
+Also removes duplicate model identification case for B850M GAMING PLUS WIFI6E
+Remove the 0-initialized control registers array
+add RAM temperature sensors for high/low/critical limits
+change RAM thermal sensor index to 0
+adjust RAM sensor indices accordingly
+Add missing MB IO controls
+Added Arctic fan controller:
+- Fixed misspelling and added improvements
+- Fixed thread not starting (added _thread.Start())
+- Added control sensor activation
+- Added PWM initialization from device
+- Improved PWM value reading for fast updates
+fix B850 GAMING PLUS WIFI6E (MS-7E80) Identification
+Aga.Controls code cleanup & fixes
+
+
 3.0.9440
 Fixed an issue with the system tray icon rendering in some scaling modes
 Added a 5-second delay when auto-launching a program as admin at Windows startup.
