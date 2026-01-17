@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Reflection;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -47,22 +46,18 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		protected override Size CalculateEditorSize(EditorContext context)
-		{
-			if (Parent.UseColumns)
-			{
-				if (context.Editor is CheckedListBox)
+        {
+            if (Parent.UseColumns)
+            {
+                if (context.Editor is CheckedListBox)
 					return new Size(context.Bounds.Size.Width, EditorHeight);
-				else
-					return context.Bounds.Size;
-			}
-			else
-			{
-				if (context.Editor is CheckedListBox)
-					return new Size(EditorWidth, EditorHeight);
-				else
-					return new Size(EditorWidth, context.Bounds.Height);
-			}
-		}
+                return context.Bounds.Size;
+            }
+
+            if (context.Editor is CheckedListBox)
+                return new Size(EditorWidth, EditorHeight);
+            return new Size(EditorWidth, context.Bounds.Height);
+        }
 
 		protected override Control CreateEditor(TreeNodeAdv node)
 		{
@@ -81,10 +76,9 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		protected virtual void OnCreatingEditor(EditEventArgs args)
-		{
-			if (CreatingEditor != null)
-				CreatingEditor(this, args);
-		}
+        {
+            CreatingEditor?.Invoke(this, args);
+        }
 
 		protected virtual bool IsCheckedListBoxRequired(TreeNodeAdv node)
 		{
@@ -93,7 +87,7 @@ namespace Aga.Controls.Tree.NodeControls
 			{
 				Type t = value.GetType();
 				object[] arr = t.GetCustomAttributes(typeof(FlagsAttribute), false);
-				return (t.IsEnum && arr.Length == 1);
+				return t.IsEnum && arr.Length == 1;
 			}
 			return false;
 		}
@@ -105,7 +99,7 @@ namespace Aga.Controls.Tree.NodeControls
 				comboBox.Items.AddRange(DropDownItems.ToArray());
 			comboBox.SelectedItem = GetValue(node);
 			comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			comboBox.DropDownClosed += new EventHandler(EditorDropDownClosed);
+			comboBox.DropDownClosed += EditorDropDownClosed;
 			SetEditControlProperties(comboBox, node);
 			return comboBox;
 		}
@@ -125,9 +119,8 @@ namespace Aga.Controls.Tree.NodeControls
 			}
 
 			SetEditControlProperties(listBox, node);
-			if (CreatingEditor != null)
-				CreatingEditor(this, new EditEventArgs(node, listBox));
-			return listBox;
+            CreatingEditor?.Invoke(this, new EditEventArgs(node, listBox));
+            return listBox;
 		}
 
 		protected virtual Type GetEnumType(TreeNodeAdv node)
@@ -146,15 +139,13 @@ namespace Aga.Controls.Tree.NodeControls
 				int i2 = (int)enumElement;
 				return (i1 & i2) == i2;
 			}
-			else
-			{
-				var arr = value as object[];
-				foreach (object obj in arr)
-					if ((int)obj == (int)enumElement)
-						return true;
-				return false;
-			}
-		}
+
+            var arr = value as object[];
+            foreach (object obj in arr)
+                if ((int)obj == (int)enumElement)
+                    return true;
+            return false;
+        }
 
 		protected override string FormatLabel(object obj)
 		{
@@ -170,9 +161,9 @@ namespace Aga.Controls.Tree.NodeControls
 				}
 				return sb.ToString();
 			}
-			else
-				return base.FormatLabel(obj);
-		}
+
+            return base.FormatLabel(obj);
+        }
 
 		void EditorDropDownClosed(object sender, EventArgs e)
 		{

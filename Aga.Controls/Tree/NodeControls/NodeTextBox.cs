@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Reflection;
-using System.ComponentModel;
 
 namespace Aga.Controls.Tree.NodeControls
 {
@@ -17,16 +13,13 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		protected override Size CalculateEditorSize(EditorContext context)
-		{
-			if (Parent.UseColumns)
+        {
+            if (Parent.UseColumns)
 				return context.Bounds.Size;
-			else
-			{
-				Size size = GetLabelSize(context.CurrentNode, context.DrawContext, _label);
-				int width = Math.Max(size.Width + Font.Height, MinTextBoxWidth); // reserve a place for new typed character
-				return new Size(width, size.Height);
-			}
-		}
+            Size size = GetLabelSize(context.CurrentNode, context.DrawContext, _label);
+            int width = Math.Max(size.Width + Font.Height, MinTextBoxWidth); // reserve a place for new typed character
+            return new Size(width, size.Height);
+        }
 
 		public override void KeyDown(KeyEventArgs args)
 		{
@@ -118,9 +111,8 @@ namespace Aga.Controls.Tree.NodeControls
 
 		public event EventHandler<LabelEventArgs> LabelChanged;
 		protected void OnLabelChanged(object subject, string oldLabel, string newLabel)
-		{
-			if (LabelChanged != null)
-				LabelChanged(this, new LabelEventArgs(subject, oldLabel, newLabel));
-		}
+        {
+            LabelChanged?.Invoke(this, new LabelEventArgs(subject, oldLabel, newLabel));
+        }
 	}
 }

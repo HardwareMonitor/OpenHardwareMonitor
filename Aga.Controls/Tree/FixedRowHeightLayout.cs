@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace Aga.Controls.Tree
@@ -45,7 +43,7 @@ namespace Aga.Controls.Tree
 
 		public int GetRowAt(Point point)
 		{
-			point = new Point(point.X, point.Y + (_treeView.FirstVisibleRow * _rowHeight) - _treeView.ColumnHeaderHeight);
+			point = new Point(point.X, point.Y + _treeView.FirstVisibleRow * _rowHeight - _treeView.ColumnHeaderHeight);
 			return point.Y / _rowHeight;
 		}
 

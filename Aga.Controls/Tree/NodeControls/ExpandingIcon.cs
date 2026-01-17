@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace Aga.Controls.Tree.NodeControls
 {
@@ -14,7 +11,7 @@ namespace Aga.Controls.Tree.NodeControls
 	public class ExpandingIcon: NodeControl
 	{
 		private static GifDecoder _gif = ResourceHelper.LoadingIcon;
-		private static int _index = 0;
+		private static int _index;
 		private static volatile Thread _animatingThread;
         private static object _lock = new object();
 
@@ -43,7 +40,7 @@ namespace Aga.Controls.Tree.NodeControls
                 if (_animatingThread == null)
                 {
                     _index = 0;
-                    _animatingThread = new Thread(new ThreadStart(IterateIcons));
+                    _animatingThread = new Thread(IterateIcons);
                     _animatingThread.IsBackground = true;
                     _animatingThread.Priority = ThreadPriority.Lowest;
                     _animatingThread.Start();
@@ -69,10 +66,9 @@ namespace Aga.Controls.Tree.NodeControls
 				else
 					_index = 0;
 
-				if (IconChanged != null)
-					IconChanged(null, EventArgs.Empty);
+                IconChanged?.Invoke(null, EventArgs.Empty);
 
-				int delay = _gif.GetFrame(_index).Delay;
+                int delay = _gif.GetFrame(_index).Delay;
 				Thread.Sleep(delay);
 			}
             System.Diagnostics.Debug.WriteLine("IterateIcons Stopped");

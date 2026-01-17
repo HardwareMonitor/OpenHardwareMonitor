@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Aga.Controls.Threading
@@ -27,7 +26,7 @@ namespace Aga.Controls.Threading
 			{
 				_callbacks.AddLast(item);
 			}
-			ThreadPool.QueueUserWorkItem(new WaitCallback(HandleItem));
+			ThreadPool.QueueUserWorkItem(HandleItem);
 			return item;
 		}
 
@@ -86,20 +85,20 @@ namespace Aga.Controls.Threading
 					_callbacks.Remove(node);
 					return WorkItemStatus.Queued;
 				}
-				else if (_threads.ContainsKey(item))
-				{
-					if (allowAbort)
-					{
-						_threads[item].Abort();
-						_threads.Remove(item);
-						return WorkItemStatus.Aborted;
-					}
-					else
-						return WorkItemStatus.Executing;
-				}
-				else
-					return WorkItemStatus.Completed;
-			}
+
+                if (_threads.ContainsKey(item))
+                {
+                    if (allowAbort)
+                    {
+                        _threads[item].Abort();
+                        _threads.Remove(item);
+                        return WorkItemStatus.Aborted;
+                    }
+
+                    return WorkItemStatus.Executing;
+                }
+                return WorkItemStatus.Completed;
+            }
 		}
 
 		public void CancelAll(bool allowAbort)

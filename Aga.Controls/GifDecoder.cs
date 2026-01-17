@@ -27,7 +27,6 @@
 using System;
 using System.Collections;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 
 namespace Aga.Controls
@@ -88,14 +87,14 @@ namespace Aga.Controls
 		private Image lastImage; // previous frame
 
 		private byte[] block = new byte[256]; // current data block
-		private int blockSize = 0; // block size
+		private int blockSize; // block size
 
 		// last graphic control extension info
-		private int dispose = 0;
+		private int dispose;
 		// 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
-		private int lastDispose = 0;
-		private bool transparency = false; // use transparent color
-		private int delay = 0; // delay in milliseconds
+		private int lastDispose;
+		private bool transparency; // use transparent color
+		private int delay; // delay in milliseconds
 		private int transIndex; // transparent color index
 
 		private const int MaxStackSize = 4096;
@@ -286,7 +285,7 @@ namespace Aga.Controls
 					int k = line * width;
 					int dx = k + ix; // start of line in dest
 					int dlim = dx + iw; // end of dest line
-					if ((k + width) < dlim) 
+					if (k + width < dlim) 
 					{
 						dlim = k + width; // past dest edge
 					}
@@ -294,7 +293,7 @@ namespace Aga.Controls
 					while (dx < dlim) 
 					{
 						// map color and insert in destination
-						int index = ((int) pixels[sx++]) & 0xff;
+						int index = (int) pixels[sx++] & 0xff;
 						int c = act[index];
 						if (c != 0) 
 						{
@@ -312,13 +311,12 @@ namespace Aga.Controls
 		 *
 		 * @return BufferedImage representation of frame.
 		 */
-		public GifFrame GetFrame(int n) 
-		{
-			if ((n >= 0) && (n < frameCount))
+		public GifFrame GetFrame(int n)
+        {
+            if (n >= 0 && n < frameCount)
 				return (GifFrame)frames[n];
-			else
-				throw new ArgumentOutOfRangeException();
-		}
+            throw new ArgumentOutOfRangeException();
+        }
 
 		/**
 		 * Gets image size.
@@ -390,7 +388,7 @@ namespace Aga.Controls
 				bi,
 				pi;
 
-			if ((pixels == null) || (pixels.Length < npix)) 
+			if (pixels == null || pixels.Length < npix) 
 			{
 				pixels = new byte[npix]; // allocate new pixel array
 			}
@@ -432,7 +430,7 @@ namespace Aga.Controls
 								break;
 							bi = 0;
 						}
-						datum += (((int) block[bi]) & 0xff) << bits;
+						datum += ((int) block[bi] & 0xff) << bits;
 						bits += 8;
 						bi++;
 						count--;
@@ -447,7 +445,7 @@ namespace Aga.Controls
 
 					//  Interpret the code
 
-					if ((code > available) || (code == end_of_information))
+					if (code > available || code == end_of_information)
 						break;
 					if (code == clear) 
 					{
@@ -476,7 +474,7 @@ namespace Aga.Controls
 						pixelStack[top++] = suffix[code];
 						code = prefix[code];
 					}
-					first = ((int) suffix[code]) & 0xff;
+					first = (int) suffix[code] & 0xff;
 
 					//  Add a new string to the string table,
 
@@ -486,8 +484,8 @@ namespace Aga.Controls
 					prefix[available] = (short) old_code;
 					suffix[available] = (byte) first;
 					available++;
-					if (((available & code_mask) == 0)
-						&& (available < MaxStackSize)) 
+					if ((available & code_mask) == 0
+						&& available < MaxStackSize) 
 					{
 						code_size++;
 						code_mask += available;
@@ -610,9 +608,9 @@ namespace Aga.Controls
 				int j = 0;
 				while (i < ncolors) 
 				{
-					int r = ((int) c[j++]) & 0xff;
-					int g = ((int) c[j++]) & 0xff;
-					int b = ((int) c[j++]) & 0xff;
+					int r = (int) c[j++] & 0xff;
+					int g = (int) c[j++] & 0xff;
+					int b = (int) c[j++] & 0xff;
 					tab[i++] = ( int ) ( 0xff000000 | (r << 16) | (g << 8) | b );
 				}
 			}
@@ -820,11 +818,11 @@ namespace Aga.Controls
 				if (block[0] == 1) 
 				{
 					// loop count sub-block
-					int b1 = ((int) block[1]) & 0xff;
-					int b2 = ((int) block[2]) & 0xff;
+					int b1 = (int) block[1] & 0xff;
+					int b2 = (int) block[2] & 0xff;
 					loopCount = (b2 << 8) | b1;
 				}
-			} while ((blockSize > 0) && !Error());
+			} while (blockSize > 0 && !Error());
 		}
 
 		/**
@@ -858,7 +856,7 @@ namespace Aga.Controls
 			do 
 			{
 				ReadBlock();
-			} while ((blockSize > 0) && !Error());
+			} while (blockSize > 0 && !Error());
 		}
 	}
 }

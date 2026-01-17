@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
@@ -14,7 +12,7 @@ namespace Aga.Controls.Tree.NodeControls
 
 		#region Properties
 
-		private bool _editOnClick = false;
+		private bool _editOnClick;
 		[DefaultValue(false)]
 		public bool EditOnClick
 		{
@@ -28,7 +26,7 @@ namespace Aga.Controls.Tree.NodeControls
 		{
 			_timer = new Timer();
 			_timer.Interval = 500;
-			_timer.Tick += new EventHandler(TimerTick);
+			_timer.Tick += TimerTick;
 		}
 
 		private void TimerTick(object sender, EventArgs e)
@@ -52,7 +50,7 @@ namespace Aga.Controls.Tree.NodeControls
 
 		protected virtual bool CanEdit(TreeNodeAdv node)
 		{
-			return (node.Tag != null) && IsEditEnabled(node);
+			return node.Tag != null && IsEditEnabled(node);
 		}
 
 		public void BeginEdit()
@@ -115,8 +113,8 @@ namespace Aga.Controls.Tree.NodeControls
 
 		public override void MouseDown(TreeNodeAdvMouseEventArgs args)
 		{
-			_editFlag = (!EditOnClick && args.Button == MouseButtons.Left
-				&& args.ModifierKeys == Keys.None && args.Node.IsSelected);
+			_editFlag = !EditOnClick && args.Button == MouseButtons.Left
+                                     && args.ModifierKeys == Keys.None && args.Node.IsSelected;
 		}
 
 		public override void MouseUp(TreeNodeAdvMouseEventArgs args)
@@ -151,24 +149,21 @@ namespace Aga.Controls.Tree.NodeControls
 
 		public event CancelEventHandler EditorShowing;
 		protected void OnEditorShowing(CancelEventArgs args)
-		{
-			if (EditorShowing != null)
-				EditorShowing(this, args);
-		}
+        {
+            EditorShowing?.Invoke(this, args);
+        }
 
 		public event EventHandler EditorHided;
 		protected void OnEditorHided()
-		{
-			if (EditorHided != null)
-				EditorHided(this, EventArgs.Empty);
-		}
+        {
+            EditorHided?.Invoke(this, EventArgs.Empty);
+        }
 
 		public event EventHandler ChangesApplied;
 		protected void OnChangesApplied()
-		{
-			if (ChangesApplied != null)
-				ChangesApplied(this, EventArgs.Empty);
-		}
+        {
+            ChangesApplied?.Invoke(this, EventArgs.Empty);
+        }
 
 		#endregion
 	}

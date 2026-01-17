@@ -69,7 +69,7 @@ namespace Aga.Controls
 			{
 				// Backspace key is OK
 			}
-			else if ((ModifierKeys & (Keys.Control)) != 0)
+			else if ((ModifierKeys & Keys.Control) != 0)
 			{
 				// Let the edit control handle control and alt key combinations
 			}
@@ -116,23 +116,25 @@ namespace Aga.Controls
 						{
 							break;
 						}
-						else if (selectionLength != 0)
-						{
-							base.Text = base.Text.Remove(SelectionStart, selectionLength);
-						}
 
-						bool containsInvalidChars = false;
+                        if (selectionLength != 0)
+                        {
+                            base.Text = base.Text.Remove(SelectionStart, selectionLength);
+                        }
+
+                        bool containsInvalidChars = false;
 						foreach (char c in pasteText)
-						{
-							if (containsInvalidChars)
+                        {
+                            if (containsInvalidChars)
 							{
 								break;
 							}
-							else if (invalidNumeric(c))
-							{
-								containsInvalidChars = true;
-							}
-						}
+
+                            if (invalidNumeric(c))
+                            {
+                                containsInvalidChars = true;
+                            }
+                        }
 
 						if (!containsInvalidChars)
 						{
@@ -152,7 +154,7 @@ namespace Aga.Controls
 			get
 			{
 				int intValue;
-				Int32.TryParse(this.Text, numberStyle, CultureInfo.CurrentCulture.NumberFormat, out intValue);
+				Int32.TryParse(Text, numberStyle, CultureInfo.CurrentCulture.NumberFormat, out intValue);
 				return intValue;
 			}
 		}
@@ -162,7 +164,7 @@ namespace Aga.Controls
 			get
 			{
 				decimal decimalValue;
-				Decimal.TryParse(this.Text, numberStyle, CultureInfo.CurrentCulture.NumberFormat, out decimalValue);
+				Decimal.TryParse(Text, numberStyle, CultureInfo.CurrentCulture.NumberFormat, out decimalValue);
 				return decimalValue;
 			}
 		}

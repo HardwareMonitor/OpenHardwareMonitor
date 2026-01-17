@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Aga.Controls.Tree
 {
@@ -20,12 +18,11 @@ namespace Aga.Controls.Tree
 		#region ITreeModel Members
 
 		public System.Collections.IEnumerable GetChildren(TreePath treePath)
-		{
-			if (treePath.IsEmpty())
+        {
+            if (treePath.IsEmpty())
 				return _list;
-			else
-				return null;
-		}
+            return null;
+        }
 
 		public bool IsLeaf(TreePath treePath)
 		{
@@ -34,31 +31,27 @@ namespace Aga.Controls.Tree
 
 		public event EventHandler<TreeModelEventArgs> NodesChanged;
 		public void OnNodesChanged(TreeModelEventArgs args)
-		{
-			if (NodesChanged != null)
-				NodesChanged(this, args);
-		}
+        {
+            NodesChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreePathEventArgs> StructureChanged;
 		public void OnStructureChanged(TreePathEventArgs args)
-		{
-			if (StructureChanged != null)
-				StructureChanged(this, args);
-		}
+        {
+            StructureChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesInserted;
 		public void OnNodeInserted(TreeModelEventArgs args)
-		{
-			if (NodesInserted != null)
-				NodesInserted(this, args);
-		}
+        {
+            NodesInserted?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesRemoved;
 		public void OnNodeRemoved(TreeModelEventArgs args)
-		{
-			if (NodesRemoved != null)
-				NodesRemoved(this, args);
-		}
+        {
+            NodesRemoved?.Invoke(this, args);
+        }
 
 		#endregion
 	}

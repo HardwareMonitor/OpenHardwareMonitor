@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Aga.Controls.Tree
 {
@@ -12,31 +10,27 @@ namespace Aga.Controls.Tree
 
 		public event EventHandler<TreeModelEventArgs> NodesChanged;
 		protected void OnNodesChanged(TreeModelEventArgs args)
-		{
-			if (NodesChanged != null)
-				NodesChanged(this, args);
-		}
+        {
+            NodesChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreePathEventArgs> StructureChanged;
 		protected void OnStructureChanged(TreePathEventArgs args)
-		{
-			if (StructureChanged != null)
-				StructureChanged(this, args);
-		}
+        {
+            StructureChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesInserted;
 		protected void OnNodesInserted(TreeModelEventArgs args)
-		{
-			if (NodesInserted != null)
-				NodesInserted(this, args);
-		}
+        {
+            NodesInserted?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesRemoved;
 		protected void OnNodesRemoved(TreeModelEventArgs args)
-		{
-			if (NodesRemoved != null)
-				NodesRemoved(this, args);
-		}
+        {
+            NodesRemoved?.Invoke(this, args);
+        }
 
 		public virtual void Refresh()
 		{

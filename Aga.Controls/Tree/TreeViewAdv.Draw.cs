@@ -16,7 +16,7 @@ namespace Aga.Controls.Tree
 
 			DrawContext context = new DrawContext();
 			context.Graphics = Graphics.FromImage(new Bitmap(1, 1));
-			context.Font = this.Font;
+			context.Font = Font;
 			int res = 0;
 			for (int row = 0; row < RowCount; row++)
 			{
@@ -72,7 +72,7 @@ namespace Aga.Controls.Tree
 
             DrawContext context = new DrawContext();
             context.Graphics = e.Graphics;
-            context.Font = this.Font;
+            context.Font = Font;
             context.Enabled = Enabled;
 
             int y = 0;
@@ -98,8 +98,7 @@ namespace Aga.Controls.Tree
                 gridHeight += rowRect.Height;
                 if (rowRect.Y + y > displayRect.Bottom)
                     break;
-                else
-                    DrawRow(e, ref context, row, rowRect);
+                DrawRow(e, ref context, row, rowRect);
             }
 
 			if ((GridLineStyle & GridLineStyle.Vertical) == GridLineStyle.Vertical && UseColumns)
@@ -125,7 +124,7 @@ namespace Aga.Controls.Tree
 			context.CurrentEditorOwner = CurrentEditorOwner;
 			if (DragMode)
 			{
-				if ((_dropPosition.Node == node) && _dropPosition.Position == NodePosition.Inside && HighlightDropPosition)
+				if (_dropPosition.Node == node && _dropPosition.Position == NodePosition.Inside && HighlightDropPosition)
 					context.DrawSelection = DrawSelectionMode.Active;
 			}
 			else
@@ -192,11 +191,11 @@ namespace Aga.Controls.Tree
 			{
 				if (c.IsVisible)
 				{
-					if (x >= OffsetX && x - OffsetX < this.Bounds.Width)// skip invisible columns
+					if (x >= OffsetX && x - OffsetX < Bounds.Width)// skip invisible columns
 					{
 						Rectangle rect = new Rectangle(x, 0, c.Width, ColumnHeaderHeight - 1);
 						gr.SetClip(rect);
-						bool pressed = ((Input is ClickColumnState || reorder != null) && ((Input as ColumnState).Column == c));
+						bool pressed = (Input is ClickColumnState || reorder != null) && (Input as ColumnState).Column == c;
 						c.Draw(gr, rect, Font, pressed, _hotColumn == c);
 						gr.ResetClip();
 
@@ -220,7 +219,7 @@ namespace Aga.Controls.Tree
 		{
 			foreach (NodeControlInfo item in GetNodeControls(node))
 			{
-				if (item.Bounds.Right >= OffsetX && item.Bounds.X - OffsetX < this.Bounds.Width)// skip invisible nodes
+				if (item.Bounds.Right >= OffsetX && item.Bounds.X - OffsetX < Bounds.Width)// skip invisible nodes
 				{
 					context.Bounds = item.Bounds;
 					context.Graphics.SetClip(context.Bounds);
@@ -257,7 +256,7 @@ namespace Aga.Controls.Tree
 				gr.SetClip(new Rectangle(0, rowRect.Y, Columns[0].Width, rowRect.Bottom));
 
 			TreeNodeAdv curNode = node;
-			while (curNode != _root && curNode != null)
+			while (curNode != Root && curNode != null)
 			{
 				int level = curNode.Level;
 				int scaledIndent = node.Tree.GetScaledSize(_indent, false);
@@ -305,7 +304,7 @@ namespace Aga.Controls.Tree
 			string debugText = string.Format("FPS {0:0.0}; Avg. FPS {1:0.0}",
 				1 / time, 1 / (_totalTime / _paintCount));
 			e.Graphics.FillRectangle(Brushes.White, new Rectangle(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20, 150, 20));
-			e.Graphics.DrawString(debugText, Control.DefaultFont, Brushes.Gray,
+			e.Graphics.DrawString(debugText, DefaultFont, Brushes.Gray,
 				new PointF(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20));
 		}
 		#endregion

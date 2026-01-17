@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Aga.Controls.Properties;
 using System.Windows.Forms;
@@ -64,25 +62,26 @@ namespace Aga.Controls.Tree.NodeControls
                     TreeViewAdv.CustomPlusMinusRenderFunc(context.Graphics, r, node.IsExpanded);
                     return;
                 }
-                else if (Application.RenderWithVisualStyles)
-				{
-					VisualStyleRenderer renderer;
-					if (node.IsExpanded)
-						renderer = OpenedRenderer;
-					else
-						renderer = ClosedRenderer;
-					renderer.DrawBackground(context.Graphics, new Rectangle(r.X, r.Y + dy, scaledX, scaledY));
-				}
-				else
-				{
-					Image img;
-					if (node.IsExpanded)
-						img = _minus;
-					else
-						img = _plus;
-					context.Graphics.DrawImageUnscaled(img, new Point(r.X, r.Y + dy));
-				}
-			}
+
+                if (Application.RenderWithVisualStyles)
+                {
+                    VisualStyleRenderer renderer;
+                    if (node.IsExpanded)
+                        renderer = OpenedRenderer;
+                    else
+                        renderer = ClosedRenderer;
+                    renderer.DrawBackground(context.Graphics, new Rectangle(r.X, r.Y + dy, scaledX, scaledY));
+                }
+                else
+                {
+                    Image img;
+                    if (node.IsExpanded)
+                        img = _minus;
+                    else
+                        img = _plus;
+                    context.Graphics.DrawImageUnscaled(img, new Point(r.X, r.Y + dy));
+                }
+            }
 		}
 
 		public override void MouseDown(TreeNodeAdvMouseEventArgs args)

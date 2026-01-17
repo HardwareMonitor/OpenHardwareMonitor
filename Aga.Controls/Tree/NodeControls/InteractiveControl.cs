@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 
 namespace Aga.Controls.Tree.NodeControls
 {
 	public abstract class InteractiveControl : BindableControl
 	{
-		private bool _editEnabled = false;
+		private bool _editEnabled;
 		[DefaultValue(false)]
 		public bool EditEnabled
 		{
@@ -16,23 +14,22 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		protected bool IsEditEnabled(TreeNodeAdv node)
-		{
-			if (EditEnabled)
+        {
+            if (EditEnabled)
 			{
 				NodeControlValueEventArgs args = new NodeControlValueEventArgs(node);
 				args.Value = true;
 				OnIsEditEnabledValueNeeded(args);
 				return Convert.ToBoolean(args.Value);
 			}
-			else
-				return false;
-		}
+
+            return false;
+        }
 
 		public event EventHandler<NodeControlValueEventArgs> IsEditEnabledValueNeeded;
 		private void OnIsEditEnabledValueNeeded(NodeControlValueEventArgs args)
-		{
-			if (IsEditEnabledValueNeeded != null)
-				IsEditEnabledValueNeeded(this, args);
-		}
+        {
+            IsEditEnabledValueNeeded?.Invoke(this, args);
+        }
 	}
 }

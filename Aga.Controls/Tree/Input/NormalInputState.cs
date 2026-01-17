@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Aga.Controls.Tree
 {
 	internal class NormalInputState : InputState
 	{
-		private bool _mouseDownFlag = false;
+		private bool _mouseDownFlag;
 
 		public NormalInputState(TreeViewAdv tree) : base(tree)
 		{
@@ -175,14 +173,14 @@ namespace Aga.Controls.Tree
 		}
 
 		protected bool CanSelect(TreeNodeAdv node)
-		{
-			if (Tree.SelectionMode == TreeSelectionMode.MultiSameParent)
+        {
+            if (Tree.SelectionMode == TreeSelectionMode.MultiSameParent)
 			{
-				return (Tree.SelectionStart == null || node.Parent == Tree.SelectionStart.Parent);
+				return Tree.SelectionStart == null || node.Parent == Tree.SelectionStart.Parent;
 			}
-			else
-				return true;
-		}
+
+            return true;
+        }
 
 		protected virtual void DoMouseOperation(TreeNodeAdvMouseEventArgs args)
 		{

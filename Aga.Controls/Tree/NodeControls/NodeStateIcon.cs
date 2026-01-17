@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Aga.Controls.Properties;
 
@@ -30,12 +27,11 @@ namespace Aga.Controls.Tree.NodeControls
 			Image icon = base.GetIcon(node);
 			if (icon != null)
 				return icon;
-			else if (node.IsLeaf)
-				return _leaf;
-			else if (node.CanExpand && node.IsExpanded)
-				return _opened;
-			else
-				return _closed;
-		}
+            if (node.IsLeaf)
+                return _leaf;
+            if (node.CanExpand && node.IsExpanded)
+                return _opened;
+            return _closed;
+        }
 	}
 }

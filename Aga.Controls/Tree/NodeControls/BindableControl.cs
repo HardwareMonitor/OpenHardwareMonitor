@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 
@@ -19,27 +17,25 @@ namespace Aga.Controls.Tree.NodeControls
 			public Type MemberType
 			{
 				get
-				{
-					if (_pi != null)
+                {
+                    if (_pi != null)
 						return _pi.PropertyType;
-					else if (_fi != null)
-						return _fi.FieldType;
-					else
-						return null;
-				}
+                    if (_fi != null)
+                        return _fi.FieldType;
+                    return null;
+                }
 			}
 
 			public object Value
 			{
 				get
-				{
-					if (_pi != null && _pi.CanRead)
+                {
+                    if (_pi != null && _pi.CanRead)
 						return _pi.GetValue(_obj, null);
-					else if (_fi != null)
-						return _fi.GetValue(_obj);
-					else
-						return null;
-				}
+                    if (_fi != null)
+                        return _fi.GetValue(_obj);
+                    return null;
+                }
 				set
 				{
 					if (_pi != null && _pi.CanWrite)
@@ -66,7 +62,7 @@ namespace Aga.Controls.Tree.NodeControls
 
 		#region Properties
 
-		private bool _virtualMode = false;
+		private bool _virtualMode;
 		[DefaultValue(false), Category("Data")]
 		public bool VirtualMode
 		{
@@ -87,7 +83,7 @@ namespace Aga.Controls.Tree.NodeControls
 			}
 		}
 
-		private bool _incrementalSearchEnabled = false;
+		private bool _incrementalSearchEnabled;
 		[DefaultValue(false)]
 		public bool IncrementalSearchEnabled
 		{
@@ -98,28 +94,25 @@ namespace Aga.Controls.Tree.NodeControls
 		#endregion
 
 		public virtual object GetValue(TreeNodeAdv node)
-		{
-			if (VirtualMode)
+        {
+            if (VirtualMode)
 			{
 				NodeControlValueEventArgs args = new NodeControlValueEventArgs(node);
 				OnValueNeeded(args);
 				return args.Value;
 			}
-			else
-			{
-				try
-				{
-					return GetMemberAdapter(node).Value;
-				}
-				catch (TargetInvocationException ex)
-				{
-					if (ex.InnerException != null)
-						throw new ArgumentException(ex.InnerException.Message, ex.InnerException);
-					else
-						throw new ArgumentException(ex.Message);
-				}
-			}
-		}
+
+            try
+            {
+                return GetMemberAdapter(node).Value;
+            }
+            catch (TargetInvocationException ex)
+            {
+                if (ex.InnerException != null)
+                    throw new ArgumentException(ex.InnerException.Message, ex.InnerException);
+                throw new ArgumentException(ex.Message);
+            }
+        }
 
 		public virtual void SetValue(TreeNodeAdv node, object value)
 		{
@@ -137,12 +130,11 @@ namespace Aga.Controls.Tree.NodeControls
 					ma.Value = value;
 				}
 				catch (TargetInvocationException ex)
-				{
-					if (ex.InnerException != null)
+                {
+                    if (ex.InnerException != null)
 						throw new ArgumentException(ex.InnerException.Message, ex.InnerException);
-					else
-						throw new ArgumentException(ex.Message);
-				}
+                    throw new ArgumentException(ex.Message);
+                }
 			}
 		}
 
@@ -159,36 +151,30 @@ namespace Aga.Controls.Tree.NodeControls
 				PropertyInfo pi = type.GetProperty(DataPropertyName);
 				if (pi != null)
 					return new MemberAdapter(node.Tag, pi);
-				else
-				{
-					FieldInfo fi = type.GetField(DataPropertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-					if (fi != null)
-						return new MemberAdapter(node.Tag, fi);
-				}
-			}
+                FieldInfo fi = type.GetField(DataPropertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (fi != null)
+                    return new MemberAdapter(node.Tag, fi);
+            }
 			return MemberAdapter.Empty;
 		}
 
 		public override string ToString()
-		{
-			if (string.IsNullOrEmpty(DataPropertyName))
+        {
+            if (string.IsNullOrEmpty(DataPropertyName))
 				return GetType().Name;
-			else
-				return string.Format("{0} ({1})", GetType().Name, DataPropertyName);
-		}
+            return string.Format("{0} ({1})", GetType().Name, DataPropertyName);
+        }
 
 		public event EventHandler<NodeControlValueEventArgs> ValueNeeded;
 		private void OnValueNeeded(NodeControlValueEventArgs args)
-		{
-			if (ValueNeeded != null)
-				ValueNeeded(this, args);
-		}
+        {
+            ValueNeeded?.Invoke(this, args);
+        }
 
 		public event EventHandler<NodeControlValueEventArgs> ValuePushed;
 		private void OnValuePushed(NodeControlValueEventArgs args)
-		{
-			if (ValuePushed != null)
-				ValuePushed(this, args);
-		}
+        {
+            ValuePushed?.Invoke(this, args);
+        }
 	}
 }

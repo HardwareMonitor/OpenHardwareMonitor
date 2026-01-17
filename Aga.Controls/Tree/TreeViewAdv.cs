@@ -10,8 +10,6 @@ using System.Collections;
 
 using Aga.Controls.Tree.NodeControls;
 using Aga.Controls.Threading;
-using System.Linq;
-
 
 namespace Aga.Controls.Tree
 {
@@ -171,9 +169,9 @@ namespace Aga.Controls.Tree
 			_hScrollBar.Height = SystemInformation.HorizontalScrollBarHeight;
 			_vScrollBar.Width = SystemInformation.VerticalScrollBarWidth;
 			_rowLayout = new FixedRowHeightLayout(this, RowHeight);
-			_rowMap = new List<TreeNodeAdv>();
-			_selection = new List<TreeNodeAdv>();
-			_readonlySelection = new ReadOnlyCollection<TreeNodeAdv>(_selection);
+			RowMap = new List<TreeNodeAdv>();
+			Selection = new List<TreeNodeAdv>();
+			SelectedNodes = new ReadOnlyCollection<TreeNodeAdv>(Selection);
 			_columns = new TreeColumnCollection(this);
 			_toolTip = new ToolTip();
 
@@ -283,10 +281,10 @@ namespace Aga.Controls.Tree
 
 		public TreePath GetPath(TreeNodeAdv node)
         {
-            if (node == _root)
+            if (node == Root)
 				return TreePath.Empty;
             Stack<object> stack = new Stack<object>();
-            while (node != _root && node != null)
+            while (node != Root && node != null)
             {
                 stack.Push(node.Tag);
                 node = node.Parent;
@@ -337,8 +335,8 @@ namespace Aga.Controls.Tree
 			SuspendSelectionEvent = false;
 		}
 
-		public void ExpandAll() => _root.ExpandAll();
-        public void CollapseAll() => _root.CollapseAll();
+		public void ExpandAll() => Root.ExpandAll();
+        public void CollapseAll() => Root.CollapseAll();
 
         /// <summary>
 		/// Expand all parent nodes, and scroll to the specified node
@@ -349,10 +347,13 @@ namespace Aga.Controls.Tree
 				throw new ArgumentNullException("node");
 
 			if (!IsMyNode(node))
+#if DEBUG
 				throw new ArgumentException();
+#endif
+                return;
 
 			TreeNodeAdv parent = node.Parent;
-			while (parent != _root)
+			while (parent != Root)
 			{
 				parent.Expand(false);
 				parent = parent.Parent;
@@ -370,7 +371,10 @@ namespace Aga.Controls.Tree
 				throw new ArgumentNullException("node");
 
 			if (!IsMyNode(node))
+#if DEBUG
 				throw new ArgumentException();
+#endif
+                return;
 
 			if (node.Row < 0)
 				CreateRowMap();
@@ -467,7 +471,7 @@ namespace Aga.Controls.Tree
 		{
 			_vScrollBar.Maximum = Math.Max(RowCount - 1, 0);
 			_vScrollBar.LargeChange = _rowLayout.PageRowCount;
-			_vScrollBar.Visible = (RowCount > 0) && (_vScrollBar.LargeChange <= _vScrollBar.Maximum);
+			_vScrollBar.Visible = RowCount > 0 && _vScrollBar.LargeChange <= _vScrollBar.Maximum;
 			_vScrollBar.Value = Math.Min(_vScrollBar.Value, _vScrollBar.Maximum - _vScrollBar.LargeChange + 1);
 		}
 
@@ -627,10 +631,10 @@ namespace Aga.Controls.Tree
 		{
 			Selection.Clear();
 			SelectionStart = null;
-			_root = new TreeNodeAdv(this, null);
-			_root.Expand(false);
-			if (_root.Nodes.Count > 0)
-				CurrentNode = _root.Nodes[0];
+			Root = new TreeNodeAdv(this, null);
+			Root.Expand(false);
+			if (Root.Nodes.Count > 0)
+				CurrentNode = Root.Nodes[0];
 			else
 				CurrentNode = null;
 		}
@@ -806,23 +810,23 @@ namespace Aga.Controls.Tree
 		{
 			RowMap.Clear();
 			int row = 0;
-			_contentWidth = 0;
+			ContentWidth = 0;
 			foreach (TreeNodeAdv node in VisibleNodes)
 			{
 				node.Row = row;
 				RowMap.Add(node);
 				if (!UseColumns)
 				{
-					_contentWidth = Math.Max(_contentWidth, GetNodeWidth(node));
+					ContentWidth = Math.Max(ContentWidth, GetNodeWidth(node));
 				}
 				row++;
 			}
 			if (UseColumns)
 			{
-				_contentWidth = 0;
+				ContentWidth = 0;
 				foreach (TreeColumn col in _columns)
 					if (col.IsVisible)
-						_contentWidth += col.Width;
+						ContentWidth += col.Width;
 			}
 		}
 
@@ -872,7 +876,7 @@ namespace Aga.Controls.Tree
 			while (node.Parent != null)
 				node = node.Parent;
 
-			return node == _root;
+			return node == Root;
 		}
 
 		internal void UpdateSelection()
@@ -881,8 +885,8 @@ namespace Aga.Controls.Tree
 
 			if (!IsMyNode(CurrentNode))
 				CurrentNode = null;
-			if (!IsMyNode(_selectionStart))
-				_selectionStart = null;
+			if (!IsMyNode(SelectionStart))
+				SelectionStart = null;
 
 			for (int i = Selection.Count - 1; i >= 0; i--)
 				if (!IsMyNode(Selection[i]))
@@ -897,7 +901,7 @@ namespace Aga.Controls.Tree
 
 		internal void ChangeColumnWidth(TreeColumn column)
 		{
-			if (!(_input is ResizeColumnState))
+			if (!(Input is ResizeColumnState))
 			{
 				FullUpdate();
 				OnColumnWidthChanged(column);
@@ -909,7 +913,7 @@ namespace Aga.Controls.Tree
 			return FindNode(path, false);
 		}
 
-		public TreeNodeAdv FindNode(TreePath path, bool readChilds) => path.IsEmpty() ? _root : FindNode(_root, path, 0, readChilds);
+		public TreeNodeAdv FindNode(TreePath path, bool readChilds) => path.IsEmpty() ? Root : FindNode(Root, path, 0, readChilds);
 
         private TreeNodeAdv FindNode(TreeNodeAdv root, TreePath path, int level, bool readChilds)
 		{
@@ -929,7 +933,7 @@ namespace Aga.Controls.Tree
 			return null;
 		}
 
-		public TreeNodeAdv FindNodeByTag(object tag) => FindNodeByTag(_root, tag);
+		public TreeNodeAdv FindNodeByTag(object tag) => FindNodeByTag(Root, tag);
 
         private TreeNodeAdv FindNodeByTag(TreeNodeAdv root, object tag)
 		{

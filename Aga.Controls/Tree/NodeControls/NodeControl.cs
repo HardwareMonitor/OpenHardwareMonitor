@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
@@ -22,12 +20,10 @@ namespace Aga.Controls.Tree.NodeControls
 			{
 				if (value != _parent)
 				{
-					if (_parent != null)
-						_parent.NodeControls.Remove(this);
+                    _parent?.NodeControls.Remove(this);
 
-					if (value != null)
-						value.NodeControls.Add(this);
-				}
+                    value?.NodeControls.Add(this);
+                }
 			}
 		}
 
@@ -45,10 +41,9 @@ namespace Aga.Controls.Tree.NodeControls
 			get { return _parentColumn; }
 			set 
 			{ 
-				_parentColumn = value; 
-				if (_parent != null)
-					_parent.FullUpdate();
-			}
+				_parentColumn = value;
+                _parent?.FullUpdate();
+            }
 		}
 
 		private VerticalAlignment _verticalAlign = VerticalAlignment.Center;
@@ -59,12 +54,11 @@ namespace Aga.Controls.Tree.NodeControls
 			set 
 			{ 
 				_verticalAlign = value;
-				if (_parent != null)
-					_parent.FullUpdate();
-			}
+                _parent?.FullUpdate();
+            }
 		}
 
-		private int _leftMargin = 0;
+		private int _leftMargin;
 		public int LeftMargin
 		{
 			get { return _leftMargin; }
@@ -74,9 +68,8 @@ namespace Aga.Controls.Tree.NodeControls
 					throw new ArgumentOutOfRangeException();
 
 				_leftMargin = value;
-				if (_parent != null)
-					_parent.FullUpdate();
-			}
+                _parent?.FullUpdate();
+            }
 		}
 		#endregion
 
@@ -117,27 +110,26 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		internal Size GetActualSize(TreeNodeAdv node, DrawContext context)
-		{
-			if (IsVisible(node))
+        {
+            if (IsVisible(node))
 			{
 				Size s = MeasureSize(node, context);
 				return new Size(s.Width + LeftMargin, s.Height);
 			}
-			else
-				return Size.Empty;
-		}
+
+            return Size.Empty;
+        }
 
 		public abstract Size MeasureSize(TreeNodeAdv node, DrawContext context);
 
 		public abstract void Draw(TreeNodeAdv node, DrawContext context);
 
 		public virtual string GetToolTip(TreeNodeAdv node)
-		{
-			if (ToolTipProvider != null)
+        {
+            if (ToolTipProvider != null)
 				return ToolTipProvider.GetToolTip(node, this);
-			else
-				return string.Empty;
-		}
+            return string.Empty;
+        }
 
 		public virtual void MouseDown(TreeNodeAdvMouseEventArgs args)
 		{
@@ -161,9 +153,8 @@ namespace Aga.Controls.Tree.NodeControls
 
 		public event EventHandler<NodeControlValueEventArgs> IsVisibleValueNeeded;
 		protected virtual void OnIsVisibleValueNeeded(NodeControlValueEventArgs args)
-		{
-			if (IsVisibleValueNeeded != null)
-				IsVisibleValueNeeded(this, args);
-		}
+        {
+            IsVisibleValueNeeded?.Invoke(this, args);
+        }
 	}
 }

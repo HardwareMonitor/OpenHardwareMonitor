@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Aga.Controls.Properties;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel;
@@ -90,11 +87,10 @@ namespace Aga.Controls.Tree.NodeControls
 			object obj = GetValue(node);
 			if (obj is CheckState)
 				return (CheckState)obj;
-			else if (obj is bool)
-				return (bool)obj ? CheckState.Checked : CheckState.Unchecked;
-			else
-				return CheckState.Unchecked;
-		}
+            if (obj is bool)
+                return (bool)obj ? CheckState.Checked : CheckState.Unchecked;
+            return CheckState.Unchecked;
+        }
 
 		protected virtual void SetCheckState(TreeNodeAdv node, CheckState value)
 		{
@@ -143,14 +139,13 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		private CheckState GetNewState(CheckState state)
-		{
-			if (state == CheckState.Indeterminate)
+        {
+            if (state == CheckState.Indeterminate)
 				return CheckState.Unchecked;
-			else if(state == CheckState.Unchecked)
-				return CheckState.Checked;
-			else 
-				return ThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
-		}
+            if(state == CheckState.Unchecked)
+                return CheckState.Checked;
+            return ThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+        }
 
 		public override void KeyDown(KeyEventArgs args)
 		{
@@ -177,14 +172,13 @@ namespace Aga.Controls.Tree.NodeControls
 
 		public event EventHandler<TreePathEventArgs> CheckStateChanged;
 		protected void OnCheckStateChanged(TreePathEventArgs args)
-		{
-			if (CheckStateChanged != null)
-				CheckStateChanged(this, args);
-		}
+        {
+            CheckStateChanged?.Invoke(this, args);
+        }
 
 		protected void OnCheckStateChanged(TreeNodeAdv node)
 		{
-			TreePath path = this.Parent.GetPath(node);
+			TreePath path = Parent.GetPath(node);
 			OnCheckStateChanged(new TreePathEventArgs(path));
 		}
 

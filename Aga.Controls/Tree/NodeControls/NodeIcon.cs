@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Windows.Forms;
-using Aga.Controls.Properties;
 using System.ComponentModel;
 
 namespace Aga.Controls.Tree.NodeControls
@@ -24,11 +20,9 @@ namespace Aga.Controls.Tree.NodeControls
 				int scaledY = node.Tree.GetScaledSize(image.Size.Height);
 				return new Size(scaledX, scaledY); ;
 			}
-			else
-			{
-				return Size.Empty;
-			}
-		}
+
+            return Size.Empty;
+        }
 
 
 		public override void Draw(TreeNodeAdv node, DrawContext context)

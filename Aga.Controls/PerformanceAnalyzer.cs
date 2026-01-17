@@ -18,14 +18,14 @@ namespace Aga.Controls
 				get { return _name; }
 			}
 
-			private int _count = 0;
+			private int _count;
 			public int Count
 			{
 				get { return _count; }
 				set { _count = value; }
 			}
 
-			private double _totalTime = 0;
+			private double _totalTime;
 			public double TotalTime
 			{
 				get { return _totalTime; }
@@ -99,12 +99,11 @@ namespace Aga.Controls
 		}
 
 		public static string GenerateReport(string mainPieceOfCode)
-		{
-			if (_performances.ContainsKey(mainPieceOfCode))
+        {
+            if (_performances.ContainsKey(mainPieceOfCode))
 				return GenerateReport(_performances[mainPieceOfCode].TotalTime);
-			else
-				return GenerateReport(0);
-		}
+            return GenerateReport(0);
+        }
 
 		public static string GenerateReport(double totalTime)
 		{

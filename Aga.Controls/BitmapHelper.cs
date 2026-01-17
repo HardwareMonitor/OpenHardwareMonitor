@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
@@ -37,7 +35,7 @@ namespace Aga.Controls
 						pPixel->A = value;
 						pPixel++;
 					}
-					pPixel += bitmapData.Stride - (bitmapData.Width * 4);
+					pPixel += bitmapData.Stride - bitmapData.Width * 4;
 				}
 			}
 			image.UnlockBits(bitmapData);

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
@@ -9,7 +7,7 @@ using System.Drawing.Imaging;
 
 namespace Aga.Controls.Tree
 {
-	[TypeConverter(typeof(TreeColumn.TreeColumnConverter)), DesignTimeVisible(false), ToolboxItem(false)]
+	[TypeConverter(typeof(TreeColumnConverter)), DesignTimeVisible(false), ToolboxItem(false)]
 	public class TreeColumn : Component
 	{
 		private class TreeColumnConverter : ComponentConverter
@@ -47,13 +45,12 @@ namespace Aga.Controls.Tree
 		[Browsable(false)]
 		public int Index
 		{
-			get 
-			{
-				if (Owner != null)
+			get
+            {
+                if (Owner != null)
 					return Owner.IndexOf(this);
-				else
-					return -1;
-			}
+                return -1;
+            }
 		}
 
 		private string _header;
@@ -157,7 +154,7 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-        private bool _sortable = false;
+        private bool _sortable;
         [DefaultValue(false)]
         public bool Sortable
         {
@@ -181,12 +178,11 @@ namespace Aga.Controls.Tree
 		public Size SortMarkSize
 		{
 			get
-			{
-				if (Application.RenderWithVisualStyles)
+            {
+                if (Application.RenderWithVisualStyles)
 					return new Size(9, 5);
-				else
-					return new Size(7, 4);
-			}
+                return new Size(7, 4);
+            }
 		}
 		#endregion
 
@@ -203,12 +199,11 @@ namespace Aga.Controls.Tree
 		}
 
 		public override string ToString()
-		{
-			if (string.IsNullOrEmpty(Header))
+        {
+            if (string.IsNullOrEmpty(Header))
 				return GetType().Name;
-			else
-				return Header;
-		}
+            return Header;
+        }
 
 		protected override void Dispose(bool disposing)
 		{
@@ -260,7 +255,7 @@ namespace Aga.Controls.Tree
                                        bounds.Height);
 
                 if (SortOrder != SortOrder.None)
-                    innerBounds.Width -= (SortMarkSize.Width + SortOrderMarkMargin);
+                    innerBounds.Width -= SortMarkSize.Width + SortOrderMarkMargin;
 
                 Size maxTextSize = TextRenderer.MeasureText(gr, Header, font, innerBounds.Size, TextFormatFlags.NoPadding);
                 Size textSize = TextRenderer.MeasureText(gr, Header, font, innerBounds.Size, _baseHeaderFlags);
@@ -354,31 +349,27 @@ namespace Aga.Controls.Tree
 
 		public event EventHandler HeaderChanged;
 		private void OnHeaderChanged()
-		{
-			if (HeaderChanged != null)
-				HeaderChanged(this, EventArgs.Empty);
-		}
+        {
+            HeaderChanged?.Invoke(this, EventArgs.Empty);
+        }
 
 		public event EventHandler SortOrderChanged;
 		private void OnSortOrderChanged()
-		{
-			if (SortOrderChanged != null)
-				SortOrderChanged(this, EventArgs.Empty);
-		}
+        {
+            SortOrderChanged?.Invoke(this, EventArgs.Empty);
+        }
 
 		public event EventHandler IsVisibleChanged;
 		private void OnIsVisibleChanged()
-		{
-			if (IsVisibleChanged != null)
-				IsVisibleChanged(this, EventArgs.Empty);
-		}
+        {
+            IsVisibleChanged?.Invoke(this, EventArgs.Empty);
+        }
 
 		public event EventHandler WidthChanged;
 		private void OnWidthChanged()
-		{
-			if (WidthChanged != null)
-				WidthChanged(this, EventArgs.Empty);
-		}
+        {
+            WidthChanged?.Invoke(this, EventArgs.Empty);
+        }
 
 		#endregion
 	}

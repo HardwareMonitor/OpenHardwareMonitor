@@ -24,44 +24,38 @@ namespace Aga.Controls.Tree
 
 		public int PageRowCount
 		{
-			get 
-			{
-				if (_treeView.RowCount == 0)
+			get
+            {
+                if (_treeView.RowCount == 0)
 					return 0;
-				else
-				{
-					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
-					int y = 0;
-					for (int i = _treeView.RowCount - 1; i >= 0; i--)
-					{
-						y += GetRowHeight(i);
-						if (y > pageHeight)
-							return Math.Max(0, _treeView.RowCount - 1 - i);
-					}
-					return _treeView.RowCount;
-				}
-			}
+                int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
+                int y = 0;
+                for (int i = _treeView.RowCount - 1; i >= 0; i--)
+                {
+                    y += GetRowHeight(i);
+                    if (y > pageHeight)
+                        return Math.Max(0, _treeView.RowCount - 1 - i);
+                }
+                return _treeView.RowCount;
+            }
 		}
 
 		public int CurrentPageSize
 		{
 			get
-			{
-				if (_treeView.RowCount == 0)
+            {
+                if (_treeView.RowCount == 0)
 					return 0;
-				else
-				{
-					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
-					int y = 0;
-					for (int i = _treeView.FirstVisibleRow; i < _treeView.RowCount; i++)
-					{
-						y += GetRowHeight(i);
-						if (y > pageHeight)
-							return Math.Max(0, i - _treeView.FirstVisibleRow);
-					}
-					return Math.Max(0, _treeView.RowCount - _treeView.FirstVisibleRow);
-				}
-			}
+                int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
+                int y = 0;
+                for (int i = _treeView.FirstVisibleRow; i < _treeView.RowCount; i++)
+                {
+                    y += GetRowHeight(i);
+                    if (y > pageHeight)
+                        return Math.Max(0, i - _treeView.FirstVisibleRow);
+                }
+                return Math.Max(0, _treeView.RowCount - _treeView.FirstVisibleRow);
+            }
 		}
 
 		public Rectangle GetRowBounds(int rowNo)
@@ -81,13 +75,12 @@ namespace Aga.Controls.Tree
 			}
 			if (rowNo >= 0 && rowNo < _rowCache.Count)
 				return _rowCache[rowNo];
-			else
-				return Rectangle.Empty;
-		}
+            return Rectangle.Empty;
+        }
 
 		private int GetRowHeight(int rowNo)
-		{
-			if (rowNo < _treeView.RowMap.Count)
+        {
+            if (rowNo < _treeView.RowMap.Count)
 			{
 				TreeNodeAdv node = _treeView.RowMap[rowNo];
 				if (node.Height == null)
@@ -104,9 +97,9 @@ namespace Aga.Controls.Tree
 				}
 				return node.Height.Value;
 			}
-			else
-				return 0;
-		}
+
+            return 0;
+        }
 
 		public int GetRowAt(Point point)
 		{
@@ -119,9 +112,8 @@ namespace Aga.Controls.Tree
 				int h = GetRowHeight(i);
 				if (py >= y && py < y + h)
 					return i;
-				else
-					y += h;
-			}
+                y += h;
+            }
 			return -1;
 		}
 

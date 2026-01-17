@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using Aga.Controls.Tree.NodeControls;
 using System.Drawing;
@@ -15,10 +13,9 @@ namespace Aga.Controls.Tree
 		public Control CurrentEditor { get; private set; }
 
 		public void HideEditor()
-		{
-			if (CurrentEditorOwner != null)
-				CurrentEditorOwner.EndEdit(false);
-		}
+        {
+            CurrentEditorOwner?.EndEdit(false);
+        }
 
 		internal void DisplayEditor(Control editor, EditableControl owner)
 		{
@@ -112,7 +109,7 @@ namespace Aga.Controls.Tree
 					Point p = info.Bounds.Location;
 					p.X += info.Control.LeftMargin;
 					p.X -= OffsetX;
-					p.Y -= (_rowLayout.GetRowBounds(FirstVisibleRow).Y - ColumnHeaderHeight);
+					p.Y -= _rowLayout.GetRowBounds(FirstVisibleRow).Y - ColumnHeaderHeight;
 					int width = DisplayRectangle.Width - p.X;
 					if (UseColumns && info.Control.ParentColumn != null && Columns.Contains(info.Control.ParentColumn))
 					{

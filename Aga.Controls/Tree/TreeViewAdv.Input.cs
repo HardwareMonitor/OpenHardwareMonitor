@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using Aga.Controls.Tree.NodeControls;
 using System.Drawing.Imaging;
-using System.Threading;
 
 namespace Aga.Controls.Tree
 {
@@ -17,15 +16,14 @@ namespace Aga.Controls.Tree
 		}
 
 		protected override bool IsInputKey(Keys keyData)
-		{
-			if (((keyData & Keys.Up) == Keys.Up)
-				|| ((keyData & Keys.Down) == Keys.Down)
-				|| ((keyData & Keys.Left) == Keys.Left)
-				|| ((keyData & Keys.Right) == Keys.Right))
+        {
+            if ((keyData & Keys.Up) == Keys.Up
+                || (keyData & Keys.Down) == Keys.Down
+                || (keyData & Keys.Left) == Keys.Left
+                || (keyData & Keys.Right) == Keys.Right)
 				return true;
-			else
-				return base.IsInputKey(keyData);
-		}
+            return base.IsInputKey(keyData);
+        }
 
 		internal void ChangeInput()
 		{
@@ -291,12 +289,11 @@ namespace Aga.Controls.Tree
 			foreach (TreeColumn col in Columns)
 			{
 				if (col.IsVisible)
-				{
-					if (column == col)
+                {
+                    if (column == col)
 						return x;
-					else
-						x += col.Width;
-				}
+                    x += col.Width;
+                }
 			}
 			return x;
 		}
@@ -316,12 +313,12 @@ namespace Aga.Controls.Tree
 					if (col.Width > 0)
 					{
 						left = new Rectangle(x, 0, DividerWidth / 2, ColumnHeaderHeight);
-						right = new Rectangle(x + col.Width - (DividerWidth / 2), 0, DividerWidth / 2, ColumnHeaderHeight);
+						right = new Rectangle(x + col.Width - DividerWidth / 2, 0, DividerWidth / 2, ColumnHeaderHeight);
 						if (left.Contains(p) && prevCol != null)
 							return prevCol;
-						else if (right.Contains(p))
-							return col;
-					}
+                        if (right.Contains(p))
+                            return col;
+                    }
 					prevCol = col;
 					x += col.Width;
 				}
@@ -405,14 +402,14 @@ namespace Aga.Controls.Tree
 
 		#region DragDrop
 
-		private bool _dragAutoScrollFlag = false;
-		private Bitmap _dragBitmap = null;
+		private bool _dragAutoScrollFlag;
+		private Bitmap _dragBitmap;
 		private System.Threading.Timer _dragTimer;
 
 		private void StartDragTimer()
 		{
 			if (_dragTimer == null)
-				_dragTimer = new System.Threading.Timer(new TimerCallback(DragTimerTick), null, 0, 100);
+				_dragTimer = new System.Threading.Timer(DragTimerTick, null, 0, 100);
 		}
 
 		private void StopDragTimer()
@@ -436,7 +433,7 @@ namespace Aga.Controls.Tree
 				float pos = (pt.Y + first.Y - ColumnHeaderHeight - bounds.Y) / (float)bounds.Height;
 				if (pos < TopEdgeSensivity)
 					_dropPosition.Position = NodePosition.Before;
-				else if (pos > (1 - BottomEdgeSensivity))
+				else if (pos > 1 - BottomEdgeSensivity)
 					_dropPosition.Position = NodePosition.After;
 				else
 					_dropPosition.Position = NodePosition.Inside;
@@ -502,7 +499,7 @@ namespace Aga.Controls.Tree
 								{
 									int width = s.Width;
 									rect = new Rectangle(x, y, width, height);
-									x += (width + 1);
+									x += width + 1;
 									context.Bounds = rect;
 									c.Draw(node, context);
 								}

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 
 namespace Aga.Controls.Tree
@@ -17,8 +14,8 @@ namespace Aga.Controls.Tree
 		public IComparer Comparer
 		{
 			get { return _comparer; }
-			set 
-			{ 
+			set
+			{
 				_comparer = value;
 				OnStructureChanged(new TreePathEventArgs(TreePath.Empty));
 			}
@@ -27,10 +24,10 @@ namespace Aga.Controls.Tree
 		public SortedTreeModel(ITreeModel innerModel)
 		{
 			_innerModel = innerModel;
-			_innerModel.NodesChanged += new EventHandler<TreeModelEventArgs>(_innerModel_NodesChanged);
-			_innerModel.NodesInserted += new EventHandler<TreeModelEventArgs>(_innerModel_NodesInserted);
-			_innerModel.NodesRemoved += new EventHandler<TreeModelEventArgs>(_innerModel_NodesRemoved);
-			_innerModel.StructureChanged += new EventHandler<TreePathEventArgs>(_innerModel_StructureChanged);
+			_innerModel.NodesChanged += _innerModel_NodesChanged;
+			_innerModel.NodesInserted += _innerModel_NodesInserted;
+			_innerModel.NodesRemoved += _innerModel_NodesRemoved;
+			_innerModel.StructureChanged += _innerModel_StructureChanged;
 		}
 
 		void _innerModel_StructureChanged(object sender, TreePathEventArgs e)
@@ -54,8 +51,8 @@ namespace Aga.Controls.Tree
 		}
 
 		public override IEnumerable GetChildren(TreePath treePath)
-		{
-			if (Comparer != null)
+        {
+            if (Comparer != null)
 			{
 				ArrayList list = new ArrayList();
 				IEnumerable res = InnerModel.GetChildren(treePath);
@@ -66,12 +63,12 @@ namespace Aga.Controls.Tree
 					list.Sort(Comparer);
 					return list;
 				}
-				else
-					return null;
-			}
-			else
-				return InnerModel.GetChildren(treePath);
-		}
+
+                return null;
+            }
+
+            return InnerModel.GetChildren(treePath);
+        }
 
 		public override bool IsLeaf(TreePath treePath)
 		{

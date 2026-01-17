@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Aga.Controls.Tree.NodeControls;
 using System.Drawing;
 
@@ -10,29 +7,15 @@ namespace Aga.Controls.Tree
 	{
 		public static readonly NodeControlInfo Empty = new NodeControlInfo(null, Rectangle.Empty, null);
 
-		private NodeControl _control;
-		public NodeControl Control
-		{
-			get { return _control; }
-		}
+        public NodeControl Control { get; }
+        public Rectangle Bounds { get; }
+        public TreeNodeAdv Node { get; }
 
-		private Rectangle _bounds;
-		public Rectangle Bounds
+        public NodeControlInfo(NodeControl control, Rectangle bounds, TreeNodeAdv node)
 		{
-			get { return _bounds; }
-		}
-
-		private TreeNodeAdv _node;
-		public TreeNodeAdv Node
-		{
-			get { return _node; }
-		}
-
-		public NodeControlInfo(NodeControl control, Rectangle bounds, TreeNodeAdv node)
-		{
-			_control = control;
-			_bounds = bounds;
-			_node = node;
+			Control = control;
+			Bounds = bounds;
+			Node = node;
 		}
 	}
 }

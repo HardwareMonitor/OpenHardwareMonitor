@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Reflection;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace Aga.Controls.Tree.NodeControls
 {
@@ -21,17 +16,17 @@ namespace Aga.Controls.Tree.NodeControls
 			set { _editorWidth = value; }
 		}
 
-		private int _decimalPlaces = 0;
+		private int _decimalPlaces;
 		[Category("Data"), DefaultValue(0)]
 		public int DecimalPlaces
 		{
 			get
 			{
-				return this._decimalPlaces;
+				return _decimalPlaces;
 			}
 			set
 			{
-				this._decimalPlaces = value;
+				_decimalPlaces = value;
 			}
 		}
 
@@ -41,15 +36,15 @@ namespace Aga.Controls.Tree.NodeControls
 		{
 			get
 			{
-				return this._increment;
+				return _increment;
 			}
 			set
 			{
-				this._increment = value;
+				_increment = value;
 			}
 		}
 
-		private decimal _minimum = 0;
+		private decimal _minimum;
 		[Category("Data"), DefaultValue(0)]
 		public decimal Minimum
 		{
@@ -69,11 +64,11 @@ namespace Aga.Controls.Tree.NodeControls
 		{
 			get
 			{
-				return this._maximum;
+				return _maximum;
 			}
 			set
 			{
-				this._maximum = value;
+				_maximum = value;
 			}
 		}
 
@@ -84,12 +79,11 @@ namespace Aga.Controls.Tree.NodeControls
 		}
 
 		protected override Size CalculateEditorSize(EditorContext context)
-		{
-			if (Parent.UseColumns)
+        {
+            if (Parent.UseColumns)
 				return context.Bounds.Size;
-			else
-				return new Size(EditorWidth, context.Bounds.Height);
-		}
+            return new Size(EditorWidth, context.Bounds.Height);
+        }
 
 		protected override Control CreateEditor(TreeNodeAdv node)
 		{

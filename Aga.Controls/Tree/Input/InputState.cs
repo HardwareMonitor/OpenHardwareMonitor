@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 namespace Aga.Controls.Tree
 {
 	internal abstract class InputState
@@ -16,7 +15,7 @@ namespace Aga.Controls.Tree
 			_tree = tree;
 		}
 
-		public abstract void KeyDown(System.Windows.Forms.KeyEventArgs args);
+		public abstract void KeyDown(KeyEventArgs args);
 		public abstract void MouseDown(TreeNodeAdvMouseEventArgs args);
 		public abstract void MouseUp(TreeNodeAdvMouseEventArgs args);
 

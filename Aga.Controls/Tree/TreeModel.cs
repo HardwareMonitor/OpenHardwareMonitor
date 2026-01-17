@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections.ObjectModel;
 
 namespace Aga.Controls.Tree
@@ -30,39 +29,34 @@ namespace Aga.Controls.Tree
 		}
 
 		public TreePath GetPath(Node node)
-		{
-			if (node == _root)
+        {
+            if (node == _root)
 				return TreePath.Empty;
-			else
-			{
-				Stack<object> stack = new Stack<object>();
-				while (node != _root)
-				{
-					stack.Push(node);
-					node = node.Parent;
-				}
-				return new TreePath(stack.ToArray());
-			}
-		}
+            Stack<object> stack = new Stack<object>();
+            while (node != _root)
+            {
+                stack.Push(node);
+                node = node.Parent;
+            }
+            return new TreePath(stack.ToArray());
+        }
 
 		public Node FindNode(TreePath path)
-		{
-			if (path.IsEmpty())
+        {
+            if (path.IsEmpty())
 				return _root;
-			else
-				return FindNode(_root, path, 0);
-		}
+            return FindNode(_root, path, 0);
+        }
 
 		private Node FindNode(Node root, TreePath path, int level)
 		{
 			foreach (Node node in root.Nodes)
 				if (node == path.FullPath[level])
-				{
-					if (level == path.FullPath.Length - 1)
+                {
+                    if (level == path.FullPath.Length - 1)
 						return node;
-					else
-						return FindNode(node, path, level + 1);
-				}
+                    return FindNode(node, path, level + 1);
+                }
 			return null;
 		}
 
@@ -83,23 +77,20 @@ namespace Aga.Controls.Tree
 			Node node = FindNode(treePath);
 			if (node != null)
 				return node.IsLeaf;
-			else
-				throw new ArgumentException("treePath");
-		}
+            throw new ArgumentException("treePath");
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesChanged;
 		internal void OnNodesChanged(TreeModelEventArgs args)
-		{
-			if (NodesChanged != null)
-				NodesChanged(this, args);
-		}
+        {
+            NodesChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreePathEventArgs> StructureChanged;
 		public void OnStructureChanged(TreePathEventArgs args)
-		{
-			if (StructureChanged != null)
-				StructureChanged(this, args);
-		}
+        {
+            StructureChanged?.Invoke(this, args);
+        }
 
 		public event EventHandler<TreeModelEventArgs> NodesInserted;
 		internal void OnNodeInserted(Node parent, int index, Node node)

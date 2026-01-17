@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel.Design;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace Aga.Controls.Tree.NodeControls
 {
@@ -22,8 +18,8 @@ namespace Aga.Controls.Tree.NodeControls
 			_tree.BeginUpdate();
 			try
 			{
-				while (this.Count != 0)
-					this.RemoveAt(this.Count - 1);
+				while (Count != 0)
+					RemoveAt(Count - 1);
 			}
 			finally
 			{
@@ -38,11 +34,8 @@ namespace Aga.Controls.Tree.NodeControls
 
 			if (item.Parent != _tree)
 			{
-				if (item.Parent != null)
-				{
-					item.Parent.NodeControls.Remove(item);
-				}
-				base.InsertItem(index, item);
+                item.Parent?.NodeControls.Remove(item);
+                base.InsertItem(index, item);
 				item.AssignParent(_tree);
 				_tree.FullUpdate();
 			}
@@ -86,7 +79,7 @@ namespace Aga.Controls.Tree.NodeControls
 				typeof(NodeStateIcon), typeof(NodeIcon), typeof(NodeNumericUpDown), typeof(ExpandingIcon)  };
 		}
 
-		protected override System.Type[] CreateNewItemTypes()
+		protected override Type[] CreateNewItemTypes()
 		{
 			return _types;
 		}

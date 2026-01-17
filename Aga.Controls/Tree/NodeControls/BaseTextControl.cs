@@ -15,16 +15,15 @@ namespace Aga.Controls.Tree.NodeControls
 
 		#region Properties
 
-		private Font _font = null;
+		private Font _font;
 		public Font Font
 		{
 			get
-			{
-				if (_font == null)
+            {
+                if (_font == null)
 					return Control.DefaultFont;
-				else
-					return _font;
-			}
+                return _font;
+            }
 			set
 			{
 				if (value == Control.DefaultFont)
@@ -36,7 +35,7 @@ namespace Aga.Controls.Tree.NodeControls
 
 		protected bool ShouldSerializeFont()
 		{
-			return (_font != null);
+			return _font != null;
 		}
 
 		private HorizontalAlignment _textAlign = HorizontalAlignment.Left;
@@ -71,7 +70,7 @@ namespace Aga.Controls.Tree.NodeControls
 			set { _displayHiddenContentInToolTip = value; }
 		}
 
-		private bool _useCompatibleTextRendering = false;
+		private bool _useCompatibleTextRendering;
 		[DefaultValue(false)]
 		public bool UseCompatibleTextRendering
 		{
@@ -137,9 +136,8 @@ namespace Aga.Controls.Tree.NodeControls
 
 			if (!s.IsEmpty)
 				return s;
-			else
-				return new Size(10, Font.Height);
-		}
+            return new Size(10, Font.Height);
+        }
 
 		protected Font GetDrawingFont(TreeNodeAdv node, DrawContext context, string label)
 		{
@@ -297,11 +295,9 @@ namespace Aga.Controls.Tree.NodeControls
 		protected virtual void OnDrawText(DrawEventArgs args)
 		{
 			TreeViewAdv tree = args.Node.Tree;
-			if (tree != null)
-				tree.FireDrawControl(args);
-			if (DrawText != null)
-				DrawText(this, args);
-		}
+            tree?.FireDrawControl(args);
+            DrawText?.Invoke(this, args);
+        }
 
 		protected virtual bool DrawTextMustBeFired(TreeNodeAdv node)
 		{
