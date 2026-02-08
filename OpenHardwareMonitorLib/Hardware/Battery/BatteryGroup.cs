@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHardwareMonitor.Interop;
@@ -10,9 +11,9 @@ namespace OpenHardwareMonitor.Hardware.Battery;
 
 internal class BatteryGroup : IGroup
 {
-    private readonly List<Battery> _hardware = new();
+    private readonly List<Battery> _hardware = [];
 
-    static bool QueryStringFromBatteryInfo(SafeFileHandle battery, Kernel32.BATTERY_QUERY_INFORMATION bqi, out string value)
+    private static bool QueryStringFromBatteryInfo(SafeFileHandle battery, Kernel32.BATTERY_QUERY_INFORMATION bqi, out string value)
     {
         const int maxLoadString = 100;
 
@@ -100,7 +101,8 @@ internal class BatteryGroup : IGroup
                                                              ref bqi.BatteryTag,
                                                              Marshal.SizeOf(bqi.BatteryTag),
                                                              out _,
-                                                             IntPtr.Zero))
+                                                             IntPtr.Zero)
+                                    && _hardware.All(x => x.BatteryTag != bqi.BatteryTag))
                                 {
                                     Kernel32.BATTERY_INFORMATION bi = default;
                                     bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryInformation;
@@ -125,6 +127,10 @@ internal class BatteryGroup : IGroup
                                             _hardware.Add(new Battery(batteryName, manufacturer, battery, bi, bqi.BatteryTag, settings));
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    battery.Close();
                                 }
                             }
                         }

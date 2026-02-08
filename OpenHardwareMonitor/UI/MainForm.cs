@@ -55,16 +55,19 @@ public sealed partial class MainForm : Form
     {
         InitializeComponent();
 
-        sensor.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.sensor); };
-        value.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.value); };
-        min.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.min); };
-        max.WidthChanged += delegate { TreeView_ColumnWidthChanged(this.max); };
+        sensor.WidthChanged += delegate { TreeView_ColumnWidthChanged(sensor); };
+        value.WidthChanged += delegate { TreeView_ColumnWidthChanged(value); };
+        min.WidthChanged += delegate { TreeView_ColumnWidthChanged(min); };
+        max.WidthChanged += delegate { TreeView_ColumnWidthChanged(max); };
 
         _settings = new PersistentSettings();
         _settings.Load();
 
         MinimumSize = new Size(400, 200);
         Text = Updater.ApplicationTitle;
+#if DEBUG
+        Text += " (DEBUG)";
+#endif
         Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
         portableModeMenuItem.Checked = _settings.IsPortable;
 
@@ -472,7 +475,10 @@ public sealed partial class MainForm : Form
     {
         if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || _computer.IsBatteryEnabled)
         {
-            _computer.Reset();
+            if (InvokeRequired)
+                Invoke(new MethodInvoker(() => ResetClick(sender, eventArgs)));
+            else
+                ResetClick(sender, eventArgs);
         }
     }
 
@@ -890,7 +896,7 @@ public sealed partial class MainForm : Form
             WindowState = FormWindowState.Normal;
             Activate();
             BringToFront();
-            WinApiHelper.SetForegroundWindow(this.Handle);
+            WinApiHelper.SetForegroundWindow(Handle);
         }
         else
         {

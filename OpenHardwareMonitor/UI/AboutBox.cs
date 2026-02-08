@@ -15,6 +15,9 @@ public sealed partial class AboutBox : Form
         lblCopyright.Text = $"Copyright © {Updater.ApplicationName}";
         Font = SystemFonts.MessageBoxFont;
         lblVersion.Text = $"Version {Application.ProductVersion} {(Environment.Is64BitProcess ? "x64" : "x86")}";
+#if DEBUG
+        lblVersion.Text += " (DEBUG)";
+#endif
         //using (var icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation))
         using (var icon = EmbeddedResources.GetIcon("icon.ico"))
             picLogo.Image = icon.GetLargestBitmap();

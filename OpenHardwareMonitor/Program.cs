@@ -27,7 +27,7 @@ public static class Program
             Environment.Exit(0);
         }
 
-        if (WinApiHelper.CheckRunningInstances(true, true))
+        if (!System.Diagnostics.Debugger.IsAttached && WinApiHelper.CheckRunningInstances(true, true))
         {
             // fallback
             MessageBox.Show($"{Updater.ApplicationName} is already running.", Updater.ApplicationName,

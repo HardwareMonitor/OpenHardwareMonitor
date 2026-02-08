@@ -391,7 +391,10 @@ public class Computer : IComputer
         if (visitor == null)
             throw new ArgumentNullException(nameof(visitor));
 
-        visitor.VisitComputer(this);
+        lock (_lock)
+        {
+            visitor.VisitComputer(this);
+        }
     }
 
     /// <summary>
@@ -671,8 +674,11 @@ public class Computer : IComputer
         if (!_open)
             return;
 
-        RemoveGroups();
-        AddGroups();
+        lock (_lock)
+        {
+            RemoveGroups();
+            AddGroups();
+        }
     }
 
     private void RemoveGroups()

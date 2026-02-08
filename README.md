@@ -1,4 +1,5 @@
-# Open hardware monitor
+# Open Hardware Monitor
+
 [![Release](https://img.shields.io/github/v/release/HardwareMonitor/openhardwaremonitor)](https://github.com/HardwareMonitor/openhardwaremonitor/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/HardwareMonitor/openhardwaremonitor/total?color=ff4f42)](https://github.com/HardwareMonitor/openhardwaremonitor/releases)
 [![Last commit](https://img.shields.io/github/last-commit/HardwareMonitor/openhardwaremonitor?color=00AD00)](https://github.com/HardwareMonitor/openhardwaremonitor/commits/master)
@@ -8,9 +9,9 @@
 [![Nuget](https://img.shields.io/nuget/v/OpenHardwareMonitorLib)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 [![Nuget](https://img.shields.io/nuget/dt/OpenHardwareMonitorLib?label=nuget-downloads)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 
-Open hardware monitor is free software that can monitor the temperature sensors, fan speeds, voltages, load and clock speeds of your computer.
+Open Hardware Monitor is a free open source software that can monitor temperature sensors, fan speeds, voltages, load and clock speeds of a computer.
 
-This application is based on the "original" [openhardwaremonitor](https://github.com/openhardwaremonitor/openhardwaremonitor) project.
+This application is based on the original [OpenHardwareMonitor](https://github.com/openhardwaremonitor/openhardwaremonitor) project.
 
 ## Features
 
@@ -140,8 +141,9 @@ Some sensors require administrator privileges to access the data. Restart your I
 
 
 ## How can I help improve it?
-The OpenHardwareMonitor team welcomes feedback and contributions!<br/>
-You can check if it works properly on your motherboard. For many manufacturers, the way of reading data differs a bit, so if you notice any inaccuracies, please send us a pull request. If you have any suggestions or improvements, don't hesitate to create an issue.
+Your feedback and contributions are welcome! Please feel free to submit Pull Requests or report issues.
+<br/>
+Please check if it works properly on your hardware. For many manufacturers, the way of reading data differs a bit, so if you notice any inaccuracies, please send us a pull request. If you have any suggestions or improvements, don't hesitate to create an issue.
 
 Also, don't forget to ★ star ★ the repository to help other people find it.
 
@@ -151,8 +153,8 @@ Also, don't forget to ★ star ★ the repository to help other people find it.
 
 [![Forkers](https://reporoster.com/forks/HardwareMonitor/OpenHardwareMonitor)](https://github.com/HardwareMonitor/OpenHardwareMonitor/network/members)
 
-## Donate!
-Every [cup of coffee](https://patreon.com/SergiyE) you donate will help this app become better and let me know that this project is in demand.
+## Donate
+If you find this project useful, consider [supporting the author](https://patreon.com/SergiyE).
 
 ## License
 

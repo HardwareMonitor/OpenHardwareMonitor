@@ -110,6 +110,8 @@ internal sealed class Battery : Hardware
         }
     }
 
+    public uint BatteryTag => _batteryTag;
+
     public float? ChargeDischargeCurrent { get; private set; }
 
     public float? ChargeDischargeRate { get; private set; }
