@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading;
 
 namespace OpenHardwareMonitor.Hardware.Motherboard.Lpc.EC;
@@ -17,7 +16,7 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
     private const int FailuresBeforeSkip = 20;
     private const int MaxRetries = 5;
 
-    // implementation 
+    // implementation
     private const int WaitSpins = 50;
     private bool _disposed;
 
@@ -33,7 +32,7 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
 
     public void Read(ushort[] registers, byte[] data)
     {
-        Trace.Assert(registers.Length <= data.Length, 
+        Trace.Assert(registers.Length <= data.Length,
                      "data buffer length has to be greater or equal to the registers array length");
 
         byte bank = 0;
@@ -58,15 +57,8 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         SwitchBank(prevBank);
     }
 
-    private byte ReadByte(byte register)
-    {
-        return ReadLoop<byte>(register, ReadByteOp);
-    }
-
-    private void WriteByte(byte register, byte value)
-    {
-        WriteLoop(register, value, WriteByteOp);
-    }
+    private byte ReadByte(byte register) => ReadLoop<byte>(register, ReadByteOp);
+    private void WriteByte(byte register, byte value) => WriteLoop(register, value, WriteByteOp);
 
     public void Dispose()
     {
@@ -84,7 +76,7 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         return previous;
     }
 
-    private TResult ReadLoop<TResult>(byte register, ReadOp<TResult> op) where TResult : new()
+    private static TResult ReadLoop<TResult>(byte register, ReadOp<TResult> op) where TResult : new()
     {
         TResult result = new();
 
@@ -99,7 +91,7 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         return result;
     }
 
-    private void WriteLoop<TValue>(byte register, TValue value, WriteOp<TValue> op)
+    private static void WriteLoop<TValue>(byte register, TValue value, WriteOp<TValue> op)
     {
         for (int i = 0; i < MaxRetries; i++)
         {
@@ -110,11 +102,11 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         }
     }
 
-    private bool WaitForStatus(Status status, bool isSet)
+    private static bool WaitForStatus(Status status, bool isSet)
     {
         for (int i = 0; i < WaitSpins; i++)
         {
-            byte value = ReadIOPort(Port.Command);
+            byte value = ReadIoPort(Port.Command);
 
             if (((byte)status & (!isSet ? value : (byte)~value)) == 0)
             {
@@ -134,10 +126,31 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
             return true;
         }
 
-        if (WaitForStatus(Status.OutputBufferFull, true))
+        // Try OBF with reduced timeout
+        for (int i = 0; i < MaxRetries; i++)
         {
-            _waitReadFailures = 0;
-            return true;
+            byte status = ReadIoPort(Port.Command);
+            if ((status & (byte)Status.OutputBufferFull) != 0)
+            {
+                _waitReadFailures = 0;
+                return true;
+            }
+
+            Thread.Sleep(1);
+        }
+
+        // ASUS workaround: Wait for IBF to clear instead of OBF
+        // Testing on Z170 Pro Gaming shows IBF clears in 1-3ms when data is ready
+        for (int i = 0; i < WaitSpins; i++)
+        {
+            byte status = ReadIoPort(Port.Command);
+            if ((status & (byte)Status.InputBufferFull) == 0)
+            {
+                _waitReadFailures = 0;
+                return true;
+            }
+
+            Thread.Sleep(1);
         }
 
         _waitReadFailures++;
@@ -149,14 +162,49 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         return WaitForStatus(Status.InputBufferFull, false);
     }
 
-    private byte ReadIOPort(Port port)
+    private static byte ReadIoPort(Port port) => Ring0.ReadIoPort((byte)port);
+
+    private static void WriteIoPort(Port port, byte datum) => Ring0.WriteIoPort((byte)port, datum);
+
+    protected bool ReadByteOp(byte register, out byte value)
     {
-        return Ring0.ReadIoPort((uint)port);
+        if (WaitWrite())
+        {
+            WriteIoPort(Port.Command, (byte)Command.Read);
+
+            if (WaitWrite())
+            {
+                WriteIoPort(Port.Data, register);
+
+                if (WaitWrite() && WaitRead())
+                {
+                    value = ReadIoPort(Port.Data);
+                    return true;
+                }
+            }
+        }
+
+        value = 0;
+        return false;
     }
 
-    private void WriteIOPort(Port port, byte datum)
+    protected bool WriteByteOp(byte register, byte value)
     {
-        Ring0.WriteIoPort((uint)port, datum);
+        if (WaitWrite())
+        {
+            WriteIoPort(Port.Command, (byte)Command.Write);
+            if (WaitWrite())
+            {
+                WriteIoPort(Port.Data, register);
+                if (WaitWrite())
+                {
+                    WriteIoPort(Port.Data, value);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public class BusMutexLockingFailedException : EmbeddedController.IOException
@@ -195,49 +243,4 @@ public class WindowsEmbeddedControllerIO : IEmbeddedControllerIO
         SciEventPending = 0x20, // SCI_EVT
         SmiEventPending = 0x40 // SMI_EVT
     }
-
-    #region Read/Write ops
-
-    protected bool ReadByteOp(byte register, out byte value)
-    {
-        if (WaitWrite())
-        {
-            WriteIOPort(Port.Command, (byte)Command.Read);
-
-            if (WaitWrite())
-            {
-                WriteIOPort(Port.Data, register);
-
-                if (WaitWrite() && WaitRead())
-                {
-                    value = ReadIOPort(Port.Data);
-                    return true;
-                }
-            }
-        }
-
-        value = 0;
-        return false;
-    }
-
-    protected bool WriteByteOp(byte register, byte value)
-    {
-        if (WaitWrite())
-        {
-            WriteIOPort(Port.Command, (byte)Command.Write);
-            if (WaitWrite())
-            {
-                WriteIOPort(Port.Data, register);
-                if (WaitWrite())
-                {
-                    WriteIOPort(Port.Data, value);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    #endregion
 }
