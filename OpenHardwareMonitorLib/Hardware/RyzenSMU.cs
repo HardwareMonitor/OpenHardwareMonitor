@@ -195,7 +195,7 @@ internal class RyzenSMU
             },
             0x1A => model switch
             {
-                >= 0x40 and <= 0x4F => CpuCodeName.GraniteRidge,
+                0x44 => CpuCodeName.GraniteRidge,
                 _ => CpuCodeName.Undefined
             },
             _ => CpuCodeName.Undefined
@@ -436,18 +436,11 @@ internal class RyzenSMU
                 switch (_pmTableVersion)
                 {
                     case 0x00540004:
-                    case 0x00540005:
                         _pmTableSize = 0x948;
                         break;
 
                     case 0x00540104:
-                    case 0x00540105:
                         _pmTableSize = 0x950;
-                        break;
-
-                    case 0x00540204:
-                    case 0x00540205:
-                        _pmTableSize = 0x958;
                         break;
 
                     default:
