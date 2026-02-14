@@ -29,9 +29,7 @@ internal class BatteryGroup : IGroup
                                      out uint stringSizeBytes,
                                      IntPtr.Zero))
         {
-            // Use the value stored in stringSizeBytes to avoid relying on a
-            // terminator char.
-            // See https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/pull/1158#issuecomment-1979559929
+            // Use the value stored in stringSizeBytes to avoid relying on a terminator char.
             int stringSizeChars = (int)stringSizeBytes / 2;
             value = Marshal.PtrToStringUni(ptrString, stringSizeChars).Trim('\0');
             result = true;
