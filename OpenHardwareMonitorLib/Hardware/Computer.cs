@@ -8,6 +8,7 @@ using OpenHardwareMonitor.Hardware.Controller.AeroCool;
 using OpenHardwareMonitor.Hardware.Controller.AquaComputer;
 using OpenHardwareMonitor.Hardware.Controller.Heatmaster;
 using OpenHardwareMonitor.Hardware.Controller.Arctic;
+using OpenHardwareMonitor.Hardware.Controller.MSI;
 using OpenHardwareMonitor.Hardware.Controller.Nzxt;
 using OpenHardwareMonitor.Hardware.Controller.Razer;
 using OpenHardwareMonitor.Hardware.Controller.TBalancer;
@@ -123,6 +124,7 @@ public class Computer : IComputer
                     Add(new NzxtGroup(_settings));
                     Add(new RazerGroup(_settings));
                     Add(new ArcticGroup(_settings));
+                    Add(new MsiGroup(_settings));
                 }
                 else
                 {
@@ -133,6 +135,7 @@ public class Computer : IComputer
                     RemoveType<NzxtGroup>();
                     RemoveType<RazerGroup>();
                     RemoveType<ArcticGroup>();
+                    RemoveType<MsiGroup>();
                 }
             }
 
@@ -548,6 +551,7 @@ public class Computer : IComputer
             Add(new NzxtGroup(_settings));
             Add(new RazerGroup(_settings));
             Add(new ArcticGroup(_settings));
+            Add(new MsiGroup(_settings));
         }
 
         if (_storageEnabled)
