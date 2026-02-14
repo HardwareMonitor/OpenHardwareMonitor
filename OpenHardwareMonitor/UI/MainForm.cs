@@ -441,7 +441,7 @@ public sealed partial class MainForm : Form
         FormClosed += CloseApplication;
         // Make sure the settings are saved when the user logs off
         Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
-        //Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
+        Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -471,16 +471,16 @@ public sealed partial class MainForm : Form
             _delayCount++;
     }
 
-    //private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
-    //{
-    //    if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || _computer.IsBatteryEnabled)
-    //    {
-    //        if (InvokeRequired)
-    //            Invoke(new MethodInvoker(() => ResetClick(sender, eventArgs)));
-    //        else
-    //            ResetClick(sender, eventArgs);
-    //    }
-    //}
+    private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
+    {
+        if (eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || _computer.IsBatteryEnabled)
+        {
+            if (InvokeRequired)
+                Invoke(new MethodInvoker(() => ResetClick(sender, eventArgs)));
+            else
+                ResetClick(sender, eventArgs);
+        }
+    }
 
     private void InitializeTheme()
     {
