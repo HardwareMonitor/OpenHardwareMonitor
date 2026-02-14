@@ -257,6 +257,7 @@ public sealed partial class MainForm : Form
         celsiusMenuItem.Checked= !fahrenheitMenuItem.Checked;
 
         Server = new HttpServer(_root,
+                                _computer,
                                 _settings.GetValue("listenerIp", "?"),
                                 _settings.GetValue("listenerPort", 8085),
                                 _settings.GetValue("authenticationEnabled", false),

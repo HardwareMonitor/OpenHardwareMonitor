@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
