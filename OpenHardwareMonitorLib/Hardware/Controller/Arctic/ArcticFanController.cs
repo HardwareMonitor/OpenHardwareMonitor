@@ -26,14 +26,14 @@ internal class ArcticFanController : Hardware
     private readonly System.Collections.Generic.List<Sensor> _rpmSensors = new();
     private readonly System.Collections.Generic.List<Sensor> _controlSensors = new();
 
-    public ArcticFanController(HidDevice dev, ISettings settings) : base("Arctic Fan Controller", new Identifier(dev), settings)
+    public ArcticFanController(HidDevice dev, ISettings settings) : base("ARCTIC Fan Controller", new Identifier(dev), settings)
     {
         if (dev.TryOpen(out HidStream hidStream))
         {
             // Create fan sensors (RPM monitoring) - all 10 fans have RPM feedback
             for (int i = 1; i <= CHANNEL_COUNT; i++)
             {
-                var fanSensor = new Sensor($"Arctic Controller Fan {i}", i, SensorType.Fan, this, settings);
+                var fanSensor = new Sensor($"Fan #{i}", i, SensorType.Fan, this, settings);
                 ActivateSensor(fanSensor);
                 _rpmSensors.Add(fanSensor);
             }
@@ -41,7 +41,7 @@ internal class ArcticFanController : Hardware
             // Create control sensors - all 10 fans can be controlled
             for (int i = 1; i <= CHANNEL_COUNT; i++)
             {
-                var controlSensor = new Sensor($"Arctic Controller Fan Control {i}", i, SensorType.Control, this, settings);
+                var controlSensor = new Sensor($"Control #{i}", i, SensorType.Control, this, settings);
                 Control control = new(controlSensor, settings, CONTROL_VALUE_MIN, CONTROL_VALUE_MAX);
                 control.ControlModeChanged += Control_ControlModeChanged;
                 control.SoftwareControlValueChanged += Control_SoftwareControlValueChanged;

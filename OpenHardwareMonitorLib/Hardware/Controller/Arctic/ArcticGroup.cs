@@ -16,7 +16,7 @@ internal class ArcticGroup : IGroup
 
     public ArcticGroup(ISettings settings)
     {
-        _report.AppendLine("Arctic Hardware");
+        _report.AppendLine("ARCTIC Hardware");
         _report.AppendLine();
         try
         {
@@ -26,12 +26,12 @@ internal class ArcticGroup : IGroup
             if (hidDevice != null)
             {
                 _hardware.Add(new ArcticFanController(hidDevice, settings));
-                _report.AppendLine("Arctic Fan Controller initialized successfully");
+                _report.AppendLine("ARCTIC Fan Controller initialized successfully");
             }
         }
         catch (Exception ex)
         {
-            _report.AppendLine($"Arctic Fan Controller Plugin initialization failed: {ex.Message}");
+            _report.AppendLine($"ARCTIC Fan Controller Plugin initialization failed: {ex.Message}");
         }
     }
 
