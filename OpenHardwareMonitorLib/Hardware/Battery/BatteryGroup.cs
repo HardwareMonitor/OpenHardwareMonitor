@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHardwareMonitor.Interop;
@@ -101,8 +100,7 @@ internal class BatteryGroup : IGroup
                                                              ref bqi.BatteryTag,
                                                              Marshal.SizeOf(bqi.BatteryTag),
                                                              out _,
-                                                             IntPtr.Zero)
-                                    && _hardware.All(x => x.BatteryTag != bqi.BatteryTag))
+                                                             IntPtr.Zero))
                                 {
                                     Kernel32.BATTERY_INFORMATION bi = default;
                                     bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryInformation;
@@ -127,10 +125,6 @@ internal class BatteryGroup : IGroup
                                             _hardware.Add(new Battery(batteryName, manufacturer, battery, bi, bqi.BatteryTag, settings));
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    battery.Close();
                                 }
                             }
                         }

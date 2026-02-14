@@ -66,7 +66,7 @@ public abstract class Hardware : IHardware
     /// <inheritdoc />
     public virtual ISensor[] Sensors
     {
-        get { return _active.ToArray(); }
+        get { lock(_active) return [.. _active]; }
     }
 
     /// <inheritdoc />
@@ -96,6 +96,7 @@ public abstract class Hardware : IHardware
     /// <inheritdoc />
     public virtual void Traverse(IVisitor visitor)
     {
+        lock (_active)
         foreach (ISensor sensor in _active)
             sensor.Accept(visitor);
     }
@@ -103,15 +104,15 @@ public abstract class Hardware : IHardware
     /// <inheritdoc />
     protected virtual void ActivateSensor(ISensor sensor)
     {
-        if (_active.Add(sensor))
-            SensorAdded?.Invoke(sensor);
+        lock (_active) if (!_active.Add(sensor)) return;
+        SensorAdded?.Invoke(sensor);
     }
 
     /// <inheritdoc />
     protected virtual void DeactivateSensor(ISensor sensor)
     {
-        if (_active.Remove(sensor))
-            SensorRemoved?.Invoke(sensor);
+        lock (_active) if (!_active.Remove(sensor)) return;
+        SensorRemoved?.Invoke(sensor);
     }
 
     /// <inheritdoc />

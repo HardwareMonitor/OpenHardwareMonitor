@@ -19,6 +19,7 @@ public class HardwareNode : Node, IExpandPersistNode
         Hardware = hardware;
         Image = HardwareTypeImage.Instance.GetImage(hardware.HardwareType);
 
+        lock (_typeNodes)
         foreach (SensorType sensorType in Enum.GetValues(typeof(SensorType)))
             _typeNodes.Add(new TypeNode(sensorType, hardware.Identifier, _settings));
 
@@ -94,6 +95,7 @@ public class HardwareNode : Node, IExpandPersistNode
 
     private void SensorRemoved(ISensor sensor)
     {
+        lock (_typeNodes)
         foreach (TypeNode typeNode in _typeNodes)
         {
             if (typeNode.SensorType == sensor.SensorType)
@@ -125,6 +127,7 @@ public class HardwareNode : Node, IExpandPersistNode
 
     private void SensorAdded(ISensor sensor)
     {
+        lock(_typeNodes)
         foreach (TypeNode typeNode in _typeNodes)
         {
             if (typeNode.SensorType == sensor.SensorType)

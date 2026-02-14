@@ -68,7 +68,7 @@ public class Computer : IComputer
     public event HardwareEventHandler HardwareRemoved;
 
     /// <inheritdoc />
-    public IList<IHardware> Hardware
+    public IReadOnlyList<IHardware> Hardware
     {
         get
         {

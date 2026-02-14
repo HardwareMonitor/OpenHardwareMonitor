@@ -14,6 +14,7 @@ internal class Parameter : IParameter
     {
         Sensor = sensor;
         _description = description;
+        Identifier = new Identifier(Sensor.Identifier, "parameter", Name.Replace(" ", string.Empty).ToLowerInvariant());
         _settings = settings;
         _isDefault = !settings.Contains(Identifier.ToString());
         _value = description.DefaultValue;
@@ -33,10 +34,7 @@ internal class Parameter : IParameter
         get { return _description.Description; }
     }
 
-    public Identifier Identifier
-    {
-        get { return new Identifier(Sensor.Identifier, "parameter", Name.Replace(" ", string.Empty).ToLowerInvariant()); }
-    }
+    public Identifier Identifier { get; private set; }
 
     public bool IsDefault
     {

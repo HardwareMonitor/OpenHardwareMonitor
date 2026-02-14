@@ -332,7 +332,8 @@ public class SensorGadget : Gadget
 
     public bool Contains(ISensor sensor)
     {
-        return _sensors.Values.Any(list => list.Contains(sensor));
+        lock(_sensors)
+        return _sensors.Values.Any(list => list.Any(x => x.Identifier.ToString() == sensor.Identifier.ToString()));
     }
 
     public bool Add(ISensor sensor)
@@ -346,6 +347,8 @@ public class SensorGadget : Gadget
             hardware = hardware.Parent;
 
         // get the sensor list associated with the hardware
+        lock (_sensors)
+        {
         if (!_sensors.TryGetValue(hardware, out IList<ISensor> list))
         {
             list = new List<ISensor>();
@@ -358,6 +361,7 @@ public class SensorGadget : Gadget
             i++;
 
         list.Insert(i, sensor);
+        }
 
         _settings.SetValue(new Identifier(sensor.Identifier, "gadget").ToString(), true);
         Resize();
@@ -374,11 +378,11 @@ public class SensorGadget : Gadget
         if (deleteConfig)
             _settings.Remove(new Identifier(sensor.Identifier, "gadget").ToString());
 
+        lock (_sensors)
         foreach (KeyValuePair<IHardware, IList<ISensor>> keyValue in _sensors)
         {
-            if (keyValue.Value.Contains(sensor))
+            if (keyValue.Value.Remove(sensor))
             {
-                keyValue.Value.Remove(sensor);
                 if (keyValue.Value.Count == 0)
                 {
                     _sensors.Remove(keyValue.Key);
@@ -446,6 +450,7 @@ public class SensorGadget : Gadget
     {
         int y = _topMargin;
 
+        lock (_sensors)
         foreach (KeyValuePair<IHardware, IList<ISensor>> pair in _sensors)
         {
             if (_hardwareNames.Value)
@@ -563,6 +568,7 @@ public class SensorGadget : Gadget
                              new Rectangle(x, y - 1, w - RightBorder - x, 0));
             }
 
+            lock (_sensors)
             foreach (KeyValuePair<IHardware, IList<ISensor>> pair in _sensors)
             {
                 if (_hardwareNames.Value)

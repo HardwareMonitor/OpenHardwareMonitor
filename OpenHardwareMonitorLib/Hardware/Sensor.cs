@@ -40,6 +40,7 @@ internal class Sensor : ISensor
         IsDefaultHidden = defaultHidden;
         SensorType = sensorType;
         _hardware = hardware;
+        Identifier = new Identifier(_hardware.Identifier, SensorType.ToString().ToLowerInvariant(), Index.ToString(CultureInfo.InvariantCulture));
 
         Parameter[] parameters = new Parameter[parameterDescriptions?.Length ?? 0];
         for (int i = 0; i < parameters.Length; i++)
@@ -67,10 +68,7 @@ internal class Sensor : ISensor
         get { return _hardware; }
     }
 
-    public Identifier Identifier
-    {
-        get { return new Identifier(_hardware.Identifier, SensorType.ToString().ToLowerInvariant(), Index.ToString(CultureInfo.InvariantCulture)); }
-    }
+    public Identifier Identifier { get; internal set; }
 
     public int Index { get; }
 

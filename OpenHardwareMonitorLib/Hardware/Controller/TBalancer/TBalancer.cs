@@ -90,12 +90,14 @@ internal class TBalancer : Hardware
 
     protected override void ActivateSensor(ISensor sensor)
     {
+        lock (_active)
         _deactivating.Remove(sensor);
         base.ActivateSensor(sensor);
     }
 
     protected override void DeactivateSensor(ISensor sensor)
     {
+        lock (_active)
         if (_deactivating.Contains(sensor))
         {
             _deactivating.Remove(sensor);

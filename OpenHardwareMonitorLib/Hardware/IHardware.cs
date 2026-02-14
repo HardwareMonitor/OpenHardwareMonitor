@@ -43,7 +43,7 @@ public interface IHardware : IElement
     ISensor[] Sensors { get; }
 
     /// <summary>
-    /// Gets child devices, e.g. <see cref="OpenHardwareMonitor.Hardware.Motherboard.Lpc.LpcIO"/> of the <see cref="OpenHardwareMonitor.Hardware.Motherboard.Motherboard"/>.
+    /// Gets child devices, e.g. <see cref="Motherboard.Lpc.LpcIO"/> of the <see cref="Motherboard.Motherboard"/>.
     /// </summary>
     IHardware[] SubHardware { get; }
 

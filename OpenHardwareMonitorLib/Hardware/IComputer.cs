@@ -28,7 +28,7 @@ public interface IComputer : IElement
     /// <para>Can be updated by <see cref="IVisitor" />.</para>
     /// </summary>
     /// <returns>List of all enabled devices.</returns>
-    IList<IHardware> Hardware { get; }
+    IReadOnlyList<IHardware> Hardware { get; }
 
     /// <summary>
     /// Gets or sets a value indicating whether collecting information about <see cref="HardwareType.Battery" /> devices should be enabled and updated.

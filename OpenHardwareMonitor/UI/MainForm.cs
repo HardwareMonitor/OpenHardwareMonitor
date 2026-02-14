@@ -511,14 +511,15 @@ public sealed partial class MainForm : Form
     private void InsertSorted(IList<Node> nodes, HardwareNode node)
     {
         int i = 0;
-        while (i < nodes.Count && nodes[i] is HardwareNode && ((HardwareNode)nodes[i]).Hardware.HardwareType <= node.Hardware.HardwareType)
+        while (i < nodes.Count && nodes[i] is HardwareNode hNode && hNode.Hardware.HardwareType <= node.Hardware.HardwareType)
             i++;
-
         nodes.Insert(i, node);
     }
 
     private void SubHardwareAdded(IHardware hardware, Node node)
     {
+        if (node.Nodes.Any(x => x is HardwareNode hNode && hNode.Hardware.Identifier.ToString() == hardware.Identifier.ToString()))
+            return;
         HardwareNode hardwareNode = new(hardware, _settings);
         InsertSorted(node.Nodes, hardwareNode);
         foreach (IHardware subHardware in hardware.SubHardware)
@@ -711,7 +712,7 @@ public sealed partial class MainForm : Form
         }
         else if (e.KeyCode == Keys.T && e.Control)
         {
-            if (!_systemTray.Add(sensorNode.Sensor))
+            if (!_systemTray.Add(sensorNode.Sensor, false))
                 _systemTray.Remove(sensorNode.Sensor);
             e.Handled = true;
         }
