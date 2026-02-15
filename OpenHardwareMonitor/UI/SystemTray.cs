@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
 using OpenHardwareMonitor.Utilities;
@@ -9,7 +10,7 @@ namespace OpenHardwareMonitor.UI;
 public class SystemTray : IDisposable
 {
     private readonly PersistentSettings _settings;
-    private readonly ConcurrentDictionary<string, SensorNotifyIcon> _sensorList = new();
+    private readonly List<SensorNotifyIcon> _sensorList = new();
     private bool _mainIconEnabled;
     private readonly NotifyIconAdv _mainIcon;
 
@@ -82,30 +83,32 @@ public class SystemTray : IDisposable
 
     public void Dispose()
     {
-        foreach (SensorNotifyIcon icon in _sensorList.Values)
+        lock(_sensorList)
+        foreach (SensorNotifyIcon icon in _sensorList)
             icon.Dispose();
         _mainIcon.Dispose();
     }
 
     public void Redraw()
     {
-        foreach (SensorNotifyIcon icon in _sensorList.Values)
+        lock(_sensorList)
+        foreach (SensorNotifyIcon icon in _sensorList)
             icon.Update();
     }
 
-    public bool Contains(ISensor sensor) => _sensorList.ContainsKey(sensor.Identifier.ToString());
+    public bool Contains(ISensor sensor)
+    {
+        lock(_sensorList)
+            return _sensorList.Any(x => x.Sensor.Identifier.ToString() == sensor.Identifier.ToString());
+    }
 
-    public bool Add(ISensor sensor, bool replaceExisting = true)
+    public bool Add(ISensor sensor)
     {
         if (Contains(sensor))
-        {
-            if (replaceExisting)
-                Remove(sensor);
-            else
-                return false;
-        }
+            return false;
 
-        _sensorList[sensor.Identifier.ToString()] = new SensorNotifyIcon(this, sensor, _settings);
+        lock (_sensorList)
+        _sensorList.Add(new SensorNotifyIcon(this, sensor, _settings));
         UpdateMainIconVisibility();
         _settings.SetValue(new Identifier(sensor.Identifier, "tray").ToString(), true);
         return true;
@@ -123,10 +126,17 @@ public class SystemTray : IDisposable
             _settings.Remove(new Identifier(sensor.Identifier, "tray").ToString());
             _settings.Remove(new Identifier(sensor.Identifier, "traycolor").ToString());
         }
-        if (_sensorList.TryRemove(sensor.Identifier.ToString(), out SensorNotifyIcon instance))
+
+        lock (_sensorList)
         {
-            UpdateMainIconVisibility();
-            instance.Dispose();
+            var toRemove = _sensorList.Where(s => s.Sensor.Identifier.ToString() == sensor.Identifier.ToString())
+                .ToArray();
+            foreach (var instance in toRemove)
+            {
+                _sensorList.Remove(instance);
+                UpdateMainIconVisibility();
+                instance.Dispose();
+            }
         }
     }
 
@@ -147,6 +157,7 @@ public class SystemTray : IDisposable
     private void UpdateMainIconVisibility()
     {
         if (_mainIconEnabled)
+            lock (_sensorList)
             _mainIcon.Visible = _sensorList.Count == 0;
         else
             _mainIcon.Visible = false;

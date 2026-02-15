@@ -713,7 +713,7 @@ public sealed partial class MainForm : Form
         }
         else if (e.KeyCode == Keys.T && e.Control)
         {
-            if (!_systemTray.Add(sensorNode.Sensor, false))
+            if (!_systemTray.Add(sensorNode.Sensor))
                 _systemTray.Remove(sensorNode.Sensor);
             e.Handled = true;
         }
