@@ -42,6 +42,7 @@ public sealed partial class MainForm : Form
     private readonly UserRadioGroup _sensorValuesTimeWindow;
     private readonly PersistentSettings _settings;
     private readonly UserOption _showGadget;
+    private readonly UserOption _hideMenu;
     private readonly StartupManager _startupManager = new();
     private readonly SystemTray _systemTray;
     private readonly UpdateVisitor _updateVisitor = new();
@@ -252,6 +253,14 @@ public sealed partial class MainForm : Form
                 _gadget.Visible = _showGadget.Value;
         };
 
+        _hideMenu = new UserOption("hideMenuMenuItem", false, hideMenuMenuItem, _settings);
+        _hideMenu.Changed += delegate
+        {
+            mainMenu.Visible = !_hideMenu.Value;
+        };
+        mainMenu.LostFocus += (_, _) => { if (_hideMenu.Value) mainMenu.Visible = false; };
+        KeyPreview = true;
+
         UnitManager.IsFahrenheitUsed = _settings.GetValue("TemperatureInFahrenheit", UnitManager.IsFahrenheitUsed);
         fahrenheitMenuItem.Checked = UnitManager.IsFahrenheitUsed;
         celsiusMenuItem.Checked= !fahrenheitMenuItem.Checked;
@@ -443,6 +452,18 @@ public sealed partial class MainForm : Form
         // Make sure the settings are saved when the user logs off
         Microsoft.Win32.SystemEvents.SessionEnded += (_, _) => CloseApplication(null, EventArgs.Empty);
         Microsoft.Win32.SystemEvents.PowerModeChanged += PowerModeChanged;
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData.HasFlag(Keys.Alt) && _hideMenu.Value)
+        {
+            mainMenu.Visible = !mainMenu.Visible;
+            mainMenu.Focus();
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)

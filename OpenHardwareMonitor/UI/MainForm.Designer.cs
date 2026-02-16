@@ -62,6 +62,7 @@ namespace OpenHardwareMonitor.UI
       this.collpaseAllNodesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.hiddenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gadgetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.hideMenuMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.columnsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.valueMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.minMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -349,6 +350,7 @@ namespace OpenHardwareMonitor.UI
       this.viewMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hiddenMenuItem,
             this.gadgetMenuItem,
+            this.hideMenuMenuItem,
             this.separatorMenuItem,
             this.themeMenuItem,
             this.temperatureUnitsMenuItem,
@@ -394,6 +396,12 @@ namespace OpenHardwareMonitor.UI
       this.gadgetMenuItem.Name = "gadgetMenuItem";
       this.gadgetMenuItem.Size = new System.Drawing.Size(188, 22);
       this.gadgetMenuItem.Text = "Show Gadget";
+      //
+      // hideMenuMenuItem
+      //
+      this.hideMenuMenuItem.Name = "hideMenuMenuItem";
+      this.hideMenuMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.hideMenuMenuItem.Text = "Hide Menu";
       //
       // columnsMenuItem
       //
@@ -1015,6 +1023,7 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem expandAllNodesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem collpaseAllNodesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gadgetMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideMenuMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minCloseMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetMenuItem;
         private System.Windows.Forms.ToolStripSeparator menuItem6;
