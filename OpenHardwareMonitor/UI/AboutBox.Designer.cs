@@ -34,7 +34,6 @@ namespace OpenHardwareMonitor.UI
             this.lblVersion = new System.Windows.Forms.Label();
             this.projectLinkLabel = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.licenseLinkLabel = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize) (this.picLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,7 +87,7 @@ namespace OpenHardwareMonitor.UI
             // projectLinkLabel
             // 
             this.projectLinkLabel.AutoSize = true;
-            this.projectLinkLabel.Location = new System.Drawing.Point(164, 80);
+            this.projectLinkLabel.Location = new System.Drawing.Point(74, 80);
             this.projectLinkLabel.Margin = new System.Windows.Forms.Padding(0);
             this.projectLinkLabel.Name = "projectLinkLabel";
             this.projectLinkLabel.Size = new System.Drawing.Size(82, 13);
@@ -107,18 +106,6 @@ namespace OpenHardwareMonitor.UI
             this.flowLayoutPanel1.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel1.TabIndex = 8;
             // 
-            // licenseLinkLabel
-            // 
-            this.licenseLinkLabel.AutoSize = true;
-            this.licenseLinkLabel.Location = new System.Drawing.Point(25, 80);
-            this.licenseLinkLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.licenseLinkLabel.Name = "licenseLinkLabel";
-            this.licenseLinkLabel.Size = new System.Drawing.Size(107, 13);
-            this.licenseLinkLabel.TabIndex = 9;
-            this.licenseLinkLabel.TabStop = true;
-            this.licenseLinkLabel.Text = "Licensing Information";
-            this.licenseLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-            // 
             // AboutBox
             // 
             this.AcceptButton = this.okButton;
@@ -127,7 +114,6 @@ namespace OpenHardwareMonitor.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(359, 115);
-            this.Controls.Add(this.licenseLinkLabel);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.projectLinkLabel);
             this.Controls.Add(this.lblVersion);
@@ -156,6 +142,5 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.LinkLabel projectLinkLabel;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.LinkLabel licenseLinkLabel;
     }
 }
