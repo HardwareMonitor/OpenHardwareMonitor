@@ -10,7 +10,7 @@ public partial class InterfacePortForm : Form
 {
     private readonly MainForm _parent;
     private string _localIP;
-    
+
     public InterfacePortForm(MainForm m)
     {
         InitializeComponent();
@@ -22,16 +22,15 @@ public partial class InterfacePortForm : Form
 
     private string LoadNetworkInterfaces(string selectedListenerIp)
     {
-        IPHostEntry host;
         interfaceComboBox.Items.Clear();
-        host = Dns.GetHostEntry(Dns.GetHostName());
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
         foreach (IPAddress ip in host.AddressList)
         {
             if (ip.AddressFamily == AddressFamily.InterNetwork)
                 interfaceComboBox.Items.Add(ip.ToString());
         }
 
-        interfaceComboBox.Items.Add("0.0.0.0");
+        interfaceComboBox.Items.Add("localhost");
 
         // select the last one by default to match the existing behavior
         if (interfaceComboBox.Items.Count > 0)
