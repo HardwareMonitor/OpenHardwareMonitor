@@ -7,14 +7,20 @@ on:
 jobs:
   build:
     runs-on: windows-2022
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: nuget/setup-nuget@v2
-      - uses: microsoft/setup-msbuild@v1.1
+      - uses: actions/checkout@v5
+
+      - uses: nuget/setup-nuget@v3
+
+      - uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
 
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -28,15 +34,13 @@ jobs:
         run: msbuild OpenHardwareMonitor.sln -p:Configuration=Release -p:Platform="Any CPU" -m
 
       - name: Publish build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: OpenHardwareMonitor
-          path: |
-            OpenHardwareMonitor/bin
+          path: OpenHardwareMonitor/bin
 
       - name: Publish Lib build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: OpenHardwareMonitorLib
-          path: |
-            OpenHardwareMonitorLib/bin
+          path: OpenHardwareMonitorLib/bin
