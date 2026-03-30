@@ -199,7 +199,7 @@ public class HttpServer
     {
         if (node is SensorNode sNode)
         {
-            if (sNode.Sensor.Identifier.ToString() == id)
+            if (HttpUtility.UrlDecode(sNode.Sensor.Identifier.ToString()) == HttpUtility.UrlDecode(id))
                 return sNode;
         }
 
