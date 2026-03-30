@@ -116,16 +116,8 @@
             // portNumericUpDn
             // 
             this.portNumericUpDn.Location = new System.Drawing.Point(208, 32);
-            this.portNumericUpDn.Maximum = new decimal(new int[] {
-            20000,
-            0,
-            0,
-            0});
-            this.portNumericUpDn.Minimum = new decimal(new int[] {
-            8080,
-            0,
-            0,
-            0});
+            this.portNumericUpDn.Maximum = 65535;
+            this.portNumericUpDn.Minimum = 1;
             this.portNumericUpDn.Name = "portNumericUpDn";
             this.portNumericUpDn.Size = new System.Drawing.Size(75, 20);
             this.portNumericUpDn.TabIndex = 8;

@@ -57,7 +57,13 @@ public partial class InterfacePortForm : Form
 
     private void PortOKButton_Click(object sender, EventArgs e)
     {
-        _parent.Server.ListenerPort = (int)portNumericUpDn.Value;
+        var port = (int)portNumericUpDn.Value;
+        if (port < 1024)
+        {
+            MessageBox.Show("Port must be greater than 1024.", Updater.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+        _parent.Server.ListenerPort = port;
         _parent.Server.ListenerIp = _localIP;
         Close();
     }
