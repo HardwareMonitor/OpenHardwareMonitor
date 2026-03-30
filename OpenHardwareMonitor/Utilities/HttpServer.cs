@@ -251,21 +251,21 @@ public class HttpServer
     {
         IDictionary<string, string> dict = ToDictionary(HttpUtility.ParseQueryString(request.Url.Query));
 
-        if (dict.ContainsKey("action"))
+        if (dict.TryGetValue("action", out string action))
         {
-            if (dict.ContainsKey("id"))
+            if (dict.TryGetValue("id", out string identifier))
             {
-                SensorNode sNode = FindSensor(_root, dict["id"])
-                    ?? throw new ArgumentException("Unknown id " + dict["id"] + " specified");
-                if (dict["action"] == "ResetMinMax")
+                SensorNode sNode = FindSensor(_root, identifier)
+                    ?? throw new ArgumentException("Unknown id " + identifier + " specified");
+                if (action == "ResetMinMax")
                 {
                     // Reset Min/Max, then return Sensor values...
                     sNode.Sensor.ResetMin();
                     sNode.Sensor.ResetMax();
-                    dict["action"] = "Get";
+                    action = "Get";
                 }
 
-                switch (dict["action"])
+                switch (action)
                 {
                     case "Set" when dict.ContainsKey("value"):
                         SetSensorControlValue(sNode, dict["value"]);
@@ -279,7 +279,7 @@ public class HttpServer
                         result["format"] = sNode.Format;
                         break;
                     default:
-                        throw new ArgumentException("Unknown action type " + dict["action"]);
+                        throw new ArgumentException("Unknown action type " + action);
                 }
             }
             else
@@ -341,6 +341,8 @@ public class HttpServer
             }
         }
 
+        try
+        {
         if (authenticated)
         {
             switch (request.HttpMethod)
@@ -422,8 +424,15 @@ public class HttpServer
             await SendResponseAsync(context.Response, responseString, "text/html");
         }
 
-        try
+        context.Response.Close();
+        }
+        catch(ArgumentException ex)
         {
+            context.Response.StatusCode = 400;
+            string responseString = @$"<HTML><HEAD><TITLE>400 Bad Request</TITLE></HEAD>
+    <BODY><H4>400 Bad Request</H4>
+    {ex.Message}</BODY></HTML> ";
+            await SendResponseAsync(context.Response, responseString, "text/html");
             context.Response.Close();
         }
         catch
@@ -431,6 +440,7 @@ public class HttpServer
             // client closed connection before the content was sent
         }
     }
+
     private async Task ServeResourceFileAsync(HttpListenerResponse response, string name, string ext)
     {
         // resource names do not support the hyphen
