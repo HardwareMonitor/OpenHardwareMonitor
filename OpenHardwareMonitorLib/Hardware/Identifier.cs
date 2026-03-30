@@ -89,8 +89,26 @@ public class Identifier : IComparable<Identifier>
         for (int i = 0; i < identifiers.Length; i++)
         {
             string s = identifiers[i];
-            identifiers[i] = Uri.EscapeDataString(identifiers[i]);
+            if (string.IsNullOrEmpty(s))
+                continue;
+
+            var sb = new StringBuilder(s.Length);
+            foreach (char c in s)
+            {
+                if (IsUnreserved(c))
+                    sb.Append(c);
+            }
+            identifiers[i] = sb.ToString();
         }
+    }
+
+    private static bool IsUnreserved(char c)
+    {
+        return
+            (c >= 'A' && c <= 'Z') ||
+            (c >= 'a' && c <= 'z') ||
+            (c >= '0' && c <= '9') ||
+            c == '-' || c == '_';// || c == '.' || c == '~';
     }
 
     /// <inheritdoc />
