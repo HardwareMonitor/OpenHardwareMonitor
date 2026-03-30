@@ -122,7 +122,7 @@
             0,
             0});
             this.portNumericUpDn.Minimum = new decimal(new int[] {
-            8080,
+            1,
             0,
             0,
             0});
