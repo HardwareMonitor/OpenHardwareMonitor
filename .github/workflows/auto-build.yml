@@ -4,6 +4,9 @@ on:
   push:
     branches: [master]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-2022
@@ -36,9 +39,6 @@ jobs:
           msbuild OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform="x86"
           msbuild OpenHardwareMonitor.sln /t:Rebuild /p:Configuration=Release /p:Platform="x86" -m
 
-      - name: Debug release files
-        run: dir OpenHardwareMonitor/bin
-
       - name: Publish build
         uses: actions/upload-artifact@v5
         with:
@@ -63,8 +63,6 @@ jobs:
           }
         shell: powershell
 
-      - name: Debug release files with archives
-        run: dir OpenHardwareMonitor/bin
 
       - name: Get version from exe
         id: get_version
