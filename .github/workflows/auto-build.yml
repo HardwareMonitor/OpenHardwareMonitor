@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: windows-2022
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      # FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - uses: actions/checkout@v5
