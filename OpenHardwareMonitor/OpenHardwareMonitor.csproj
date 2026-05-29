@@ -65,11 +65,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Obfuscar">
-      <Version>2.2.50</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+<!--    <PackageReference Include="Obfuscar">-->
+<!--      <Version>2.2.50</Version>-->
+<!--      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
+<!--      <PrivateAssets>all</PrivateAssets>-->
+<!--    </PackageReference>-->
 <!--    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />-->
   </ItemGroup>
   <ItemGroup>
@@ -122,18 +122,18 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release'">
     <Exec Command="for %%f in ($(OutDir)\*) do if not %%~xf==.exe del /S /Q &quot;%%f&quot;" />
   </Target>
-  <Target Name="GenerateObfuscarConfig" AfterTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'ReleaseLite' ">
-    <WriteLinesToFile File="$(TargetDir)obfuscar.xml" Overwrite="true" Lines="
-&lt;?xml version='1.0' encoding='utf-8' ?&gt;
-&lt;Obfuscator&gt;
-  &lt;Var name='InPath' value='$(TargetDir)' /&gt;
-  &lt;Var name='OutPath' value='.\Obfuscated' /&gt;
-  &lt;Var name='HidePrivateApi' value='true' /&gt;
-  &lt;Module file='$(TargetDir)$(TargetFileName)' /&gt;
-&lt;/Obfuscator&gt;
-" />
-  </Target>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' OR '$(Configuration)' == 'ReleaseLite' ">
-    <PostBuildEvent>$(Obfuscar) obfuscar.xml</PostBuildEvent>
-  </PropertyGroup>
+<!--  <Target Name="GenerateObfuscarConfig" AfterTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'ReleaseLite' ">-->
+<!--    <WriteLinesToFile File="$(TargetDir)obfuscar.xml" Overwrite="true" Lines="-->
+<!--&lt;?xml version='1.0' encoding='utf-8' ?&gt;-->
+<!--&lt;Obfuscator&gt;-->
+<!--  &lt;Var name='InPath' value='$(TargetDir)' /&gt;-->
+<!--  &lt;Var name='OutPath' value='.\Obfuscated' /&gt;-->
+<!--  &lt;Var name='HidePrivateApi' value='true' /&gt;-->
+<!--  &lt;Module file='$(TargetDir)$(TargetFileName)' /&gt;-->
+<!--&lt;/Obfuscator&gt;-->
+<!--" />-->
+<!--  </Target>-->
+<!--  <PropertyGroup Condition=" '$(Configuration)' == 'Release' OR '$(Configuration)' == 'ReleaseLite' ">-->
+<!--    <PostBuildEvent>$(Obfuscar) obfuscar.xml</PostBuildEvent>-->
+<!--  </PropertyGroup>-->
 </Project>
