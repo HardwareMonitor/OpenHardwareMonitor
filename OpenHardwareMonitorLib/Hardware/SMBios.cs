@@ -1154,7 +1154,7 @@ public class SMBios
     /// </summary>
     public SMBios()
     {
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             _raw = null;
 

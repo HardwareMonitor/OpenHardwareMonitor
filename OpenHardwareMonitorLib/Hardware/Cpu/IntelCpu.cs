@@ -229,11 +229,11 @@ internal sealed class IntelCpu : GenericCpu
                             _microArchitecture = MicroArchitecture.LunarLake;
                             tjMax = GetTjMaxFromMsr();
                             break;
-                        case 0x8F: // Intel Xeon W5-3435X // SapphireRapids 
+                        case 0x8F: // Intel Xeon W5-3435X // SapphireRapids
                             _microArchitecture = MicroArchitecture.SapphireRapids;
                             tjMax = GetTjMaxFromMsr();
                             break;
-                        case 0x96: // Intel Celeron ElkhartLake 
+                        case 0x96: // Intel Celeron ElkhartLake
                             _microArchitecture = MicroArchitecture.ElkhartLake;
                             tjMax = GetTjMaxFromMsr();
                             break;
@@ -480,7 +480,7 @@ internal sealed class IntelCpu : GenericCpu
                         continue;
 
                     // Don't show the "GPU Graphics" sensor on windows, it will show up under the GPU instead.
-                    if (i == 2 && !OperatingSystemHelper.IsUnix)
+                    if (i == 2 && !OSHelper.IsUnix)
                         continue;
 
                     _lastEnergyTime[i] = DateTime.UtcNow;

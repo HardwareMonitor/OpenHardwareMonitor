@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public class UserRadioGroup
+internal class UserRadioGroup
 {
     private readonly string _name;
     private int _value;

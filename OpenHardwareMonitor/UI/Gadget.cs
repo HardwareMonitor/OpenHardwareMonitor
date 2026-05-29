@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace OpenHardwareMonitor.UI;
 
-public abstract class Gadget : IDisposable
+internal abstract class Gadget : IDisposable
 {
     private readonly GadgetWindow _window;
 

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenHardwareMonitor.Utilities
+﻿namespace OpenHardwareMonitor.Utilities
 {
-    public enum LoggerFileRotation
+    internal enum LoggerFileRotation
     {
         // Keep the same file for the entire record session
         PerSession = 0,

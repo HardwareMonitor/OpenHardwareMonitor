@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public class UserOption
+internal class UserOption
 {
     private readonly string _name;
     private bool _value;

@@ -3,7 +3,7 @@ using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public sealed class TypeNode : Node, IExpandPersistNode
+internal sealed class TypeNode : Node, IExpandPersistNode
 {
     private readonly PersistentSettings _settings;
     private readonly string _expandedIdentifier;

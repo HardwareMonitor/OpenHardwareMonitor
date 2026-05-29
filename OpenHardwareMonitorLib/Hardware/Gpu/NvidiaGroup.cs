@@ -28,7 +28,7 @@ internal class NvidiaGroup : IGroup, IHardwareChanged
         _report.AppendLine("NvApi");
         _report.AppendLine();
 
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             _report.AppendLine("Status: Not supported on Unix for NvApi group");
             _report.AppendLine();

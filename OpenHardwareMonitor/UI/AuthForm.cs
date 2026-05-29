@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace OpenHardwareMonitor.UI;
 
-public partial class AuthForm : Form
+internal partial class AuthForm : Form
 {
     private readonly MainForm _parent;
 

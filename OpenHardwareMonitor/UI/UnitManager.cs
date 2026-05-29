@@ -1,8 +1,8 @@
 ﻿namespace OpenHardwareMonitor.UI;
 
-public static class UnitManager
+internal static class UnitManager
 {
-    public static bool IsFahrenheitUsed { get; set; } = !OperatingSystemHelper.IsMetricSystemUsed;
+    public static bool IsFahrenheitUsed { get; set; } = !OSHelper.IsMetricSystemUsed;
 
     public static float? CelsiusToFahrenheit(float? valueInCelsius)
     {

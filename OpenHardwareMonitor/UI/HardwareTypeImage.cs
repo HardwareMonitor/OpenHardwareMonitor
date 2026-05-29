@@ -4,7 +4,7 @@ using OpenHardwareMonitor.Hardware;
 
 namespace OpenHardwareMonitor.UI;
 
-public class HardwareTypeImage
+internal class HardwareTypeImage
 {
     private readonly IDictionary<HardwareType, Image> _images = new Dictionary<HardwareType, Image>();
 
@@ -16,7 +16,6 @@ public class HardwareTypeImage
     {
         if (_images.TryGetValue(hardwareType, out Image image))
             return image;
-
 
         switch (hardwareType)
         {

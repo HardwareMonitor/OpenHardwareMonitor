@@ -128,7 +128,7 @@ internal sealed class Amd10Cpu : AmdCpu
         // the file reader for lm-sensors support on Linux
         _temperatureStream = null;
 
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             foreach (string path in Directory.GetDirectories("/sys/class/hwmon/"))
             {

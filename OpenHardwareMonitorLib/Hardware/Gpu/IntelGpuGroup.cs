@@ -14,7 +14,7 @@ internal class IntelGpuGroup : IGroup
 
     public IntelGpuGroup(List<IntelCpu> intelCpus, ISettings settings)
     {
-        if (!OperatingSystemHelper.IsUnix)
+        if (!OSHelper.IsUnix)
         {
             // Initialize Intel GCL for discrete GPUs
             bool gclInitialized = false;

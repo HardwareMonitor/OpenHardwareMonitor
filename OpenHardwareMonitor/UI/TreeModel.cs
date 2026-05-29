@@ -7,7 +7,7 @@ using Aga.Controls.Tree;
 
 namespace OpenHardwareMonitor.UI;
 
-public class TreeModel : ITreeModel
+internal class TreeModel : ITreeModel
 {
     private readonly Node _root;
     private bool _forceVisible;

@@ -7,7 +7,7 @@ using OpenHardwareMonitor.Hardware;
 
 namespace OpenHardwareMonitor.Utilities;
 
-public class Logger
+internal class Logger
 {
     private const string FileNameFormat = "OpenHardwareMonitorLog-{0:yyyy-MM-dd}{1}.csv";
 

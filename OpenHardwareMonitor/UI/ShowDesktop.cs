@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace OpenHardwareMonitor.UI;
 
-public class ShowDesktop : IDisposable
+internal class ShowDesktop : IDisposable
 {
     private readonly NativeWindow _referenceWindow;
     private readonly string _referenceWindowCaption = "OpenHardwareMonitorShowDesktopReferenceWindow";

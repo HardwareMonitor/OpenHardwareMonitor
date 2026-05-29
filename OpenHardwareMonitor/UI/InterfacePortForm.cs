@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace OpenHardwareMonitor.UI;
 
-public partial class InterfacePortForm : Form
+internal partial class InterfacePortForm : Form
 {
     private readonly MainForm _parent;
     private string _localIP;

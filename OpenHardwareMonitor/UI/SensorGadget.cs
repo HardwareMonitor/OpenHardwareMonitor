@@ -10,7 +10,7 @@ using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public class SensorGadget : Gadget
+internal class SensorGadget : Gadget
 {
     private const int TopBorder = 6;
     private const int BottomBorder = 7;

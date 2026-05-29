@@ -39,53 +39,53 @@ jobs:
           msbuild OpenHardwareMonitor.sln /t:restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform="x86"
           msbuild OpenHardwareMonitor.sln /t:Rebuild /p:Configuration=Release /p:Platform="x86" -m
 
-      - name: Publish build
-        uses: actions/upload-artifact@v5
-        with:
-          name: OpenHardwareMonitor
-          path: OpenHardwareMonitor/bin
+      # - name: Publish build
+      #   uses: actions/upload-artifact@v5
+      #   with:
+      #     name: OpenHardwareMonitor
+      #     path: OpenHardwareMonitor/bin
 
-      - name: Publish Lib build
-        uses: actions/upload-artifact@v5
-        with:
-          name: OpenHardwareMonitorLib
-          path: OpenHardwareMonitorLib/bin
+      # - name: Publish Lib build
+      #   uses: actions/upload-artifact@v5
+      #   with:
+      #     name: OpenHardwareMonitorLib
+      #     path: OpenHardwareMonitorLib/bin
 
-      - name: Create zip for each exe
-        run: |
-          $source = "OpenHardwareMonitor/bin"
+      # - name: Create zip for each exe
+      #   run: |
+      #     $source = "OpenHardwareMonitor/bin"
 
-          Get-ChildItem -Path $source -Filter *.exe | ForEach-Object {
-              $exePath = $_.FullName
-              $zipPath = Join-Path $source ($_.BaseName + ".zip")
+      #     Get-ChildItem -Path $source -Filter *.exe | ForEach-Object {
+      #         $exePath = $_.FullName
+      #         $zipPath = Join-Path $source ($_.BaseName + ".zip")
 
-              Compress-Archive -Path $exePath -DestinationPath $zipPath -Force
-          }
-        shell: powershell
+      #         Compress-Archive -Path $exePath -DestinationPath $zipPath -Force
+      #     }
+      #   shell: powershell
 
 
-      - name: Get version from exe
-        id: get_version
-        run: |
-          $file = Get-Item "OpenHardwareMonitor/bin/OpenHardwareMonitor.exe"
-          $fullVersion = $file.VersionInfo.FileVersion
+      # - name: Get version from exe
+      #   id: get_version
+      #   run: |
+      #     $file = Get-Item "OpenHardwareMonitor/bin/OpenHardwareMonitor.exe"
+      #     $fullVersion = $file.VersionInfo.FileVersion
 
-          $parts = $fullVersion.Split('.')
-          $shortVersion = "$($parts[0]).$($parts[1]).$($parts[2]).$($parts[3])"
+      #     $parts = $fullVersion.Split('.')
+      #     $shortVersion = "$($parts[0]).$($parts[1]).$($parts[2]).$($parts[3])"
 
-          echo "version=$shortVersion" >> $env:GITHUB_OUTPUT
-        shell: powershell
+      #     echo "version=$shortVersion" >> $env:GITHUB_OUTPUT
+      #   shell: powershell
 
-      - name: Debug version
-        run: |
-          echo "version is set: ${{ steps.get_version.outputs.version }}"
+      # - name: Debug version
+      #   run: |
+      #     echo "version is set: ${{ steps.get_version.outputs.version }}"
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          name: Build ${{ steps.get_version.outputs.version }}
-          draft: true
-          files: |
-            OpenHardwareMonitor/bin/*.exe
-            OpenHardwareMonitor/bin/*.zip
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: ${{ steps.get_version.outputs.version }}
+      #     name: Build ${{ steps.get_version.outputs.version }}
+      #     draft: true
+      #     files: |
+      #       OpenHardwareMonitor/bin/*.exe
+      #       OpenHardwareMonitor/bin/*.zip

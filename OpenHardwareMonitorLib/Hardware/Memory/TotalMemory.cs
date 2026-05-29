@@ -29,7 +29,7 @@ internal sealed class TotalMemory : Hardware
 
     public override void Update()
     {
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             MemoryLinux.Update(this);
         }

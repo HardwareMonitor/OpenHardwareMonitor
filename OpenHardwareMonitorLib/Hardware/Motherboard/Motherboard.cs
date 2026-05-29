@@ -54,7 +54,7 @@ public class Motherboard : IHardware
 
         _customName = settings.GetValue(new Identifier(Identifier, "name").ToString(), _name);
 
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             _lmSensors = new LMSensors();
             superIO = _lmSensors.SuperIO;

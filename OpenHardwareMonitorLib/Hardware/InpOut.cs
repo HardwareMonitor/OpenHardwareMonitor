@@ -20,7 +20,7 @@ internal static class InpOut
 
     public static bool Open()
     {
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
             return false;
 
         if (IsOpen)
@@ -182,7 +182,7 @@ internal static class InpOut
 
     private static bool Extract(string filePath)
     {
-        string resourceName = $"{nameof(OpenHardwareMonitor)}.Resources.{(OperatingSystemHelper.Is64Bit ? "inpoutx64.gz" : "inpout32.gz")}";
+        string resourceName = $"{nameof(OpenHardwareMonitor)}.Resources.{(OSHelper.Is64Bit ? "inpoutx64.gz" : "inpout32.gz")}";
 
         Assembly assembly = typeof(InpOut).Assembly;
         long requiredLength = 0;

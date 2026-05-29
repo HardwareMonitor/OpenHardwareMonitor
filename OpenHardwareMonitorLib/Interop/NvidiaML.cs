@@ -141,7 +141,7 @@ internal static class NvidiaML
                 return true;
             }
 
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 try
                 {
@@ -186,7 +186,7 @@ internal static class NvidiaML
 
     private static bool IsNvmlCompatibleWindowsVersion()
     {
-        return OperatingSystemHelper.Is64Bit && ((Environment.OSVersion.Version.Major > 6) || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1));
+        return OSHelper.Is64Bit && ((Environment.OSVersion.Version.Major > 6) || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1));
     }
 
     private static bool InitialiseDelegates()
@@ -257,7 +257,7 @@ internal static class NvidiaML
         {
             if (IsAvailable)
             {
-                if (OperatingSystemHelper.IsUnix)
+                if (OSHelper.IsUnix)
                 {
                     nvmlShutdown();
                 }
@@ -277,7 +277,7 @@ internal static class NvidiaML
         if (IsAvailable)
         {
             NvmlDevice nvmlDevice;
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 try
                 {
@@ -309,7 +309,7 @@ internal static class NvidiaML
         if (IsAvailable)
         {
             NvmlDevice nvmlDevice;
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 if (nvmlDeviceGetHandleByPciBusId(pciBusId, out nvmlDevice) == NvmlReturn.Success)
                     return nvmlDevice;
@@ -333,7 +333,7 @@ internal static class NvidiaML
         if (IsAvailable)
         {
             int powerUsage;
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 if (nvmlDeviceGetPowerUsage(nvmlDevice, out powerUsage) == NvmlReturn.Success)
                     return powerUsage;
@@ -357,7 +357,7 @@ internal static class NvidiaML
         if (IsAvailable)
         {
             uint pcieThroughput;
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 if (nvmlDeviceGetPcieThroughput(nvmlDevice, counter, out pcieThroughput) == NvmlReturn.Success)
                     return pcieThroughput;
@@ -382,7 +382,7 @@ internal static class NvidiaML
         {
             var pci = new NvmlPciInfo();
 
-            if (OperatingSystemHelper.IsUnix)
+            if (OSHelper.IsUnix)
             {
                 if (nvmlDeviceGetPciInfo(nvmlDevice, ref pci) == NvmlReturn.Success)
                     return pci;

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace OpenHardwareMonitor.Utilities;
 
-public class EmbeddedResources
+internal class EmbeddedResources
 {
     public static Image GetImage(string name)
     {

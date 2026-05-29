@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace OpenHardwareMonitor.UI;
 
-public class Node
+internal class Node
 {
     private Node _parent;
     private readonly NodeCollection _nodes;

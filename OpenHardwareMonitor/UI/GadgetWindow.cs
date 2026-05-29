@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace OpenHardwareMonitor.UI;
 
-public sealed class GadgetWindow : NativeWindow, IDisposable
+internal sealed class GadgetWindow : NativeWindow, IDisposable
 {
     private bool _visible;
     private bool _alwaysOnTop;
@@ -360,7 +360,7 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct BITMAPINFO
+    private struct BITMAPINFO
     {
         public int Size;
         public int Width;
@@ -432,8 +432,8 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
     /// </summary>
     private static class Macros
     {
-        public static ushort LOWORD(IntPtr l) => (ushort)((ulong)l & 0xFFFF);
-        public static ushort HIWORD(IntPtr l) => (ushort)(((ulong)l >> 16) & 0xFFFF);
+        private static ushort LOWORD(IntPtr l) => (ushort)((ulong)l & 0xFFFF);
+        private static ushort HIWORD(IntPtr l) => (ushort)(((ulong)l >> 16) & 0xFFFF);
         public static int GET_X_LPARAM(IntPtr lp) => (short)LOWORD(lp);
         public static int GET_Y_LPARAM(IntPtr lp) => (short)HIWORD(lp);
     }
@@ -493,9 +493,9 @@ public sealed class GadgetWindow : NativeWindow, IDisposable
     }
 }
 
-public delegate void HitTestEventHandler(object sender, HitTestEventArgs e);
+internal delegate void HitTestEventHandler(object sender, HitTestEventArgs e);
 
-public enum HitResult
+internal enum HitResult
 {
     Transparent = -1,
     Nowhere = 0,
@@ -512,7 +512,7 @@ public enum HitResult
     Border = 18
 }
 
-public class HitTestEventArgs : EventArgs
+internal class HitTestEventArgs : EventArgs
 {
     public HitTestEventArgs(Point location, HitResult hitResult)
     {

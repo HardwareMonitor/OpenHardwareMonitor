@@ -15,7 +15,7 @@ using Logger = OpenHardwareMonitor.Utilities.Logger;
 
 namespace OpenHardwareMonitor.UI;
 
-public sealed partial class MainForm : Form
+internal sealed partial class MainForm : Form
 {
     private readonly UserOption _autoStart;
     private readonly UserOption _autoUpdate;
@@ -122,7 +122,7 @@ public sealed partial class MainForm : Form
         _systemTray.HideShowCommand += HideShowClick;
         _systemTray.ExitCommand += CloseApplication;
 
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             // Unix
             treeView.RowHeight = Math.Max(treeView.RowHeight, 18);
@@ -205,7 +205,7 @@ public sealed partial class MainForm : Form
             }
         };
 
-        if (OperatingSystemHelper.IsAdministrator())
+        if (OSHelper.IsAdministrator())
         {
             _readMainboardSensors = new UserOption("mainboardMenuItem", true, mainboardMenuItem, _settings);
             _readMainboardSensors.Changed += delegate { _computer.IsMotherboardEnabled = _readMainboardSensors.Value; };

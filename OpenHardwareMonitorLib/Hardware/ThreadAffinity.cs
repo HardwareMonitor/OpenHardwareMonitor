@@ -10,7 +10,7 @@ internal static class ThreadAffinity
     /// </summary>
     static ThreadAffinity()
     {
-        ProcessorGroupCount = OperatingSystemHelper.IsUnix ? 1 : Kernel32.GetActiveProcessorGroupCount();
+        ProcessorGroupCount = OSHelper.IsUnix ? 1 : Kernel32.GetActiveProcessorGroupCount();
 
         if (ProcessorGroupCount < 1)
             ProcessorGroupCount = 1;
@@ -31,7 +31,7 @@ internal static class ThreadAffinity
         if (affinity == GroupAffinity.Undefined)
             return GroupAffinity.Undefined;
 
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
         {
             if (affinity.Group > 0)
                 throw new ArgumentOutOfRangeException(nameof(affinity));

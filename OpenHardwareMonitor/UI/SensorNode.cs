@@ -6,7 +6,7 @@ using OpenHardwareMonitor.Hardware;
 
 namespace OpenHardwareMonitor.UI;
 
-public class SensorNode : Node
+internal class SensorNode : Node
 {
     private readonly PersistentSettings _settings;
     private Color? _penColor;

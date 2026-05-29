@@ -103,7 +103,7 @@ internal sealed class AmdGpu : GenericGpu
         _memoryFree = new Sensor("GPU Memory Free", 1, SensorType.SmallData, this, settings);
         _memoryTotal = new Sensor("GPU Memory Total", 2, SensorType.SmallData, this, settings);
 
-        if (!OperatingSystemHelper.IsUnix)
+        if (!OSHelper.IsUnix)
         {
             string[] deviceIds = D3DDisplayDevice.GetDeviceIdentifiers();
             if (deviceIds != null)

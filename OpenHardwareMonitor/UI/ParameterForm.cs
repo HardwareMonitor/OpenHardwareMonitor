@@ -6,7 +6,7 @@ using OpenHardwareMonitor.Hardware;
 
 namespace OpenHardwareMonitor.UI;
 
-public partial class ParameterForm : Form
+internal partial class ParameterForm : Form
 {
     private IReadOnlyList<IParameter> _parameters;
     private BindingList<ParameterRow> _parameterRows;

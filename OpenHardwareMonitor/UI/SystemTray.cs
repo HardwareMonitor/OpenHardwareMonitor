@@ -7,7 +7,7 @@ using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public class SystemTray : IDisposable
+internal class SystemTray : IDisposable
 {
     private readonly PersistentSettings _settings;
     private readonly List<SensorNotifyIcon> _sensorList = new();

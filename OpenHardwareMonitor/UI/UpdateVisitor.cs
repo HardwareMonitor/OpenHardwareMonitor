@@ -2,7 +2,7 @@
 
 namespace OpenHardwareMonitor.UI;
 
-public class UpdateVisitor : IVisitor
+internal class UpdateVisitor : IVisitor
 {
     public void VisitComputer(IComputer computer)
     {

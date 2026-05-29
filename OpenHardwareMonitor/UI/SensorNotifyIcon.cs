@@ -6,7 +6,7 @@ using OpenHardwareMonitor.Hardware;
 
 namespace OpenHardwareMonitor.UI;
 
-public class SensorNotifyIcon : IDisposable
+internal class SensorNotifyIcon : IDisposable
 {
     private enum IconKind
     {

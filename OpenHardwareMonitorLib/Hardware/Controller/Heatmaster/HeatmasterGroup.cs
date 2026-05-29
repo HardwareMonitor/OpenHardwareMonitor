@@ -17,7 +17,7 @@ internal class HeatmasterGroup : IGroup
     public HeatmasterGroup(ISettings settings)
     {
         // No implementation for Heatmaster on Unix systems
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
             return;
 
         string[] portNames = GetRegistryPortNames();

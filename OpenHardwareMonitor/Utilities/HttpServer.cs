@@ -19,7 +19,7 @@ using OpenHardwareMonitor.UI;
 
 namespace OpenHardwareMonitor.Utilities;
 
-public class HttpServer
+internal class HttpServer
 {
     private readonly HttpListener _listener;
     private readonly Node _root;
@@ -712,13 +712,13 @@ public class HttpServer
         if (request != null && request.QueryString != null && request.QueryString.Count > 0)
         {
             int archive = 0, timestamps = 0, lastvalue = 1;
-            
+
             foreach (string key in request.QueryString.AllKeys)
             {
                 switch (key)
                 {
                     case "timestamps":
-                        int.TryParse(request.QueryString[key], out timestamps);     
+                        int.TryParse(request.QueryString[key], out timestamps);
 
                         if (timestamps < 0 || timestamps > 1)
                             timestamps = 0;     // Enforce boolean range 0 to 1
@@ -782,7 +782,7 @@ public class HttpServer
         response.AddHeader("Access-Control-Allow-Origin", "*");
         await SendResponseAsync(response, responseContent, "application/json");
     }
-        
+
     private Dictionary<string, object> GenerateJsonForNode(Node n, ref int nodeIndex)
     {
         Dictionary<string, object> jsonNode = new()

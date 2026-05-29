@@ -38,7 +38,7 @@ internal class CpuLoad
 
     private static bool GetTimes(out long[] idle, out long[] total)
     {
-        return !OperatingSystemHelper.IsUnix ? GetWindowsTimes(out idle, out total) : GetUnixTimes(out idle, out total);
+        return !OSHelper.IsUnix ? GetWindowsTimes(out idle, out total) : GetUnixTimes(out idle, out total);
     }
 
     private static bool GetWindowsTimes(out long[] idle, out long[] total)
@@ -174,7 +174,7 @@ internal class CpuLoad
         if (_idleTimes == null || !GetTimes(out long[] newIdleTimes, out long[] newTotalTimes))
             return;
 
-        int minDiff = OperatingSystemHelper.IsUnix ? 100 : 100000;
+        int minDiff = OSHelper.IsUnix ? 100 : 100000;
         for (int i = 0; i < Math.Min(newTotalTimes.Length, _totalTimes.Length); i++)
         {
             if (newTotalTimes[i] - _totalTimes[i] < minDiff)
@@ -208,7 +208,7 @@ internal class CpuLoad
         {
             total = 0;
         }
-        
+
         _totalLoad = Math.Round(total * 100.0, 2);
         _totalTimes = newTotalTimes;
         _idleTimes = newIdleTimes;
@@ -216,10 +216,10 @@ internal class CpuLoad
 
     private static bool QueryIdleTimeSeparated()
     {
-        if (OperatingSystemHelper.IsUnix)
+        if (OSHelper.IsUnix)
             return false;
 
-        // From Windows 11 22H2 the CPU idle time returned by SystemProcessorPerformanceInformation is invalid, this issue has been fixed with 24H2. 
+        // From Windows 11 22H2 the CPU idle time returned by SystemProcessorPerformanceInformation is invalid, this issue has been fixed with 24H2.
         var os = Environment.OSVersion;
         var win1122H2 = new Version(10, 0, 22621, 0);
         var win1124H2 = new Version(10, 0, 26100, 0);

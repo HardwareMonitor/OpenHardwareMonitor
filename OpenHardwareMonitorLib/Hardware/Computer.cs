@@ -434,7 +434,7 @@ public class Computer : IComputer
         if (group == null)
             return;
 
-        if (!OperatingSystemHelper.IsCompatible(false, out var _, out var _))
+        if (!OSHelper.IsCompatible(false, out _, out _))
             return;
 
         lock (_lock)

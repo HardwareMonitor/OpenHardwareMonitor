@@ -6,7 +6,7 @@ using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
-public sealed partial class AboutBox : Form
+internal sealed partial class AboutBox : Form
 {
     public AboutBox()
     {

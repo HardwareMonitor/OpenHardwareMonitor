@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OpenHardwareMonitor.UI;
 
-public class HardwareNode : Node, IExpandPersistNode
+internal class HardwareNode : Node, IExpandPersistNode
 {
     private readonly PersistentSettings _settings;
     private readonly List<TypeNode> _typeNodes = new List<TypeNode>();
