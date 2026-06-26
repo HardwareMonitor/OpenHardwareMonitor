@@ -396,7 +396,7 @@ internal sealed class AmdGpu : GenericGpu
             AtiAdlxx.ADLPMLogData adlPMLogData = new();
             if (_pmLogStarted)
             {
-                adlPMLogData = (AtiAdlxx.ADLPMLogData)Marshal.PtrToStructure(_adlPMLogStartOutput.pLoggingAddress, typeof(AtiAdlxx.ADLPMLogData));
+                adlPMLogData = Marshal.PtrToStructure<AtiAdlxx.ADLPMLogData>(_adlPMLogStartOutput.pLoggingAddress);
             }
 
             GetAdlSensor(adlPMLogData, logDataOutput, AtiAdlxx.ADLPMLogSensors.ADL_PMLOG_CLK_GFXCLK, _coreClock, reset: false);
@@ -916,10 +916,16 @@ internal sealed class AmdGpu : GenericGpu
                 AtiAdlxx.ADLPMLogData adlPMLogData = new();
                 if (_pmLogStarted)
                 {
-                    adlPMLogData = (AtiAdlxx.ADLPMLogData)Marshal.PtrToStructure(_adlPMLogStartOutput.pLoggingAddress, typeof(AtiAdlxx.ADLPMLogData));
+                    adlPMLogData = Marshal.PtrToStructure<AtiAdlxx.ADLPMLogData>(_adlPMLogStartOutput.pLoggingAddress);
                 }
 
-                foreach (AtiAdlxx.ADLPMLogSensors sensorType in Enum.GetValues(typeof(AtiAdlxx.ADLPMLogSensors)))
+                foreach (AtiAdlxx.ADLPMLogSensors sensorType in
+#if NET
+                    Enum.GetValues<AtiAdlxx.ADLPMLogSensors>()
+#else
+                    (AtiAdlxx.ADLPMLogSensors[])Enum.GetValues(typeof(AtiAdlxx.ADLPMLogSensors))
+#endif
+                )
                 {
                     int i = (int)sensorType;
                     if (i == 0)

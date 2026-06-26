@@ -195,56 +195,56 @@ internal static class NvidiaML
 
         if (nvmlInit != IntPtr.Zero)
         {
-            _windowsNvmlInit = (WindowsNvmlDelegate)Marshal.GetDelegateForFunctionPointer(nvmlInit, typeof(WindowsNvmlDelegate));
+            _windowsNvmlInit = Marshal.GetDelegateForFunctionPointer<WindowsNvmlDelegate>(nvmlInit);
         }
         else
         {
             nvmlInit = Kernel32.GetProcAddress(_windowsDll, "nvmlInit");
             if (nvmlInit != IntPtr.Zero)
-                _windowsNvmlInit = (WindowsNvmlDelegate)Marshal.GetDelegateForFunctionPointer(nvmlInit, typeof(WindowsNvmlDelegate));
+                _windowsNvmlInit = Marshal.GetDelegateForFunctionPointer<WindowsNvmlDelegate>(nvmlInit);
             else
                 return false;
         }
 
         IntPtr nvmlShutdown = Kernel32.GetProcAddress(_windowsDll, "nvmlShutdown");
         if (nvmlShutdown != IntPtr.Zero)
-            _windowsNvmlShutdown = (WindowsNvmlDelegate)Marshal.GetDelegateForFunctionPointer(nvmlShutdown, typeof(WindowsNvmlDelegate));
+            _windowsNvmlShutdown = Marshal.GetDelegateForFunctionPointer<WindowsNvmlDelegate>(nvmlShutdown);
         else
             return false;
 
         IntPtr nvmlGetHandle = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetHandleByIndex_v2");
         if (nvmlGetHandle != IntPtr.Zero)
-            _windowsNvmlDeviceGetHandleByIndex = (WindowsNvmlGetHandleDelegate)Marshal.GetDelegateForFunctionPointer(nvmlGetHandle, typeof(WindowsNvmlGetHandleDelegate));
+            _windowsNvmlDeviceGetHandleByIndex = Marshal.GetDelegateForFunctionPointer<WindowsNvmlGetHandleDelegate>(nvmlGetHandle);
         else
         {
             nvmlGetHandle = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetHandleByIndex");
             if (nvmlGetHandle != IntPtr.Zero)
-                _windowsNvmlDeviceGetHandleByIndex = (WindowsNvmlGetHandleDelegate)Marshal.GetDelegateForFunctionPointer(nvmlGetHandle, typeof(WindowsNvmlGetHandleDelegate));
+                _windowsNvmlDeviceGetHandleByIndex = Marshal.GetDelegateForFunctionPointer<WindowsNvmlGetHandleDelegate>(nvmlGetHandle);
             else
                 return false;
         }
 
         IntPtr nvmlGetPowerUsage = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetPowerUsage");
         if (nvmlGetPowerUsage != IntPtr.Zero)
-            _windowsNvmlDeviceGetPowerUsage = (WindowsNvmlGetPowerUsageDelegate)Marshal.GetDelegateForFunctionPointer(nvmlGetPowerUsage, typeof(WindowsNvmlGetPowerUsageDelegate));
+            _windowsNvmlDeviceGetPowerUsage = Marshal.GetDelegateForFunctionPointer<WindowsNvmlGetPowerUsageDelegate>(nvmlGetPowerUsage);
         else
             return false;
 
         IntPtr nvmlGetPcieThroughput = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetPcieThroughput");
         if (nvmlGetPcieThroughput != IntPtr.Zero)
-            _windowsNvmlDeviceGetPcieThroughputDelegate = (WindowsNvmlDeviceGetPcieThroughputDelegate)Marshal.GetDelegateForFunctionPointer(nvmlGetPcieThroughput, typeof(WindowsNvmlDeviceGetPcieThroughputDelegate));
+            _windowsNvmlDeviceGetPcieThroughputDelegate = Marshal.GetDelegateForFunctionPointer<WindowsNvmlDeviceGetPcieThroughputDelegate>(nvmlGetPcieThroughput);
         else
             return false;
 
         IntPtr nvmlGetHandlePciBus = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetHandleByPciBusId_v2");
         if (nvmlGetHandlePciBus != IntPtr.Zero)
-            _windowsNvmlDeviceGetHandleByPciBusId = (WindowsNvmlGetHandleByPciBusIdDelegate)Marshal.GetDelegateForFunctionPointer(nvmlGetHandlePciBus, typeof(WindowsNvmlGetHandleByPciBusIdDelegate));
+            _windowsNvmlDeviceGetHandleByPciBusId = Marshal.GetDelegateForFunctionPointer<WindowsNvmlGetHandleByPciBusIdDelegate>(nvmlGetHandlePciBus);
         else
             return false;
 
         IntPtr nvmlDeviceGetPciInfo = Kernel32.GetProcAddress(_windowsDll, "nvmlDeviceGetPciInfo_v2");
         if (nvmlDeviceGetPciInfo != IntPtr.Zero)
-            _windowsNvmlDeviceGetPciInfo = (WindowsNvmlDeviceGetPciInfo)Marshal.GetDelegateForFunctionPointer(nvmlDeviceGetPciInfo, typeof(WindowsNvmlDeviceGetPciInfo));
+            _windowsNvmlDeviceGetPciInfo = Marshal.GetDelegateForFunctionPointer<WindowsNvmlDeviceGetPciInfo>(nvmlDeviceGetPciInfo);
         else
             return false;
 
