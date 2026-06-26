@@ -712,15 +712,37 @@ internal sealed class IntelCpu : GenericCpu
 
         if (_coreVoltage != null && Ring0.ReadMsr(IA32_PERF_STATUS, out _, out uint edx))
         {
-            _coreVoltage.Value = ((edx >> 32) & 0xFFFF) / (float)(1 << 13);
+            uint vidBits = edx & 0xFFFF;
+            if (vidBits == 0)
+                vidBits = edx & 0xFFFF;
+        
+            if (vidBits > 0)
+            {
+                _coreVoltage.Value = vidBits / 8192.0f;
+            }
+            else
+            {
+                _coreVoltage.Value = 0;
+            }
         }
 
         for (int i = 0; i < _coreVIDs.Length; i++)
         {
-            if (Ring0.ReadMsr(IA32_PERF_STATUS, out _, out edx, _cpuId[i][0].Affinity) && ((edx >> 32) & 0xFFFF) > 0)
+            if (Ring0.ReadMsr(IA32_PERF_STATUS, out eax, out edx, _cpuId[i][0].Affinity))
             {
-                _coreVIDs[i].Value = ((edx >> 32) & 0xFFFF) / (float)(1 << 13);
-                ActivateSensor(_coreVIDs[i]);
+                uint vidBitsLoop = edx & 0xFFFF;
+                if (vidBitsLoop == 0)
+                    vidBitsLoop = eax & 0xFFFF;
+        
+                if (vidBitsLoop > 0)
+                {
+                    _coreVIDs[i].Value = vidBitsLoop / 8192.0f;
+                    ActivateSensor(_coreVIDs[i]);
+                }
+                else
+                {
+                    DeactivateSensor(_coreVIDs[i]);
+                }
             }
             else
             {
@@ -758,7 +780,6 @@ internal sealed class IntelCpu : GenericCpu
         Skylake,
         TigerLake,
         Tremont,
-        PantherLake,
         RaptorLake,
         SapphireRapids,
         ElkhartLake,
