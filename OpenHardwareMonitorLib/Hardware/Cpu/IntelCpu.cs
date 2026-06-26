@@ -229,18 +229,22 @@ internal sealed class IntelCpu : GenericCpu
                             _microArchitecture = MicroArchitecture.LunarLake;
                             tjMax = GetTjMaxFromMsr();
                             break;
+
                         case 0x8F: // Intel Xeon W5-3435X // SapphireRapids
                             _microArchitecture = MicroArchitecture.SapphireRapids;
                             tjMax = GetTjMaxFromMsr();
                             break;
+
                         case 0x96: // Intel Celeron ElkhartLake
                             _microArchitecture = MicroArchitecture.ElkhartLake;
                             tjMax = GetTjMaxFromMsr();
                             break;
-                        case 0xCC: //Intel Panther Lake
+
+                        case 0xCC: // Intel Panther Lake.
                             _microArchitecture = MicroArchitecture.PantherLake;
                             tjMax = GetTjMaxFromMsr();
                             break;
+
                         default:
                             _microArchitecture = MicroArchitecture.Unknown;
                             tjMax = Floats(100);
@@ -747,6 +751,7 @@ internal sealed class IntelCpu : GenericCpu
         Nehalem,
         NetBurst,
         MeteorLake,
+        PantherLake,
         RocketLake,
         SandyBridge,
         Silvermont,
