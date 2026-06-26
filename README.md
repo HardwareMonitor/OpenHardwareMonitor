@@ -149,9 +149,9 @@ Also, don't forget to ★ star ★ the repository to help other people find it.
 
 <!-- [![Star History Chart](https://api.star-history.com/svg?repos=HardwareMonitor/openhardwaremonitor&type=Date)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date) -->
 
-[![Stargazers](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date)
+<!-- [![Stargazers](https://reporoster.com/stars/HardwareMonitor/openhardwaremonitor)](https://star-history.com/#HardwareMonitor/openhardwaremonitor&Date) -->
 
-[![Forkers](https://reporoster.com/forks/HardwareMonitor/OpenHardwareMonitor)](https://github.com/HardwareMonitor/OpenHardwareMonitor/network/members)
+<!-- [![Forkers](https://reporoster.com/forks/HardwareMonitor/OpenHardwareMonitor)](https://github.com/HardwareMonitor/OpenHardwareMonitor/network/members) -->
 
 ## Donate
 If you find this project useful, consider [supporting the author](https://patreon.com/SergiyE).
