@@ -73,7 +73,6 @@ namespace OpenHardwareMonitor.UI
       this.minCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.startupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.autoUpdateAppMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.separatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
       this.temperatureUnitsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.celsiusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.fahrenheitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -351,13 +350,12 @@ namespace OpenHardwareMonitor.UI
             this.hiddenMenuItem,
             this.gadgetMenuItem,
             this.hideMenuMenuItem,
-            this.separatorMenuItem,
-            this.themeMenuItem,
             this.temperatureUnitsMenuItem,
             this.resetMinMaxMenuItem,
             this.expandAllNodesMenuItem,
             this.collpaseAllNodesMenuItem,
-            this.columnsMenuItem});
+            this.columnsMenuItem,
+            this.themeMenuItem});
       this.viewMenuItem.Name = "viewMenuItem";
       this.viewMenuItem.Size = new System.Drawing.Size(44, 22);
       this.viewMenuItem.Text = "View";
@@ -481,11 +479,6 @@ namespace OpenHardwareMonitor.UI
       this.autoUpdateAppMenuItem.Name = "autoUpdateAppMenuItem";
       this.autoUpdateAppMenuItem.Size = new System.Drawing.Size(221, 22);
       this.autoUpdateAppMenuItem.Text = "Auto-Update Application";
-      //
-      // separatorMenuItem
-      //
-      this.separatorMenuItem.Name = "separatorMenuItem";
-      this.separatorMenuItem.Size = new System.Drawing.Size(218, 6);
       //
       // temperatureUnitsMenuItem
       //
@@ -1002,7 +995,6 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem optionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hddMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minTrayMenuItem;
-        private System.Windows.Forms.ToolStripSeparator separatorMenuItem;
         private System.Windows.Forms.ContextMenuStrip treeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem startMinMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startupMenuItem;
