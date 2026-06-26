@@ -29,7 +29,10 @@ internal partial class AuthForm : Form
     private void HttpAuthOkButton_Click(object sender, EventArgs e)
     {
         _parent.Server.UserName = httpAuthUsernameTextBox.Text;
-        _parent.Server.Password = httpAuthPasswordTextBox.Text;
+        if (!string.IsNullOrWhiteSpace(httpAuthPasswordTextBox.Text))
+        {
+            _parent.Server.SetPassword(httpAuthPasswordTextBox.Text);
+        }
         _parent.Server.AuthEnabled = enableHTTPAuthCheckBox.Checked;
         _parent.AuthWebServerMenuItemChecked = _parent.Server.AuthEnabled;
         Close();
