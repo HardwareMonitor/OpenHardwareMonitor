@@ -102,12 +102,12 @@
   <ItemGroup>
     <PackageReference Include="HidSharp" Version="2.6.4" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.IO.Ports" Version="10.0.10" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.12" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="SergiyE.Common" Version="1.*" />
-    <PackageReference Include="System.Management" Version="10.0.10" />
-    <PackageReference Include="System.Threading.AccessControl" Version="10.0.10" />
-    <PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
+    <PackageReference Include="System.Threading.AccessControl" Version="10.0.12" />
+    <PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
   </ItemGroup>
