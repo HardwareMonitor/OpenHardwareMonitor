@@ -94,7 +94,8 @@ internal class IT87XX : ISuperIO
             Chip.IT8655E or
             Chip.IT8631E or
             Chip.IT8638E or
-            Chip.IT8696E;
+            Chip.IT8696E or
+            Chip.IT8772E;
 
         _hasAlt6thFanReg = chip is Chip.IT8665E or Chip.IT8625E;
 
@@ -260,7 +261,7 @@ internal class IT87XX : ISuperIO
         _gpioCount = chip switch
         {
             Chip.IT8712F or Chip.IT8716F or Chip.IT8718F or Chip.IT8726F => 5,
-            Chip.IT8720F or Chip.IT8721F => 8,
+            Chip.IT8720F or Chip.IT8721F or Chip.IT8772E => 8,
             _ => 0
         };
     }
