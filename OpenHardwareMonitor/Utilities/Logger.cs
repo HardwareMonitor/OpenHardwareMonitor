@@ -76,10 +76,12 @@ internal class Logger
         }
     }
 
-    private static string GetFileName(DateTime date, uint sessionNumber = 0)
+    public string LogFilePath { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+
+    private string GetFileName(DateTime date, uint sessionNumber = 0)
     {
-        return AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar
-            + string.Format(FileNameFormat, date, sessionNumber == 0 ? "" : "-" + sessionNumber);
+        return Path.Combine(LogFilePath,
+            string.Format(FileNameFormat, date, sessionNumber == 0 ? "" : "-" + sessionNumber));
     }
 
     private bool OpenExistingLogFile()

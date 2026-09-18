@@ -152,6 +152,9 @@ internal sealed partial class MainForm : Form
         _logger.FileRotationMethod = (LoggerFileRotation)Math.Max(0, Math.Min(saved, 1));
         perSessionFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.PerSession;
         dailyFileRotationMenuItem.Checked = _logger.FileRotationMethod == LoggerFileRotation.Daily;
+        var savedLogPath = _settings.GetValue("logger.filePath", string.Empty);
+        if (!string.IsNullOrEmpty(savedLogPath) && Directory.Exists(savedLogPath))
+            _logger.LogFilePath = savedLogPath;
 
         _computer.HardwareAdded += HardwareAdded;
         _computer.HardwareRemoved += HardwareRemoved;
@@ -497,7 +500,7 @@ internal sealed partial class MainForm : Form
 
     private void PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs eventArgs)
     {
-        if (eventArgs.Mode is Microsoft.Win32.PowerModes.Resume or Microsoft.Win32.PowerModes.StatusChange &&
+        if ((eventArgs.Mode == Microsoft.Win32.PowerModes.Resume || eventArgs.Mode == Microsoft.Win32.PowerModes.StatusChange) &&
             _computer.IsBatteryEnabled)
         {
             if (InvokeRequired)
@@ -1080,6 +1083,21 @@ internal sealed partial class MainForm : Form
         perSessionFileRotationMenuItem.Checked = false;
         _logger.FileRotationMethod = LoggerFileRotation.Daily;
         _settings.SetValue("logger.fileRotation", (int)LoggerFileRotation.Daily);
+    }
+
+    private void LogFolderMenuItem_Click(object sender, EventArgs e)
+    {
+        using FolderBrowserDialog dialog = new()
+        {
+            Description = "Select folder for log files",
+            SelectedPath = _logger.LogFilePath,
+            ShowNewFolderButton = true
+        };
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _logger.LogFilePath = dialog.SelectedPath;
+            _settings.SetValue("logger.filePath", dialog.SelectedPath);
+        }
     }
 
     private void PortableModeMenu_Click(object sender, EventArgs e)
