@@ -134,6 +134,8 @@ internal class Logger
         _sensors = list.ToArray();
         _identifiers = _sensors.Select(s => s.Identifier.ToString()).ToArray();
 
+        Directory.CreateDirectory(Path.GetDirectoryName(_fileName));
+
         using (StreamWriter writer = new StreamWriter(_fileName, false))
         {
             writer.Write(",");
