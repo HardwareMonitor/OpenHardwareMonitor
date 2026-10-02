@@ -9,38 +9,73 @@
 [![Nuget](https://img.shields.io/nuget/v/OpenHardwareMonitorLib)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 [![Nuget](https://img.shields.io/nuget/dt/OpenHardwareMonitorLib?label=nuget-downloads)](https://www.nuget.org/packages/OpenHardwareMonitorLib/)
 
-Open Hardware Monitor is a free open source software that can monitor temperature sensors, fan speeds, voltages, load and clock speeds of a computer.
 
-This application is based on the original [OpenHardwareMonitor](https://github.com/openhardwaremonitor/openhardwaremonitor) project.
+Open Hardware Monitor is a free, open source Windows application that reads hardware sensors of a computer (temperatures, fan speeds, voltages, power, clock speeds, load, data throughput and more) and shows them in a single tree view. The same data is available through tray icons, a desktop gadget, a built-in web server, WMI, CSV logs and a .NET library.
+
+This application is based on the original [OpenHardwareMonitor](https://github.com/openhardwaremonitor/openhardwaremonitor) project. It adds support for new hardware, a modern UI (themes, tray icons, gadget), remote access and logging.
+
+> [!NOTE]
+> Some sensors are only available when the application runs as administrator, because it needs a kernel driver to read hardware registers.
 
 ## Features
 
-### What can it do?
+### Supported hardware
 
-You can see information about devices such as:
- - Motherboards
- - Intel and AMD processors
- - RAM
- - NVIDIA, AMD and Intel graphics cards
- - HDD, SSD and NVMe hard drives
- - Network cards
- - Power suppliers
- - Laptop batteries
+Each group can be switched on/off in `File > Hardware`. Only enabled groups are queried, so you can disable what you don't need to reduce load and startup time.
 
-### Additional features
+1. **Motherboards** - temperatures, voltages, fan speeds and fan controls from Super I/O chips and embedded controllers of many ASUS, MSI, Gigabyte, ASRock and other boards.
+2. **CPU** - Intel and AMD processors: per-core temperature, clocks, load, power and voltages. Intel hybrid CPUs show Performance and Efficient cores separately.
+3. **RAM** - physical and virtual memory usage, DIMM temperature and memory timings.
+4. **GPU** - NVIDIA, AMD and Intel (integrated and discrete) graphics cards: temperature (including hot spot and memory junction), clocks, load, fan, power, VRAM usage and bandwidth.
+5. **Storage devices** - HDD, SSD and NVMe drives: temperature, S.M.A.R.T. attributes, wear level, data written and drive load.
+6. **Network** - network adapters: upload/download speed, transferred data and bandwidth utilization.
+7. **Fan controllers and liquid cooling** - USB devices from Aqua Computer, NZXT (Kraken, Grid), MSI, Razer, AeroCool, Arctic, Heatmaster and T-Balancer.
+8. **Power supplies** - Corsair and MSI PSUs with a USB interface: power, voltages, currents, temperatures and fan.
+9. **Batteries** - laptop battery charge level, voltage, current, power and capacity.
 
- - `Remote web-server` mode for browsing data from remote machine with custom port and authentication.
- - `Hide/Unhide` sensors to remove some data from UI and web server.
- - Multiple `Tray icons` and `Gadget` for selected sensor values.
- - `Light`/`Dark` themes with auto switching mode.
- - Custom `color-themes` from external files.
- - `Portable` mode for storing temporary driver file and settings configuration next to the executable file.
- - `Updated versions check` - manually from main menu.
+Motherboards, CPU, RAM and batteries are enabled by default. Other groups are disabled until you turn them on.
 
- Note: Some sensors are only available when running the application as administrator.
+### Main window
 
-To add custom theme to the app, just create a `themes` folder next to the executable file and place any {themeName}.json files there.
-Custom theme.json file content example:
+- **Sensor tree** - hardware devices are grouped by type; every sensor shows its current `Value`, `Min` and `Max`. Columns can be toggled in `View > Columns`.
+- **Reset Min/Max** (`View`) - restarts min/max tracking for all sensors.
+- **Expand/Collapse All Nodes** and **Show Hidden Sensors** (`View`).
+- **Hide Menu** (`View`) - hides the menu bar; press `Alt` to show it again.
+- **Update Interval** (`Options`) - how often sensors are polled, from 250 ms to 10 s.
+- **Throttle ATA Storage** (`Options`) - polls S.M.A.R.T. data of ATA drives less often to avoid slowing down disk access.
+- **Sensor Values Time Window** (`Options`) - how much sensor history (30 s to 24 h) is kept in memory.
+- **Save Report** (`File`) - saves a text report with full hardware and sensor information; attach it to bug reports and compatibility requests.
+
+### Sensor actions
+
+Right-click a sensor (or use a hotkey) to:
+
+1. `Rename` (`F2`) a sensor or hardware node.
+2. `Hide` (`Ctrl+H`) a sensor. Hidden sensors disappear from the tree and the web server until `Show Hidden Sensors` is enabled.
+3. Change the `Pen Color` and reset it (`Ctrl+R`).
+4. `Show in Tray` (`Ctrl+T`) - add a separate tray icon for the sensor.
+5. `Show in Gadget` (`Ctrl+G`) - add the sensor to the desktop gadget.
+6. Open `Parameters` (`Ctrl+P`) - available for sensors with adjustable parameters.
+
+Other hotkeys: `F5` - reset, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project site, `Ctrl+U` - check for updates.
+
+### Tray icons and gadget
+
+- **Tray icons** - one icon per selected sensor with the value drawn in the icon and details in the tooltip.
+- **Icon kind** - for percent sensors choose `Value`, `Bar` or `Pie` from the icon's context menu; other sensors always show the value.
+- **Gadget** - a small window on the desktop with selected sensors, enabled in `View > Show Gadget`.
+- **Window behavior** - `Start Minimized`, `Minimize To Tray` and `Minimize On Close` (`Options`).
+
+### Themes and units
+
+- `Light` and `Dark` themes, with an auto mode that follows the Windows theme (`Options > Theme`).
+- Custom color themes from external files (see below).
+- Temperature unit: `Celsius` or `Fahrenheit` (`Options > Temperature Unit`).
+- `Increase Font Size` / `Decrease Font Size` for the tree view.
+
+#### Custom themes
+
+To add a custom theme, create a `themes` folder next to the executable file and place any `{themeName}.json` files there. Example:
 ```json
 {
   "DisplayName": "Custom Theme",
@@ -55,8 +90,44 @@ Custom theme.json file content example:
   "WarnColor": "#FF4500"
 }
 ```
-Don't forget to restart the app to scan for new theme files!
+Restart the app so it scans for new theme files.
 
+### Remote web server
+
+Enable it in `Options > Remote Web Server > Run`; `Open` opens the page in your browser. The default port is `8085`; change it with `Port`. `Authentication` enables HTTP basic authentication with a user name and password.
+
+The server provides:
+
+1. A web page with the live sensor tree, available from any device in the network.
+2. `/data.json` - the whole sensor tree as JSON, with display values and raw values (`RawValue`, `RawMin`, `RawMax`).
+3. `/metrics` - the same data in OpenMetrics (Prometheus) format for Grafana and other monitoring systems.
+4. `/Sensor?action=Get&id={SensorId}` - current value, min and max of one sensor.
+5. `/Sensor?action=Set&id={SensorId}&value={number}` - sets a control sensor (fan/pump speed); `value=null` returns it to the default mode.
+6. `/Sensor?action=ResetMinMax&id={SensorId}` and `/ResetAllMinMax` - reset min/max for one sensor or for all of them.
+
+Hidden sensors are not exposed. Use authentication if the port is reachable outside your local network. A usage example is in `OpenHardwareMonitor/TestScripts/basicrest.py`.
+
+### WMI
+
+While the app is running, hardware and sensors are published to WMI in the `root\OpenHardwareMonitor` namespace (`Hardware` and `Sensor` classes), so PowerShell and other tools can read values without HTTP. An example is in `OpenHardwareMonitor/TestScripts/basicwmi.py`.
+
+### Logging
+
+`Options > Log Sensors` writes sensor values to CSV files.
+
+1. `Log Folder...` - destination folder; it is created automatically if it doesn't exist.
+2. `Logging Interval` - from 1 s to 6 h.
+3. `File rotation method` - `Per session` starts a new file when logging starts or after a gap in logging (for example, after sleep); `Daily` starts a new file every day.
+
+Files are named `OpenHardwareMonitorLog-yyyy-MM-dd[-N].csv`. The first row contains sensor identifiers, the second row contains sensor names, and every following row is one sample with a timestamp.
+
+### System integration
+
+- `Run On Windows Startup` - starts the app after login with administrator rights through a scheduled task (with a 5-second delay), so no UAC prompt appears.
+- `Portable mode` (`File`) - stores the settings and the temporary driver file next to the executable file.
+- `Auto-Update Application` (`Options`) and `Check for updates` (`Help`) - get new versions from GitHub releases.
+- Single instance: launching the app again shows the already running window.
+- x64 and x86 builds for Windows 7 - 11 and Windows Server 2012 - 2025.
 
 ### What does it look like?
 
@@ -66,33 +137,24 @@ Here's a preview of the app's UI with `Light`/`Dark` themes running on Windows 1
 
 Here's a preview of the tray icons and gadget (in Windows 10):
 
-[<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png" alt="Themes" width="300"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png)
+[<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png" alt="Tray icons and gadget" width="300"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_tray.png)
 
 ## Download
 
-The published version can be obtained from [releases](https://github.com/HardwareMonitor/openhardwaremonitor/releases).
+Get the latest version from [releases](https://github.com/HardwareMonitor/openhardwaremonitor/releases).
 
-> [!WARNING]
->Microsoft and other major antivirus vendors may have flagged OpenHardwareMonitor as malware. This is a false positive and is not related to a virus or anything similar. Signals from Microsoft usually extend to other antivirus vendors as well.
->OpenHardwareMonitor has a history of being falsely flagged as malware by antivirus vendors (including Defender). This is likely due to its behavior, such as creating a task with administrator privileges to auto-start the application after login, or storing an internal driver in a temporary folder to gain access to hardware resources.
+### Antivirus warnings
 
-Currently, Defender does not flag this release, but it is likely that future updates may be flagged by Defender's machine learning-based detection systems within a few days of release.
+Antivirus software (including Microsoft Defender) may flag OpenHardwareMonitor as malware. This is a **false positive**. It happens because of how the app works: it creates a scheduled task with administrator privileges to auto-start after login, and it extracts an internal driver to a temporary folder to access hardware resources. Detections can appear a few days after a release, and a Microsoft signal usually spreads to other vendors.
 
 > [!IMPORTANT]
->If Defender or another antivirus detects any part of OpenHardwareMonitor as malware, it may prevent proper work or cause application to fail to start.
-> OpenHardwareMonitor will not start if this file exists but is blocked from being loaded.
->We strongly recommend excluding OpenHardwareMonitor's binaries from antivirus scans
+> If the driver file is blocked or deleted by an antivirus, the application will not start or will not work properly. We strongly recommend adding the application folder to your antivirus exclusion list.
 
-> [!TIP]
-> You can include the app folder in your antivirus' exclusion list to prevent issues due to antivirus detections
-
-For Defender, you can run the following script in PowerShell as an administrator:
+For Defender, run in PowerShell as administrator:
 `Add-MpPreference -ExclusionPath "folder_with_app_binaries"`
 
-
 > [!CAUTION]
-> If your antivirus deletes the downloaded app file, you may need to temporarily disable real-time protection or save the file in an excluded folder.
-> If you are not comfortable with this process or your antivirus is managed by your company, we do not recommend using OpenHardwareMonitor. Please consider alternative solutions instead.
+> If your antivirus deletes the downloaded file, temporarily disable real-time protection or save the file to an excluded folder. If you are not comfortable with this or your antivirus is managed by your company, we do not recommend using OpenHardwareMonitor.
 
 ## Developer information
 **Integrate the library in own application**
