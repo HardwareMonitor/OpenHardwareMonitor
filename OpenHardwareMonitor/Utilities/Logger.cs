@@ -11,6 +11,8 @@ internal class Logger
 {
     private const string FileNameFormat = "OpenHardwareMonitorLog-{0:yyyy-MM-dd}{1}.csv";
 
+    private static readonly TimeSpan _sessionGapMargin = TimeSpan.FromSeconds(30);
+
     private readonly IComputer _computer;
 
     private DateTime _day = DateTime.MinValue;
@@ -175,7 +177,7 @@ internal class Logger
         {
             case LoggerFileRotation.PerSession:
                 // Create file if it does not exist or the logging interval has passed (+ some margin)
-                if (!File.Exists(_fileName) || now - _lastLoggedTime > LoggingInterval + TimeSpan.FromMilliseconds(100))
+                if (!File.Exists(_fileName) || now - _lastLoggedTime > LoggingInterval + _sessionGapMargin)
                 {
                     uint sessionNumber = 1;
                     do
