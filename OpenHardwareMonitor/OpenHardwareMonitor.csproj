@@ -53,7 +53,32 @@
     <AssemblyName>OpenHardwareMonitor_x86</AssemblyName>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup>
+    <CommonSourcesDir>$(MSBuildThisFileDirectory)..\..\common\</CommonSourcesDir>
+    <UseLocalCommon Condition="'$(UseLocalCommon)' == '' And Exists('$(CommonSourcesDir)sergiye.Common')">true</UseLocalCommon>
+    <UseLocalCommon Condition="'$(UseLocalCommon)' == ''">false</UseLocalCommon>
+  </PropertyGroup>  
+  <ItemGroup Condition="'$(UseLocalCommon)' == 'true'">
+    <Compile Include="..\..\common\sergiye.Common\Extensions\JsonExtensions.cs" Link="Common\JsonExtensions.cs" />
+    <Compile Include="..\..\common\sergiye.Common\Tools\StartupManager.cs" Link="Common\StartupManager.cs" />
+    <Compile Include="..\..\common\sergiye.Common\Tools\Updater.cs" Link="Common\Updater.cs" />
+    <Compile Include="..\..\common\sergiye.Common\Tools\Crasher.cs" Link="Common\Crasher.cs" />
+    <Compile Include="..\..\common\sergiye.Common\Win\TaskScheduler.cs" Link="Common\TaskScheduler.cs" />
+    <Compile Include="..\..\common\sergiye.Common\Win\WinApiHelper.cs" Link="Common\WinApiHelper.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\PersistentSettings.cs" Link="Common\PersistentSettings.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\ToolStripRadioButtonMenuItem.cs" Link="Common\ToolStripRadioButtonMenuItem.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\NotifyIconAdv.cs" Link="Common\NotifyIconAdv.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\IconFactory.cs" Link="Common\IconFactory.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\Theme.cs" Link="Common\Themes\Theme.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\LightTheme.cs" Link="Common\Themes\LightTheme.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\DarkTheme.cs" Link="Common\Themes\DarkTheme.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\CustomTheme.cs" Link="Common\Themes\CustomTheme.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\ThemedToolStripRenderer.cs" Link="Common\Themes\ThemedToolStripRenderer.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\ThemedHScrollIndicator.cs" Link="Common\Themes\ThemedHScrollIndicator.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\Themes\ThemedVScrollIndicator.cs" Link="Common\Themes\ThemedVScrollIndicator.cs" />
+    <EmbeddedResource Include="..\..\common\themes\*.json" Link="Resources\themes\%(Filename)%(Extension)" />
+  </ItemGroup>  
+  <ItemGroup Condition="'$(UseLocalCommon)' != 'true'">
     <PackageReference Include="SergiyE.Common" Version="1.*" />
     <PackageReference Include="SergiyE.Common.UI" Version="1.*" />
   </ItemGroup>
