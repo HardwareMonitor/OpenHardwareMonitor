@@ -158,7 +158,11 @@ If you find this project useful, consider [supporting the author](https://patreo
 
 ## License
 
-This program is free software: you can redistribute it.
+This program is free to use for **personal, home and other non-commercial purposes only**.
+
+Any commercial use is not allowed without prior written permission from the author. This includes use inside a company or organization, bundling it with or into commercial products or services, and selling it or charging for access to it. For commercial licensing, please contact the author through [GitHub issues](https://github.com/HardwareMonitor/OpenHardwareMonitor/issues).
+
+You may share unmodified copies of the program free of charge, as long as they are used under the same terms.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
