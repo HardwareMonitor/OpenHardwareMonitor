@@ -461,14 +461,42 @@ internal sealed partial class MainForm : Form
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        if (keyData.HasFlag(Keys.Alt) && _hideMenu.Value)
+        if (_hideMenu.Value)
         {
-            mainMenu.Visible = !mainMenu.Visible;
-            mainMenu.Focus();
-            return true;
+            if ((keyData & Keys.KeyCode) == Keys.Menu && (keyData & Keys.Modifiers) == Keys.Alt)
+            {
+                // bit 30 of lParam is set for auto-repeated key presses while Alt is held down
+                if (((long)msg.LParam & 0x40000000) == 0)
+                    _altPressedAlone = true;
+                return true;
+            }
+
+            _altPressedAlone = false;
         }
 
         return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    private bool _altPressedAlone;
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        base.OnKeyUp(e);
+        if (!_altPressedAlone || e.KeyCode != Keys.Menu)
+            return;
+
+        _altPressedAlone = false;
+        if (!_hideMenu.Value)
+            return;
+
+        mainMenu.Visible = !mainMenu.Visible;
+        mainMenu.Focus();
+    }
+
+    protected override void OnDeactivate(EventArgs e)
+    {
+        _altPressedAlone = false;
+        base.OnDeactivate(e);
     }
 
     private void StopFileHardwareMenuFromClosing(object sender, ToolStripDropDownClosingEventArgs e)
