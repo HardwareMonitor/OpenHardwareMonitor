@@ -54,8 +54,9 @@ Right-click a sensor (or use a hotkey) to:
 2. `Hide` (`Ctrl+H`) a sensor. Hidden sensors disappear from the tree and the web server until `Show Hidden Sensors` is enabled.
 3. Change the `Pen Color` and reset it (`Ctrl+R`).
 4. `Show in Tray` (`Ctrl+T`) - add a separate tray icon for the sensor.
-5. `Show in Gadget` (`Ctrl+G`) - add the sensor to the desktop gadget.
-6. Open `Parameters` (`Ctrl+P`) - available for sensors with adjustable parameters.
+5. `Show in Gadget` (`Ctrl+G`) - add the sensor value to the desktop gadget.
+6. `Gadget Mini Graph` (`Ctrl+Shift+G`) - show the sensor on the gadget graph; with the graph enabled, `Gadget Color...` and `Reset Gadget Color` set the line color.
+7. Open `Parameters` (`Ctrl+P`) - available for sensors with adjustable parameters.
 
 Other hotkeys: `F5` - reset, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project site, `Ctrl+U` - check for updates.
 
@@ -64,6 +65,10 @@ Other hotkeys: `F5` - reset, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project 
 - **Tray icons** - one icon per selected sensor with the value drawn in the icon and details in the tooltip.
 - **Icon kind** - for percent sensors choose `Value`, `Bar` or `Pie` from the icon's context menu; other sensors always show the value.
 - **Gadget** - a small window on the desktop with selected sensors, enabled in `View > Show Gadget`.
+- **Gadget mini graphs** - any sensor can be shown on the gadget as a value, as a graph, or both; the two options are independent.
+  - A graph is drawn right after the last sensor of its type (for example, temperatures get their own graph, loads another one) and shows the last 90 seconds of all sensors of that type that have the graph enabled.
+  - Percent sensors (load, control, level, humidity) use a fixed 0-100% scale, other types are auto-scaled and the graph caption shows the type and its min-max range.
+  - Each sensor gets its own default line color (also used for the percent bar), which can be changed per sensor.
 - **Window behavior** - `Start Minimized`, `Minimize To Tray` and `Minimize On Close` (`Options`).
 
 ### Themes and units
