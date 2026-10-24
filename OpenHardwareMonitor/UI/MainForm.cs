@@ -772,6 +772,12 @@ internal sealed partial class MainForm : Form
                 _systemTray.Remove(sensorNode.Sensor);
             e.Handled = true;
         }
+        else if (e.KeyCode == Keys.G && e.Control && e.Shift)
+        {
+            _gadget.SetGraph(sensorNode.Sensor, !_gadget.GetGraph(sensorNode.Sensor));
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+        }
         else if (e.KeyCode == Keys.G && e.Control)
         {
             if (!_gadget.Add(sensorNode.Sensor))
@@ -864,6 +870,34 @@ internal sealed partial class MainForm : Form
                             _gadget.Add(node.Sensor);
                     };
                     treeContextMenu.Items.Add(item);
+
+                    {
+                        bool graph = _gadget.GetGraph(node.Sensor);
+                        item = new ToolStripMenuItem("Gadget Mini Graph (Ctrl+Shift+G)") { Checked = graph };
+                        item.Click += (s, _) =>
+                        {
+                            if (s is ToolStripMenuItem menuItem)
+                                _gadget.SetGraph(node.Sensor, !menuItem.Checked);
+                        };
+                        treeContextMenu.Items.Add(item);
+
+                        if (graph)
+                        {
+                            item = new ToolStripMenuItem("Gadget Color...");
+                            item.Click += delegate
+                            {
+                                using var dialog = new ColorDialog();
+                                dialog.Color = _gadget.GetColor(node.Sensor).GetValueOrDefault();
+                                if (dialog.ShowDialog() == DialogResult.OK)
+                                    _gadget.SetColor(node.Sensor, dialog.Color);
+                            };
+                            treeContextMenu.Items.Add(item);
+
+                            item = new ToolStripMenuItem("Reset Gadget Color");
+                            item.Click += delegate { _gadget.SetColor(node.Sensor, null); };
+                            treeContextMenu.Items.Add(item);
+                        }
+                    }
                 }
 
                 if (node.Sensor.Control != null)
