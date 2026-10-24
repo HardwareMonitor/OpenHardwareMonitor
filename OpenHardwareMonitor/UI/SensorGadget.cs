@@ -216,7 +216,7 @@ internal class SensorGadget : Gadget
 
         for (int i = 0; i < 5; i++)
         {
-            ToolStripMenuItem item = new ToolStripMenuItem((20 * (i + 1)).ToString() + " %");
+            ToolStripMenuItem item = new ToolStripMenuItem($"{20 * (i + 1)} %");
             byte o = (byte)(51 * (i + 1));
             item.Checked = Opacity == o;
             item.Click += delegate
@@ -721,11 +721,16 @@ internal class SensorGadget : Gadget
     {
         SensorStyle style = GetStyle(sensor);
         if (style.Color.HasValue)
-            return style.Color;
+            return style.Color.Value;
 
-        // position among sensors of the same type keeps the color stable when other graphs are toggled
-        int index = sensors.Where(s => s.SensorType == sensor.SensorType).ToList().IndexOf(sensor);
-        return GetPaletteColor(Math.Max(index, 0));
+        if (sensor.Name.Contains('#'))
+        {
+            // position among sensors of the same type keeps the color stable when other graphs are toggled
+            int index = sensors.Where(s => s.SensorType == sensor.SensorType).ToList().IndexOf(sensor);
+            return GetPaletteColor(Math.Max(index, 0));
+        }
+
+        return null;
     }
 
     private void SampleHistory(DateTime now)
@@ -782,7 +787,7 @@ internal class SensorGadget : Gadget
             foreach (ISensor sensor in series)
             {
                 if (_history.TryGetValue(sensor.Identifier.ToString(), out List<HistoryPoint> points) && points.Count > 1)
-                    lines.Add((GetGraphColor(sensors, sensor).Value, points.ToList()));
+                    lines.Add((GetGraphColor(sensors, sensor) ?? Color.SteelBlue, points.ToList()));
             }
         }
 

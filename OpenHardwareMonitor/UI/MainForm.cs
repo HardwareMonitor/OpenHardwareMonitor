@@ -871,32 +871,30 @@ internal sealed partial class MainForm : Form
                     };
                     treeContextMenu.Items.Add(item);
 
+                    bool graph = _gadget.GetGraph(node.Sensor);
+                    item = new ToolStripMenuItem("Graph in Gadget (Ctrl+Shift+G)") { Checked = graph };
+                    item.Click += (s, _) =>
                     {
-                        bool graph = _gadget.GetGraph(node.Sensor);
-                        item = new ToolStripMenuItem("Gadget Mini Graph (Ctrl+Shift+G)") { Checked = graph };
-                        item.Click += (s, _) =>
-                        {
-                            if (s is ToolStripMenuItem menuItem)
-                                _gadget.SetGraph(node.Sensor, !menuItem.Checked);
-                        };
+                        if (s is ToolStripMenuItem menuItem)
+                            _gadget.SetGraph(node.Sensor, !menuItem.Checked);
+                    };
+                    treeContextMenu.Items.Add(item);
+
+                    item = new ToolStripMenuItem("Gadget Color...");
+                    item.Click += delegate
+                    {
+                        using var dialog = new ColorDialog();
+                        dialog.Color = _gadget.GetColor(node.Sensor).GetValueOrDefault();
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                            _gadget.SetColor(node.Sensor, dialog.Color);
+                    };
+                    treeContextMenu.Items.Add(item);
+
+                    if (_gadget.GetColor(node.Sensor) != null)
+                    {
+                        item = new ToolStripMenuItem("Reset Gadget Color");
+                        item.Click += delegate { _gadget.SetColor(node.Sensor, null); };
                         treeContextMenu.Items.Add(item);
-
-                        if (graph)
-                        {
-                            item = new ToolStripMenuItem("Gadget Color...");
-                            item.Click += delegate
-                            {
-                                using var dialog = new ColorDialog();
-                                dialog.Color = _gadget.GetColor(node.Sensor).GetValueOrDefault();
-                                if (dialog.ShowDialog() == DialogResult.OK)
-                                    _gadget.SetColor(node.Sensor, dialog.Color);
-                            };
-                            treeContextMenu.Items.Add(item);
-
-                            item = new ToolStripMenuItem("Reset Gadget Color");
-                            item.Click += delegate { _gadget.SetColor(node.Sensor, null); };
-                            treeContextMenu.Items.Add(item);
-                        }
                     }
                 }
 
