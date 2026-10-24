@@ -746,6 +746,15 @@ internal sealed partial class MainForm : Form
     private void TreeView_KeyDown(object sender, KeyEventArgs e)
     {
         var node = treeView.SelectedNode;
+        if (node is {Tag: HardwareNode hardwareNode} && e.KeyCode == Keys.H && e.Control)
+        {
+            treeView.SelectedNode = node.NextNode ?? node.PreviousNode;
+            hardwareNode.SetSensorsVisible(!hardwareNode.IsVisible);
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            return;
+        }
+
         if (node is not {Tag: SensorNode sensorNode} || sensorNode.Sensor == null)
             return;
         if (e.KeyCode == Keys.H && e.Control)
@@ -937,6 +946,12 @@ internal sealed partial class MainForm : Form
                     item.Click += delegate { nodeTextBoxText.BeginEdit(); };
                     treeContextMenu.Items.Add(item);
                 }
+
+                bool hardwareVisible = hardwareNode.IsVisible;
+                item = new ToolStripMenuItem(hardwareVisible ? "Hide (Ctrl+H)" : "Unhide (Ctrl+H)");
+                item.Click += delegate { hardwareNode.SetSensorsVisible(!hardwareVisible); };
+                treeContextMenu.Items.Add(item);
+
                 treeContextMenu.Show(treeView, new Point(m.X, m.Y));
                 break;
             }

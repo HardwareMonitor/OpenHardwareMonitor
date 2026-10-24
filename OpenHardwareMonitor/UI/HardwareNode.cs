@@ -1,6 +1,7 @@
 ﻿using OpenHardwareMonitor.Hardware;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenHardwareMonitor.UI;
@@ -18,6 +19,9 @@ internal class HardwareNode : Node, IExpandPersistNode
         _expandedIdentifier = new Identifier(hardware.Identifier, "expanded").ToString();
         Hardware = hardware;
         Image = HardwareTypeImage.Instance.GetImage(hardware.HardwareType);
+
+        NodeAdded += ChildNodeAdded;
+        NodeRemoved += ChildNodeRemoved;
 
         lock (_typeNodes)
         foreach (SensorType sensorType in Enum.GetValues(typeof(SensorType)))
@@ -71,6 +75,44 @@ internal class HardwareNode : Node, IExpandPersistNode
             _expanded = value;
             _settings.SetValue(_expandedIdentifier, _expanded);
         }
+    }
+
+    /// <summary>
+    /// Hides all sensors of this hardware and its sub hardware, which in turn hides the hardware node itself.
+    /// </summary>
+    public void SetSensorsVisible(bool visible)
+    {
+        foreach (Node child in Nodes.ToList())
+        {
+            switch (child)
+            {
+                case HardwareNode hardwareNode:
+                    hardwareNode.SetSensorsVisible(visible);
+                    break;
+                case TypeNode typeNode:
+                    foreach (SensorNode sensorNode in typeNode.Nodes.OfType<SensorNode>().ToList())
+                        sensorNode.IsVisible = visible;
+                    break;
+            }
+        }
+    }
+
+    private void ChildNodeAdded(Node node)
+    {
+        node.IsVisibleChanged += ChildIsVisibleChanged;
+        ChildIsVisibleChanged(null);
+    }
+
+    private void ChildNodeRemoved(Node node)
+    {
+        node.IsVisibleChanged -= ChildIsVisibleChanged;
+        ChildIsVisibleChanged(null);
+    }
+
+    // A hardware without visible children is hidden; one without children is kept until sensors show up.
+    private void ChildIsVisibleChanged(Node node)
+    {
+        IsVisible = Nodes.Count == 0 || Nodes.Any(static n => n.IsVisible);
     }
 
     private void UpdateNode(TypeNode node)
