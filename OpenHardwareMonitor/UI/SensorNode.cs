@@ -113,7 +113,7 @@ internal class SensorNode : Node
 
     public string Value
     {
-        get { return ValueToString(Sensor.Value); }
+        get { return Sensor.SensorType == SensorType.Text ? Sensor.Text ?? "-" : ValueToString(Sensor.Value); }
     }
 
     public string ValueToString(float? value)

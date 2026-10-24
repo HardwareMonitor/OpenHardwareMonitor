@@ -133,6 +133,8 @@ internal class Sensor : ISensor
         }
     }
 
+    public string Text { get; set; }
+
     public IEnumerable<SensorValue> Values
     {
         get { return _values; }

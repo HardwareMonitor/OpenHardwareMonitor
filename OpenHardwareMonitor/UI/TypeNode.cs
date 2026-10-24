@@ -102,6 +102,10 @@ internal sealed class TypeNode : Node, IExpandPersistNode
                 Image = EmbeddedResources.GetImage("humidity.png");
                 Text = "Humidity Levels";
                 break;
+            case SensorType.Text:
+                Image = EmbeddedResources.GetImage("factor.png");
+                Text = "Info";
+                break;
         }
 
         NodeAdded += TypeNode_NodeAdded;

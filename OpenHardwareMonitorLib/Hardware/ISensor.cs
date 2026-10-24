@@ -24,12 +24,13 @@ public enum SensorType
     Data, // GB = 2^30 Bytes
     SmallData, // MB = 2^20 Bytes
     Throughput, // B/s
-    TimeSpan, // Seconds 
+    TimeSpan, // Seconds
     Timing, // ns
     Energy, // milliwatt-hour (mWh)
     Noise, // dBA
     Conductivity, // µS/cm
-    Humidity // %
+    Humidity, // %
+    Text // string, see ISensor.Text
 }
 
 public static class SensorTypeExtensions
@@ -114,6 +115,11 @@ public interface ISensor : IElement
     /// Gets the last recorded value for the given sensor.
     /// </summary>
     float? Value { get; }
+
+    /// <summary>
+    /// Gets the last value of a <see cref="SensorType.Text"/> sensor; null for numeric sensors.
+    /// </summary>
+    string Text { get; }
 
     /// <summary>
     /// Gets a list of recorded values for the given sensor.

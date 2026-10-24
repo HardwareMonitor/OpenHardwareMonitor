@@ -630,6 +630,10 @@ internal class HttpServer
 
                 foreach (SensorNode sensor in node.Nodes[i].Nodes)
                 {
+                    // Text values cannot be represented as a gauge.
+                    if (sensor.Sensor.SensorType == SensorType.Text)
+                        continue;
+
                     string valueSensorName = sensor.Text.Replace("#", string.Empty);
 
                     // Variables needed in dictionary lookup and error message

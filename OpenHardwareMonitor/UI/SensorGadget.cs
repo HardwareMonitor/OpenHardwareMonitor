@@ -917,7 +917,11 @@ internal class SensorGadget : Gadget
                     {
                         string formatted;
 
-                        if (sensor.Value.HasValue)
+                        if (sensor.SensorType == SensorType.Text)
+                        {
+                            formatted = sensor.Text ?? "-";
+                        }
+                        else if (sensor.Value.HasValue)
                         {
                             string format = sensor.SensorType switch
                             {

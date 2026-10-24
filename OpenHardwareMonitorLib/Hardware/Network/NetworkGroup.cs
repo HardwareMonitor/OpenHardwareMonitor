@@ -39,7 +39,7 @@ internal class NetworkGroup : IGroup, IHardwareChanged
             foreach (ISensor sensor in network.Sensors)
             {
                 report.AppendLine(sensor.Name);
-                report.AppendLine(sensor.Value.ToString());
+                report.AppendLine(sensor.SensorType == SensorType.Text ? sensor.Text : sensor.Value.ToString());
                 report.AppendLine();
             }
         }

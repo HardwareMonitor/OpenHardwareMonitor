@@ -107,6 +107,9 @@ internal class SensorNotifyIcon : IDisposable
 
     private string GetString()
     {
+        if (Sensor.SensorType == SensorType.Text)
+            return Sensor.Text ?? "-";
+
         if (!Sensor.Value.HasValue)
             return "-";
 
@@ -177,6 +180,7 @@ internal class SensorNotifyIcon : IDisposable
         };
         string formattedValue = Sensor.SensorType switch
         {
+            SensorType.Text => $"\n{Sensor.Name}: {Sensor.Text ?? "-"}",
             SensorType.Temperature when UnitManager.IsFahrenheitUsed => string.Format("\n{0}: {1:0.#} °F", Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value)),
             SensorType.Throughput when !"Connection Speed".Equals(Sensor.Name) => $"\n{Sensor.Name}: {GetThroughputValue(Sensor.Value ?? 0, 0, true)}/s",
             _ => string.Format(format, Sensor.Name, Sensor.Value),
