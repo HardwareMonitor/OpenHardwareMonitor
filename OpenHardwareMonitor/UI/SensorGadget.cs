@@ -1,28 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
-using System.IO;
 using System.Linq;
 using OpenHardwareMonitor.Hardware;
-using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.UI;
 
 internal class SensorGadget : Gadget
 {
-    private const int TopBorder = 6;
-    private const int BottomBorder = 7;
-    private const int LeftBorder = 6;
-    private const int RightBorder = 7;
+    private const int BorderWidth = 6;
 
-    private Image _back = EmbeddedResources.GetImage("gadget.png");
-    private Image _image;
-    private Image _fore;
-    private Image _barBack = EmbeddedResources.GetImage("barback.png");
-    private Image _barFore = EmbeddedResources.GetImage("barblue.png");
-    private Image _background = new Bitmap(1, 1);
     private readonly float _scale;
     private float _fontSize;
     private int _iconSize;
@@ -48,7 +36,9 @@ internal class SensorGadget : Gadget
     private readonly Dictionary<string, List<HistoryPoint>> _history = new();
     private DateTime _lastSample = DateTime.MinValue;
     private Font _captionFont;
-    private static readonly Color[] GraphPalette =
+    private readonly Pen _borderPen = new Pen(Color.LightSlateGray, 1f);
+    private readonly Brush _captionBrush = new SolidBrush(Color.FromArgb(150, 150, 150));
+    private static readonly Color[] _graphPalette =
     {
         Color.FromArgb(0x90, 0xEE, 0x90), Color.FromArgb(0xFF, 0xF6, 0x2A), Color.FromArgb(0xFA, 0xBA, 0x00), Color.FromArgb(0xEC, 0x75, 0x27),
         Color.FromArgb(0xE5, 0x31, 0x6C), Color.FromArgb(0xE2, 0x00, 0x3B), Color.FromArgb(0xD7, 0x00, 0x7A), Color.FromArgb(0xAE, 0x32, 0x88),
@@ -59,8 +49,8 @@ internal class SensorGadget : Gadget
     // The base palette is a smooth hue cycle; every next cycle is alternately lightened and darkened so that colors do not repeat.
     private static Color GetPaletteColor(int index)
     {
-        Color color = GraphPalette[index % GraphPalette.Length];
-        int cycle = index / GraphPalette.Length;
+        Color color = _graphPalette[index % _graphPalette.Length];
+        int cycle = index / _graphPalette.Length;
         if (cycle == 0)
             return color;
 
@@ -80,6 +70,7 @@ internal class SensorGadget : Gadget
 
     private Font _largeFont;
     private Font _smallFont;
+    private Brush _backBrush;
     private Brush _textBrush;
     private StringFormat _stringFormat;
     private StringFormat _trimStringFormat;
@@ -94,57 +85,6 @@ internal class SensorGadget : Gadget
         _stringFormat = new StringFormat { FormatFlags = StringFormatFlags.NoWrap };
         _trimStringFormat = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap };
         _alignRightStringFormat = new StringFormat { Alignment = StringAlignment.Far, FormatFlags = StringFormatFlags.NoWrap };
-
-        if (File.Exists("gadget_background.png"))
-        {
-            try
-            {
-                Image newBack = new Bitmap("gadget_background.png");
-                _back.Dispose();
-                _back = newBack;
-            }
-            catch { }
-        }
-
-        if (File.Exists("gadget_image.png"))
-        {
-            try
-            {
-                _image = new Bitmap("gadget_image.png");
-            }
-            catch { }
-        }
-
-        if (File.Exists("gadget_foreground.png"))
-        {
-            try
-            {
-                _fore = new Bitmap("gadget_foreground.png");
-            }
-            catch { }
-        }
-
-        if (File.Exists("gadget_bar_background.png"))
-        {
-            try
-            {
-                Image newBarBack = new Bitmap("gadget_bar_background.png");
-                _barBack.Dispose();
-                _barBack = newBarBack;
-            }
-            catch { }
-        }
-
-        if (File.Exists("gadget_bar_foreground.png"))
-        {
-            try
-            {
-                Image newBarColor = new Bitmap("gadget_bar_foreground.png");
-                _barFore.Dispose();
-                _barFore = newBarColor;
-            }
-            catch { }
-        }
 
         Location = new Point(settings.GetValue("sensorGadget.Location.X", 100), settings.GetValue("sensorGadget.Location.Y", 100));
         LocationChanged += delegate
@@ -166,6 +106,12 @@ internal class SensorGadget : Gadget
         contextMenuStrip.Renderer = new ThemedToolStripRenderer();
         ToolStripMenuItem hardwareNamesItem = new ToolStripMenuItem("Hardware Names");
         contextMenuStrip.Items.Add(hardwareNamesItem);
+        contextMenuStrip.Items.Add(new ToolStripMenuItem("Increase Font Size", null, (_, _) =>
+        {
+            float newSize = _fontSize + 1;
+            SetFontSize(newSize);
+            settings.SetValue("sensorGadget.FontSize", newSize);
+        }));
         contextMenuStrip.Items.Add(new ToolStripMenuItem("Decrease Font Size", null, (_, _) =>
         {
             float newSize = _fontSize - 1;
@@ -173,37 +119,27 @@ internal class SensorGadget : Gadget
             SetFontSize(newSize);
             settings.SetValue("sensorGadget.FontSize", newSize);
         }));
-        contextMenuStrip.Items.Add(new ToolStripMenuItem("Increase Font Size", null, (_, _) =>
-        {
-            float newSize = _fontSize + 1;
-            SetFontSize(newSize);
-            settings.SetValue("sensorGadget.FontSize", newSize);
-        }));
 
         Color fontColor = settings.GetValue("sensorGadget.FontColor", Color.White);
-        int fontColorArgb = fontColor.ToArgb();
-
         SetFontColor(fontColor);
-
-        IEnumerable<Color> providedColors = Enum.GetValues(typeof(KnownColor))
-                                                .Cast<KnownColor>()
-                                                .Select(x => Color.FromKnownColor(x))
-                                                .Where(x => !x.IsSystemColor && x.Name.Length < 7);
-
-        ToolStripMenuItem fontColorMenu = new ToolStripMenuItem("Font Color");
-        foreach (Color color in providedColors)
+        contextMenuStrip.Items.Add(new ToolStripMenuItem("Font Color", null, (_, _) =>
         {
-            ToolStripItem item = new ToolStripMenuItem(color.Name) { Checked = fontColorArgb == color.ToArgb() };
-            item.Click += delegate
-            {
-                SetFontColor(color);
-                settings.SetValue("sensorGadget.FontColor", color);
-                foreach (ToolStripMenuItem mi in fontColorMenu.DropDownItems)
-                    mi.Checked = mi == item;
-            };
-            fontColorMenu.DropDownItems.Add(item);
-        }
-        contextMenuStrip.Items.Add(fontColorMenu);
+            using var dialog = new ColorDialog();
+            dialog.Color = fontColor;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            SetFontColor(dialog.Color);
+            settings.SetValue("sensorGadget.FontColor", dialog.Color);
+        }));
+        Color backColor = settings.GetValue("sensorGadget.BackColor", Color.Transparent);
+        SetBackColor(backColor);
+        contextMenuStrip.Items.Add(new ToolStripMenuItem("Back Color", null, (_, _) =>
+        {
+            using var dialog = new ColorDialog();
+            dialog.Color = backColor;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            SetBackColor(dialog.Color);
+            settings.SetValue("sensorGadget.BackColor", dialog.Color);
+        }));
         contextMenuStrip.Items.Add(new ToolStripSeparator());
         ToolStripMenuItem lockItem = new ToolStripMenuItem("Lock Position and Size");
         contextMenuStrip.Items.Add(lockItem);
@@ -252,12 +188,12 @@ internal class SensorGadget : Gadget
             if (lockPositionAndSize.Value)
                 return;
 
-            if (e.Location.X < LeftBorder)
+            if (e.Location.X < BorderWidth)
             {
                 e.HitResult = HitResult.Left;
                 return;
             }
-            if (e.Location.X > Size.Width - 1 - RightBorder)
+            if (e.Location.X > Size.Width - 1 - BorderWidth)
             {
                 e.HitResult = HitResult.Right;
             }
@@ -301,6 +237,9 @@ internal class SensorGadget : Gadget
         _textBrush.Dispose();
         _textBrush = null;
 
+        _backBrush.Dispose();
+        _backBrush = null;
+
         _stringFormat.Dispose();
         _stringFormat = null;
 
@@ -310,29 +249,8 @@ internal class SensorGadget : Gadget
         _alignRightStringFormat.Dispose();
         _alignRightStringFormat = null;
 
-        _back.Dispose();
-        _back = null;
-
-        _barFore.Dispose();
-        _barFore = null;
-
-        _barBack.Dispose();
-        _barBack = null;
-
-        _background.Dispose();
-        _background = null;
-
-        if (_image != null)
-        {
-            _image.Dispose();
-            _image = null;
-        }
-
-        if (_fore != null)
-        {
-            _fore.Dispose();
-            _fore = null;
-        }
+        _borderPen.Dispose();
+        _captionBrush.Dispose();
 
         base.Dispose();
     }
@@ -491,10 +409,10 @@ internal class SensorGadget : Gadget
         _iconSize = (int)Math.Round(1.5 * scaledFontSize);
         _hardwareLineHeight = (int)Math.Round(1.66 * scaledFontSize);
         _sensorLineHeight = (int)Math.Round(1.33 * scaledFontSize);
-        _leftMargin = LeftBorder + (int)Math.Round(0.3 * scaledFontSize);
-        _rightMargin = RightBorder + (int)Math.Round(0.3 * scaledFontSize);
-        _topMargin = TopBorder;
-        _bottomMargin = BottomBorder + (int)Math.Round(0.3 * scaledFontSize);
+        _leftMargin = BorderWidth + (int)Math.Round(0.3 * scaledFontSize);
+        _rightMargin = BorderWidth + (int)Math.Round(0.3 * scaledFontSize);
+        _topMargin = BorderWidth;
+        _bottomMargin = BorderWidth + (int)Math.Round(0.3 * scaledFontSize);
         _progressWidth = (int)Math.Round(5.3 * scaledFontSize);
 
         Resize((int)Math.Round(17.3 * scaledFontSize));
@@ -504,6 +422,12 @@ internal class SensorGadget : Gadget
     {
         _textBrush?.Dispose();
         _textBrush = new SolidBrush(color);
+    }
+
+    private void SetBackColor(Color color)
+    {
+        _backBrush?.Dispose();
+        _backBrush = new SolidBrush(color);
     }
 
     private void Resize()
@@ -533,72 +457,6 @@ internal class SensorGadget : Gadget
 
         y += _bottomMargin;
         Size = new Size(width, y);
-    }
-
-    private void DrawImageWidthBorder(Graphics g, int width, int height, Image back, int t, int b, int l, int r)
-    {
-        GraphicsUnit u = GraphicsUnit.Pixel;
-
-        g.DrawImage(back, new Rectangle(0, 0, l, t), new Rectangle(0, 0, l, t), u);
-        g.DrawImage(back, new Rectangle(l, 0, width - l - r, t), new Rectangle(l, 0, back.Width - l - r, t), u);
-        g.DrawImage(back, new Rectangle(width - r, 0, r, t), new Rectangle(back.Width - r, 0, r, t), u);
-
-        g.DrawImage(back, new Rectangle(0, t, l, height - t - b), new Rectangle(0, t, l, back.Height - t - b), u);
-        g.DrawImage(back, new Rectangle(l, t, width - l - r, height - t - b), new Rectangle(l, t, back.Width - l - r, back.Height - t - b), u);
-        g.DrawImage(back, new Rectangle(width - r, t, r, height - t - b), new Rectangle(back.Width - r, t, r, back.Height - t - b), u);
-
-        g.DrawImage(back, new Rectangle(0, height - b, l, b), new Rectangle(0, back.Height - b, l, b), u);
-        g.DrawImage(back, new Rectangle(l, height - b, width - l - r, b), new Rectangle(l, back.Height - b, back.Width - l - r, b), u);
-        g.DrawImage(back, new Rectangle(width - r, height - b, r, b), new Rectangle(back.Width - r, back.Height - b, r, b), u);
-    }
-
-    private void DrawBackground(Graphics g)
-    {
-        int w = Size.Width;
-        int h = Size.Height;
-
-        if (w != _background.Width || h != _background.Height)
-        {
-            _background.Dispose();
-            _background = new Bitmap(w, h, PixelFormat.Format32bppPArgb);
-
-            using (Graphics graphics = Graphics.FromImage(_background))
-            {
-                DrawImageWidthBorder(graphics, w, h, _back, TopBorder, BottomBorder, LeftBorder, RightBorder);
-
-                if (_fore != null)
-                    DrawImageWidthBorder(graphics, w, h, _fore, TopBorder, BottomBorder, LeftBorder, RightBorder);
-
-                if (_image != null)
-                {
-                    int width = w - LeftBorder - RightBorder;
-                    int height = h - TopBorder - BottomBorder;
-                    float xRatio = width / (float)_image.Width;
-                    float yRatio = height / (float)_image.Height;
-                    float destWidth, destHeight;
-                    float xOffset, yOffset;
-
-                    if (xRatio < yRatio)
-                    {
-                        destWidth = width;
-                        destHeight = _image.Height * xRatio;
-                        xOffset = 0;
-                        yOffset = 0.5f * (height - destHeight);
-                    }
-                    else
-                    {
-                        destWidth = _image.Width * yRatio;
-                        destHeight = height;
-                        xOffset = 0.5f * (width - destWidth);
-                        yOffset = 0;
-                    }
-
-                    graphics.DrawImage(_image, new RectangleF(LeftBorder + xOffset, TopBorder + yOffset, destWidth, destHeight));
-                }
-            }
-        }
-
-        g.DrawImageUnscaled(_background, 0, 0);
     }
 
     public static bool IsGraphical(ISensor sensor)
@@ -667,7 +525,7 @@ internal class SensorGadget : Gadget
         }
     }
 
-    private void DrawProgress(Graphics g, float x, float y, float width, float height, float progress, Color? color)
+    private void DrawProgress(Graphics g, float x, float y, float width, float height, float progress, Color color)
     {
         // A NaN, infinite or huge value makes GDI+ throw an OverflowException.
         if (float.IsNaN(progress) || progress < 0)
@@ -675,21 +533,10 @@ internal class SensorGadget : Gadget
         else if (progress > 1)
             progress = 1;
 
-        g.DrawImage(_barBack,
-                    new RectangleF(x + width * progress, y, width * (1 - progress), height),
-                    new RectangleF(_barBack.Width * progress, 0, (1 - progress) * _barBack.Width, _barBack.Height),
-                    GraphicsUnit.Pixel);
+        g.DrawRectangle(_borderPen, x, y, width, height);
 
-        if (color.HasValue)
-        {
-            using Brush brush = new SolidBrush(color.Value);
-            g.FillRectangle(brush, x, y, width * progress, height);
-            return;
-        }
-
-        g.DrawImage(_barFore,
-                    new RectangleF(x, y, width * progress, height),
-                    new RectangleF(0, 0, progress * _barFore.Width, _barFore.Height), GraphicsUnit.Pixel);
+        using Brush brush = new SolidBrush(color);
+        g.FillRectangle(brush, x, y, width * progress, height);
     }
 
     private static bool HasFixedScale(SensorType type)
@@ -717,7 +564,7 @@ internal class SensorGadget : Gadget
         return sensors.Last(s => s.SensorType == sensor.SensorType) == sensor && sensors.Any(s => s.SensorType == sensor.SensorType && GetStyle(s).Graph);
     }
 
-    private Color? GetGraphColor(IList<ISensor> sensors, ISensor sensor)
+    private Color GetGraphColor(IList<ISensor> sensors, ISensor sensor)
     {
         SensorStyle style = GetStyle(sensor);
         if (style.Color.HasValue)
@@ -730,7 +577,7 @@ internal class SensorGadget : Gadget
             return GetPaletteColor(Math.Max(index, 0));
         }
 
-        return null;
+        return Color.Yellow;
     }
 
     private void SampleHistory(DateTime now)
@@ -787,7 +634,7 @@ internal class SensorGadget : Gadget
             foreach (ISensor sensor in series)
             {
                 if (_history.TryGetValue(sensor.Identifier.ToString(), out List<HistoryPoint> points) && points.Count > 1)
-                    lines.Add((GetGraphColor(sensors, sensor) ?? Color.SteelBlue, points.ToList()));
+                    lines.Add((GetGraphColor(sensors, sensor), points.ToList()));
             }
         }
 
@@ -814,16 +661,13 @@ internal class SensorGadget : Gadget
         {
             g.SetClip(new RectangleF(x, y, width, height), System.Drawing.Drawing2D.CombineMode.Intersect);
 
-            using (Pen grid = new Pen(Color.FromArgb(48, 104, 94), 1f))
-            {
-                for (int i = 1; i < 4; i++)
-                    g.DrawLine(grid, x, y + height * i / 4, x + width, y + height * i / 4);
+            for (int i = 1; i < 4; i++)
+                g.DrawLine(_borderPen, x, y + height * i / 4, x + width, y + height * i / 4);
 
-                for (int i = 1; i < 10; i++)
-                {
-                    float gx = x + width * i / 10;
-                    g.DrawLine(grid, gx, y, gx, y + height);
-                }
+            for (int i = 1; i < 10; i++)
+            {
+                float gx = x + width * i / 10;
+                g.DrawLine(_borderPen, gx, y, gx, y + height);
             }
 
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -842,8 +686,7 @@ internal class SensorGadget : Gadget
                 bool fahrenheit = type == SensorType.Temperature && UnitManager.IsFahrenheitUsed;
                 float lo = fahrenheit ? dataMin * 1.8f + 32 : dataMin;
                 float hi = fahrenheit ? dataMax * 1.8f + 32 : dataMax;
-                using Brush captionBrush = new SolidBrush(Color.FromArgb(150, 150, 150));
-                g.DrawString($"{type}  {lo:0.#}–{hi:0.#}", _captionFont, captionBrush, x + 2, y);
+                g.DrawString($"{type}  {lo:0.#}–{hi:0.#}", _captionFont, _captionBrush, x + 2, y);
             }
         }
         finally
@@ -851,8 +694,7 @@ internal class SensorGadget : Gadget
             g.Restore(state);
         }
 
-        using Pen border = new Pen(Color.FromArgb(84, 124, 114), 1f);
-        g.DrawRectangle(border, x, y, width - 1, height - 1);
+        g.DrawRectangle(_borderPen, x, y, width - 1, height - 1);
     }
 
     private class SensorStyle
@@ -870,7 +712,8 @@ internal class SensorGadget : Gadget
             int w = Size.Width;
 
             g.Clear(Color.Transparent);
-            DrawBackground(g);
+            g.FillRectangle(_backBrush, 0, 0, Size.Width, Size.Height);
+
             SampleHistory(DateTime.UtcNow);
 
             int x;
@@ -878,11 +721,11 @@ internal class SensorGadget : Gadget
 
             if (_sensors.Count == 0)
             {
-                x = LeftBorder + 1;
+                x = BorderWidth + 1;
                 g.DrawString("Right-click on a sensor in the main window and select " +
                              "\"Show in Gadget\" to show the sensor here.",
                              _smallFont, _textBrush,
-                             new Rectangle(x, y - 1, w - RightBorder - x, 0));
+                             new Rectangle(x, y - 1, w - BorderWidth - x, 0));
             }
 
             lock (_sensors)
@@ -893,10 +736,10 @@ internal class SensorGadget : Gadget
                     if (y > _topMargin)
                         y += _hardwareLineHeight - _sensorLineHeight;
 
-                    x = LeftBorder + 1;
+                    x = BorderWidth + 1;
                     g.DrawImage(HardwareTypeImage.Instance.GetImage(pair.Key.HardwareType), new Rectangle(x, y + 1, _iconSize, _iconSize));
                     x += _iconSize + 1;
-                    g.DrawString(pair.Key.Name, _largeFont, _textBrush, new Rectangle(x, y - 1, w - RightBorder - x, 0), _stringFormat);
+                    g.DrawString(pair.Key.Name, _largeFont, _textBrush, new Rectangle(x, y - 1, w - BorderWidth - x, 0), _stringFormat);
                     y += _hardwareLineHeight;
                 }
 
