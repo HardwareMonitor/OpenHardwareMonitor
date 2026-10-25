@@ -849,9 +849,12 @@ internal sealed partial class MainForm : Form
                 };
                 treeContextMenu.Items.Add(item);
 
-                item = new ToolStripMenuItem("Reset Pen Color (Ctrl+R)");
-                item.Click += delegate { node.PenColor = null; };
-                treeContextMenu.Items.Add(item);
+                if (node.PenColor != null)
+                {
+                    item = new ToolStripMenuItem("Reset Pen Color (Ctrl+R)");
+                    item.Click += delegate { node.PenColor = null; };
+                    treeContextMenu.Items.Add(item);
+                }
 
                 treeContextMenu.Items.Add(new ToolStripSeparator());
                 item = new ToolStripMenuItem("Show in Tray (Ctrl+T)") { Checked = _systemTray.Contains(node.Sensor) };
