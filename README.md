@@ -69,6 +69,9 @@ Other hotkeys: `F5` - reset, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project 
   - A graph is drawn right after the last sensor of its type (for example, temperatures get their own graph, loads another one) and shows the last 90 seconds of all sensors of that type that have the graph enabled.
   - Percent sensors (load, control, level, humidity) use a fixed 0-100% scale, other types are auto-scaled and the graph caption shows the type and its min-max range.
   - Each sensor gets its own default line color (also used for the percent bar), which can be changed per sensor.
+- **Plain themed drawing** - the gadget no longer uses skin images; the background is a solid color (transparent by default) set with `Back Color`, and progress bars and graphs are drawn with a single border pen. The font color is chosen in a color dialog, `Reset Pen Color` appears only after a color has been assigned.
+- **Text sensors** - network adapters show string values (IP, MAC, Subnet Mask, Gateway, DNS, DHCP, Status, Wi-Fi SSID and others) that can be added to the gadget and tray like any other sensor.
+- **Hiding hardware** - `Hide`/`Unhide` (`Ctrl+H`) in the hardware menu toggles all sensors of a device; hardware nodes without visible sensors are removed from the tree.
 - **Window behavior** - `Start Minimized`, `Minimize To Tray` and `Minimize On Close` (`Options`).
 
 ### Themes and units
@@ -139,6 +142,10 @@ Files are named `OpenHardwareMonitorLog-yyyy-MM-dd[-N].csv`. The first row conta
 Here's a preview of the app's UI with `Light`/`Dark` themes running on Windows 10:
 
 [<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/themes.png" alt="Themes" width="300"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/themes.png)
+
+Here's a preview of the gadget with mini graphs, text sensors and the plain themed background:
+
+[<img src="https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_gadget.png" alt="Gadget" width="200"/>](https://github.com/HardwareMonitor/openhardwaremonitor/raw/master/preview_gadget.png)
 
 Here's a preview of the tray icons and gadget (in Windows 10):
 
