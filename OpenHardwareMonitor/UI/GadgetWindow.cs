@@ -19,6 +19,7 @@ internal sealed class GadgetWindow : NativeWindow, IDisposable
     private IntPtr _handleBitmapDC;
     private Size _bufferSize;
     private Graphics _graphics;
+    private bool _redrawing;
 
     public event EventHandler SizeChanged;
     public event EventHandler LocationChanged;
@@ -230,18 +231,30 @@ internal sealed class GadgetWindow : NativeWindow, IDisposable
         if (!_visible || Paint == null)
             return;
 
-        if (_size != _bufferSize)
-        {
-            DisposeBuffer();
-            CreateBuffer();
-        }
+        // the paint handler may pump messages, so a nested Redraw would use the busy Graphics
+        if (_redrawing)
+            return;
 
-        Paint(this, new PaintEventArgs(_graphics, new Rectangle(Point.Empty, _size)));
-        Point pointSource = Point.Empty;
-        BlendFunction blend = CreateBlendFunction();
-        NativeMethods.UpdateLayeredWindow(Handle, IntPtr.Zero, IntPtr.Zero, ref _size, _handleBitmapDC, ref pointSource, 0, ref blend, ULW_ALPHA);
-        // make sure the window is at the right location
-        NativeMethods.SetWindowPos(Handle, IntPtr.Zero, _location.X, _location.Y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSENDCHANGING);
+        _redrawing = true;
+        try
+        {
+            if (_size != _bufferSize)
+            {
+                DisposeBuffer();
+                CreateBuffer();
+            }
+
+            Paint(this, new PaintEventArgs(_graphics, new Rectangle(Point.Empty, _size)));
+            Point pointSource = Point.Empty;
+            BlendFunction blend = CreateBlendFunction();
+            NativeMethods.UpdateLayeredWindow(Handle, IntPtr.Zero, IntPtr.Zero, ref _size, _handleBitmapDC, ref pointSource, 0, ref blend, ULW_ALPHA);
+            // make sure the window is at the right location
+            NativeMethods.SetWindowPos(Handle, IntPtr.Zero, _location.X, _location.Y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSENDCHANGING);
+        }
+        finally
+        {
+            _redrawing = false;
+        }
     }
 
     public byte Opacity
