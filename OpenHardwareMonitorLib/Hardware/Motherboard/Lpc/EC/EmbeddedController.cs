@@ -19,6 +19,16 @@ public abstract class EmbeddedController : Hardware
             ECSensor.TempCPUPackage,
             ECSensor.TempVrm,
             ECSensor.TempTSensorAlt),
+        new (Model.ROG_CROSSHAIR_X870E_APEX,
+            BoardFamily.Amd800,
+            ECSensor.TempVrm,
+            ECSensor.TempVrmSoc,
+            ECSensor.TempDimm,
+            ECSensor.VoltageVrmCore,
+            ECSensor.VoltageVrmSoc,
+            ECSensor.PowerVrmCore,
+            ECSensor.PowerVrmSoc,
+            ECSensor.FanCPUOpt),
         new (Model.ROG_CROSSHAIR_X870E_DARK_HERO,
             BoardFamily.Amd800,
             ECSensor.TempTSensor),
@@ -405,6 +415,12 @@ public abstract class EmbeddedController : Hardware
                 { ECSensor.TempCPUPackage, new EmbeddedControllerSource("CPU Package", SensorType.Temperature, 0x0031) },
                 { ECSensor.TempMB, new EmbeddedControllerSource("Motherboard", SensorType.Temperature, 0x0032) },
                 { ECSensor.TempVrm, new EmbeddedControllerSource("VRM", SensorType.Temperature, 0x0033) },
+                { ECSensor.TempDimm, new EmbeddedControllerSource("DIMM Thermistor", SensorType.Temperature, 0x0055) },
+                { ECSensor.TempVrmSoc, new EmbeddedControllerSource("VRM SOC", SensorType.Temperature, 0x0418) },
+                { ECSensor.VoltageVrmCore, new EmbeddedControllerSource("VRM Vcore (Voltage Out)", SensorType.Voltage, 0x015A, 2, factor: 0.000125f) },
+                { ECSensor.VoltageVrmSoc, new EmbeddedControllerSource("VRM SOC (Voltage Out)", SensorType.Voltage, 0x041A, 2, factor: 0.001f, isLittleEndian: true) },
+                { ECSensor.PowerVrmCore, new EmbeddedControllerSource("VRM Vcore (Power Out)", SensorType.Power, 0x015C, 2, factor: 0.125f) },
+                { ECSensor.PowerVrmSoc, new EmbeddedControllerSource("VRM SOC (Power Out)", SensorType.Power, 0x041E, 2, isLittleEndian: true) },
                 { ECSensor.TempTSensor, new EmbeddedControllerSource("T Sensor", SensorType.Temperature, 0x0036, blank: -40) },
                 { ECSensor.TempTSensorAlt, new EmbeddedControllerSource("T Sensor", SensorType.Temperature, 0x0035, blank: -40) },
                 { ECSensor.FanCPUOpt, new EmbeddedControllerSource("CPU Optional Fan", SensorType.Fan, 0x00b0, 2) }
@@ -563,16 +579,19 @@ public abstract class EmbeddedController : Hardware
         int readRegister = 0;
         for (int si = 0; si < _sensors.Count; ++si)
         {
+            int littleEndian = _sources[si].IsLittleEndian ? 1 : 0;
+            int bigEndian = _sources[si].IsLittleEndian ? 0 : 1;
+
             int val = _sources[si].Size switch
             {
                 1 => _sources[si].Type switch { SensorType.Temperature => unchecked((sbyte)_data[readRegister]), _ => _data[readRegister] },
-                2 => unchecked((short)((_data[readRegister] << 8) + _data[readRegister + 1])),
+                2 => unchecked((short)((_data[readRegister + littleEndian] << 8) + _data[readRegister + bigEndian])),
                 _ => 0
             };
 
             readRegister += _sources[si].Size;
 
-            _sensors[si].Value = val != _sources[si].Blank ? val * _sources[si].Factor : null;
+            _sensors[si].Value = val != _sources[si].Blank ? (val * _sources[si].Factor) + _sources[si].Offset : null;
         }
     }
 
@@ -662,8 +681,20 @@ public abstract class EmbeddedController : Hardware
         /// <summary>VRM temperature [℃]</summary>
         TempVrm,
 
+        /// <summary>VRM SOC temperature [℃]</summary>
+        TempVrmSoc,
+
+        /// <summary>DIMM thermistor temperature [℃]</summary>
+        TempDimm,
+
         /// <summary>CPU Core voltage [mV]</summary>
         VoltageCPU,
+
+        /// <summary>VRM Vcore output voltage [V]</summary>
+        VoltageVrmCore,
+
+        /// <summary>VRM SOC output voltage [V]</summary>
+        VoltageVrmSoc,
 
         /// <summary>CPU_Opt fan [RPM]</summary>
         FanCPUOpt,
@@ -682,6 +713,12 @@ public abstract class EmbeddedController : Hardware
 
         /// <summary>CPU current [A]</summary>
         CurrCPU,
+
+        /// <summary>VRM Vcore output power [W]</summary>
+        PowerVrmCore,
+
+        /// <summary>VRM SOC output power [W]</summary>
+        PowerVrmSoc,
 
         /// <summary>"Water_In" temperature sensor reading [℃]</summary>
         TempWaterIn,
