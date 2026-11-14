@@ -5,15 +5,23 @@ body:
   - type: markdown
     attributes:
       value: |
-        > [!IMPORTANT]
-        > Before you start, check if there are already open or resolved similar issues.
-  
+        Thanks for your suggestion! Please fill in the fields below.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you start
+      options:
+        - label: I checked the open and closed issues and did not find a similar request.
+          required: true
+        - label: I am using the latest release.
+          required: true
   - type: input
     id: version
     attributes:
       label: Version
-      description: Which App version do you use?
-      placeholder: e.g. 1.0.0
+      description: Shown in `Help > About` and in the title of the main window.
+      placeholder: e.g. 3.0.9513 x64
     validations:
       required: true
   - type: input
@@ -21,35 +29,32 @@ body:
     attributes:
       label: OS
       description: Which operating system do you use?
-      placeholder: e.g. Windows 11 21H2 build 22000
+      placeholder: e.g. Windows 11 23H2 build 22631
     validations:
       required: true
   - type: textarea
     id: problem
     attributes:
-      label: Is your feature request related to a problem?
-      description: A clear and concise description of what the problem is.
-      placeholder: A clear and concise description of what the problem is.
+      label: What problem would this solve?
+      description: Describe the use case or the problem you are trying to solve.
+      placeholder: e.g. I want to see the CPU temperature of the last hour next to the sensor list.
     validations:
       required: true
   - type: textarea
     id: solution
     attributes:
-      label: How would you like the problem to be solved?
-      description: A clear and concise description of what you would like to happen.
-      placeholder: A clear and concise description of what you would like to happen.
+      label: How would you like it to work?
+      description: Describe the behavior you expect, including menu items or hotkeys if relevant.
+      placeholder: e.g. A "Show Plot" menu item that draws the selected sensors on a chart.
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
       label: What alternatives have you considered?
-      description: A clear and concise description of any alternative solutions or features you have considered.
-      placeholder: A clear and concise description of any alternative solutions or features you have considered.
-    validations:
-      required: true
+      description: Optional. Other solutions or workarounds you have tried.
   - type: textarea
     id: additional
     attributes:
       label: Additional information
-      description: If applicable, add screenshots or other relevant information to help explain your problem.
+      description: Optional. Screenshots, mockups or links that help to explain the request.

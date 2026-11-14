@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Antivirus warnings or the app does not start
+    url: https://github.com/HardwareMonitor/openhardwaremonitor#antivirus-warnings
+    about: Antivirus false positives and driver blocking are described in the README. Please read it before opening an issue.

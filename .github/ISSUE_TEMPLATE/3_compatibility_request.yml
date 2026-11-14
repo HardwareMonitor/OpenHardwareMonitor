@@ -5,15 +5,25 @@ body:
   - type: markdown
     attributes:
       value: |
-        > [!IMPORTANT]
-        > Before you start, check if there are already open or resolved similar issues.
-  
+        Use this form for hardware that is missing, shows no sensors or reports wrong values.
+
+        Please attach a report from `File > Save Report`: without it the device usually cannot be investigated.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you start
+      options:
+        - label: I checked the open and closed issues and did not find a similar request.
+          required: true
+        - label: I am using the latest release.
+          required: true
   - type: input
     id: version
     attributes:
       label: Version
-      description: Which App version do you use?
-      placeholder: e.g. 1.0.0
+      description: Shown in `Help > About` and in the title of the main window.
+      placeholder: e.g. 3.0.9513 x64
     validations:
       required: true
   - type: input
@@ -21,32 +31,52 @@ body:
     attributes:
       label: OS
       description: Which operating system do you use?
-      placeholder: e.g. Windows 11 21H2 build 22000
+      placeholder: e.g. Windows 11 23H2 build 22631
+    validations:
+      required: true
+  - type: dropdown
+    id: admin
+    attributes:
+      label: Run as administrator
+      description: Many sensors are available only with administrator rights.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+      description: The exact model of the motherboard, GPU, drive, fan controller or other device.
+      placeholder: e.g. ASUS ROG STRIX B550-F GAMING, BIOS 3202
     validations:
       required: true
   - type: textarea
     id: what-was-test
     attributes:
       label: Which features of the application did you test?
-      description: A clear and concise description of features that were tested.
-      placeholder: Type here...
+      description: Which sensors and hardware groups (`File > Hardware`) did you check?
+      placeholder: e.g. Motherboard and CPU groups are enabled, temperatures and voltages checked.
     validations:
       required: true
   - type: textarea
     id: what-is-broken
     attributes:
       label: Which features of the application do not work as expected?
-      description: A clear and concise description of features that do not work as expected.
-      placeholder: Type here...
+      description: Which sensors are missing or show wrong values, and what values you expect (for example, from the manufacturer's tool).
+      placeholder: e.g. The CPU fan shows 0 RPM, the BIOS shows 1200 RPM.
     validations:
       required: true
   - type: textarea
-    id: logs
+    id: report
     attributes:
-      label: Logs
-      description: If you encountered problems, please drag and drop log files here.
+      label: Report
+      description: Save a report with `File > Save Report` and drag and drop it here.
+    validations:
+      required: true
   - type: textarea
     id: additional
     attributes:
       label: Additional information
-      description: If applicable, add screenshots or other relevant information to help explain your problem.
+      description: Optional. Screenshots, output of the manufacturer's tool or other relevant information.

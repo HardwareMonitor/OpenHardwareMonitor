@@ -1,9 +1,0 @@
-{
-    "gitignore": "exclude",
-    "excludeFiles": [
-        "*.md",
-        "*.user",
-        "*.bat",
-    ],
-    "hideFiles": []
-}
