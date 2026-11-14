@@ -124,22 +124,17 @@ internal class SensorNotifyIcon : IDisposable
         };
     }
 
-    private static string GetThroughputValue(float byteCount, byte preferredSufNum = 1, bool addSuffix = false)
+    private static string GetThroughputValue(float byteCount)
     {
-        string[] suf = [" B", " KB", " MB", " GB"];
-        if (byteCount == 0)
-            return addSuffix ? "0" + suf[0] : "0";
         long bytes = Math.Abs((long)byteCount);
-        int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-        if (place < preferredSufNum)
-            place = preferredSufNum;
+        if (bytes == 0)
+            return "0";
+
+        int place = Math.Max(1, Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024))));
         double num = Math.Round(bytes / Math.Pow(1024, place), 1);
         if (num >= 10)
             num = Math.Round(num, 0);
-        string result = (Math.Sign(byteCount) * num).ToString();
-        if (addSuffix)
-            return result + suf[place];
-        return new string(result.Take(3).ToArray());
+        return new string((Math.Sign(byteCount) * num).ToString().Take(3).ToArray());
     }
 
     public void Update()
@@ -156,35 +151,7 @@ internal class SensorNotifyIcon : IDisposable
             _ => _iconFactory.CreateTransparentIcon(GetString()),
         };
         icon?.Destroy();
-        string format = Sensor.SensorType switch
-        {
-            SensorType.Voltage => "\n{0}: {1:0.##} V",
-            SensorType.Current => "\n{0}: {1:0.##} A",
-            SensorType.Clock => "\n{0}: {1:F0} MHz",
-            SensorType.Load => "\n{0}: {1:0.#} %",
-            SensorType.Temperature => "\n{0}: {1:0.#} °C",
-            SensorType.Fan => "\n{0}: {1:F0} RPM",
-            SensorType.Flow => "\n{0}: {1:F0} L/h",
-            SensorType.Control => "\n{0}: {1:0.#} %",
-            SensorType.Level => "\n{0}: {1:0.#} %",
-            SensorType.Power => "\n{0}: {1:0.##} W",
-            SensorType.Data => "\n{0}: {1:0.##} GB",
-            SensorType.Factor => "\n{0}: {1:0.###}",
-            SensorType.IntFactor => "\n{0}: {1:F0}",
-            SensorType.Energy => "\n{0}: {0:F0} mWh",
-            SensorType.Noise => "\n{0}: {0:F0} dBA",
-            SensorType.Conductivity => "\n{0}: {0:0.#} µS/cm",
-            SensorType.Humidity => "\n{0}: {0:F0} %",
-            SensorType.Timing => "\n{0}: {0:0.###} ns",
-            _ => "\n{0}: {1}",
-        };
-        string formattedValue = Sensor.SensorType switch
-        {
-            SensorType.Text => $"\n{Sensor.Name}: {Sensor.Text ?? "-"}",
-            SensorType.Temperature when UnitManager.IsFahrenheitUsed => string.Format("\n{0}: {1:0.#} °F", Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value)),
-            SensorType.Throughput when !"Connection Speed".Equals(Sensor.Name) => $"\n{Sensor.Name}: {GetThroughputValue(Sensor.Value ?? 0, 0, true)}/s",
-            _ => string.Format(format, Sensor.Name, Sensor.Value),
-        };
+        string formattedValue = $"\n{Sensor.Name}: {SensorValueFormatter.FormatValue(Sensor)}";
         string hardwareName = Sensor.Hardware.Name;
         hardwareName = hardwareName.Substring(0, Math.Min(63 - formattedValue.Length, hardwareName.Length));
         string text = hardwareName + formattedValue;

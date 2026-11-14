@@ -16,32 +16,7 @@ internal class SensorNode : Node
     {
         Sensor = sensor;
         _settings = settings;
-        Format = sensor.SensorType switch
-        {
-            SensorType.Voltage => "{0:0.###} V",
-            SensorType.Current => "{0:0.###} A",
-            SensorType.Clock => "{0:0.#} MHz",
-            SensorType.Load => "{0:0.#} %",
-            SensorType.Temperature => "{0:0.#} °C",
-            SensorType.Fan => "{0:F0} RPM",
-            SensorType.Flow => "{0:0.#} L/h",
-            SensorType.Control => "{0:0.#} %",
-            SensorType.Level => "{0:0.#} %",
-            SensorType.Power => "{0:0.#} W",
-            SensorType.Data => "{0:0.#} GB",
-            SensorType.SmallData => "{0:0.#} MB",
-            SensorType.Factor => "{0:0.###}",
-            SensorType.IntFactor => "{0:F0}",
-            SensorType.Frequency => "{0:0.#} Hz",
-            SensorType.Throughput => "{0:0.#} B/s",
-            SensorType.TimeSpan => "{0:g}",
-            SensorType.Timing => "{0:0.###} ns",
-            SensorType.Energy => "{0:F0} mWh",
-            SensorType.Noise => "{0:F0} dBA",
-            SensorType.Conductivity => "{0:0.#} µS/cm",
-            SensorType.Humidity => "{0:F0} %",
-            _ => Format
-        };
+        Format = SensorValueFormatter.GetFormat(sensor.SensorType);
 
         bool hidden = settings.GetValue(new Identifier(sensor.Identifier, "hidden").ToString(), sensor.IsDefaultHidden);
         base.IsVisible = !hidden;
@@ -54,7 +29,7 @@ internal class SensorNode : Node
 
     public event EventHandler PlotSelectionChanged;
 
-    public string Format { get; set; } = "";
+    public string Format { get; }
 
     public override bool IsVisible
     {
@@ -68,12 +43,12 @@ internal class SensorNode : Node
 
     public string Max
     {
-        get { return ValueToString(Sensor.Max); }
+        get { return SensorValueFormatter.Format(Sensor, Sensor.Max); }
     }
 
     public string Min
     {
-        get { return ValueToString(Sensor.Min); }
+        get { return SensorValueFormatter.Format(Sensor, Sensor.Min); }
     }
 
     public Color? PenColor
@@ -130,79 +105,7 @@ internal class SensorNode : Node
 
     public string Value
     {
-        get { return Sensor.SensorType == SensorType.Text ? Sensor.Text ?? "-" : ValueToString(Sensor.Value); }
-    }
-
-    public string ValueToString(float? value)
-    {
-        if (value.HasValue)
-        {
-            switch (Sensor.SensorType)
-            {
-                case SensorType.Temperature when UnitManager.IsFahrenheitUsed:
-                    {
-                        return $"{value * 1.8 + 32:0.#} °F";
-                    }
-                case SensorType.Throughput:
-                    {
-                        string result;
-                        switch (Sensor.Name)
-                        {
-                            case "Connection Speed":
-                                {
-                                    switch (value)
-                                    {
-                                        case 100000000:
-                                            {
-                                                result = "100Mbps";
-                                                break;
-                                            }
-                                        case 1000000000:
-                                            {
-                                                result = "1Gbps";
-                                                break;
-                                            }
-                                        default:
-                                            {
-                                                if (value < 1024)
-                                                    result = $"{value:F0} bps";
-                                                else if (value < 1048576)
-                                                    result = $"{value / 1024:0.#} Kbps";
-                                                else if (value < 1073741824)
-                                                    result = $"{value / 1048576:0.#} Mbps";
-                                                else
-                                                    result = $"{value / 1073741824:0.#} Gbps";
-                                            }
-
-                                            break;
-                                    }
-
-                                    break;
-                                }
-                            default:
-                                {
-                                    const int _1MB = 1048576;
-
-                                    result = value < _1MB ? $"{value / 1024:0.#} KB/s" : $"{value / _1MB:0.#} MB/s";
-
-                                    break;
-                                }
-                        }
-
-                        return result;
-                    }
-                case SensorType.TimeSpan:
-                    {
-                        return value.HasValue ? string.Format(Format, TimeSpan.FromSeconds(value.Value)) : "-";
-                    }
-                default:
-                    {
-                        return string.Format(Format, value);
-                    }
-            }
-        }
-
-        return "-";
+        get { return SensorValueFormatter.FormatValue(Sensor); }
     }
 
     private void OptionallyAppendCriticalRange(StringBuilder str, float? min, float? max, string kind)
@@ -210,12 +113,12 @@ internal class SensorNode : Node
         if (min.HasValue)
         {
             str.AppendLine(max.HasValue
-                               ? $"{CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(kind)} range: {ValueToString(min)} to {ValueToString(max)}."
-                               : $"Minimal {kind} value: {ValueToString(min)}.");
+                               ? $"{CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(kind)} range: {SensorValueFormatter.Format(Sensor, min)} to {SensorValueFormatter.Format(Sensor, max)}."
+                               : $"Minimal {kind} value: {SensorValueFormatter.Format(Sensor, min)}.");
         }
         else if (max.HasValue)
         {
-            str.AppendLine($"Maximal {kind} value: {ValueToString(max)}.");
+            str.AppendLine($"Maximal {kind} value: {SensorValueFormatter.Format(Sensor, max)}.");
         }
     }
 

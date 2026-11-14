@@ -683,10 +683,7 @@ internal class SensorGadget : Gadget
 
             if (!fixedScale && lines.Count > 0)
             {
-                bool fahrenheit = type == SensorType.Temperature && UnitManager.IsFahrenheitUsed;
-                float lo = fahrenheit ? dataMin * 1.8f + 32 : dataMin;
-                float hi = fahrenheit ? dataMax * 1.8f + 32 : dataMax;
-                g.DrawString($"{type}  {lo:0.#}–{hi:0.#}", _captionFont, _captionBrush, x + 2, y);
+                g.DrawString($"{SensorValueFormatter.GetTitle(type)}  {SensorValueFormatter.FormatRange(type, dataMin, dataMax)}", _captionFont, _captionBrush, x + 2, y);
             }
         }
         finally
@@ -758,94 +755,7 @@ internal class SensorGadget : Gadget
                          sensor.SensorType != SensorType.Level &&
                          sensor.SensorType != SensorType.Humidity || !sensor.Value.HasValue)
                     {
-                        string formatted;
-
-                        if (sensor.SensorType == SensorType.Text)
-                        {
-                            formatted = sensor.Text ?? "-";
-                        }
-                        else if (sensor.Value.HasValue)
-                        {
-                            string format = sensor.SensorType switch
-                            {
-                                SensorType.Voltage => "{0:0.###} V",
-                                SensorType.Current => "{0:0.###} A",
-                                SensorType.Clock => "{0:F0} MHz",
-                                SensorType.Frequency => "{0:F0} Hz",
-                                SensorType.Temperature => "{0:0.#} °C",
-                                SensorType.Fan => "{0:F0} RPM",
-                                SensorType.Flow => "{0:F0} L/h",
-                                SensorType.Power => "{0:0.#} W",
-                                SensorType.Data => "{0:0.#} GB",
-                                SensorType.SmallData => "{0:F0} MB",
-                                SensorType.Factor => "{0:0.###}",
-                                SensorType.IntFactor => "{0:F0}",
-                                SensorType.TimeSpan => "{0:g}",
-                                SensorType.Timing => "{0:0.###} ns",
-                                SensorType.Energy => "{0:F0} mWh",
-                                SensorType.Noise => "{0:F0} dBA",
-                                SensorType.Conductivity => "{0:0.#} µS/cm",
-                                _ => ""
-                            };
-
-                            if (sensor.SensorType == SensorType.Temperature && UnitManager.IsFahrenheitUsed)
-                            {
-                                formatted = $"{UnitManager.CelsiusToFahrenheit(sensor.Value):0.#} °F";
-                            }
-                            else if (sensor.SensorType == SensorType.Throughput)
-                            {
-                                string result;
-                                switch (sensor.Name)
-                                {
-                                    case "Connection Speed":
-                                        {
-                                            switch (sensor.Value)
-                                            {
-                                                case 100000000:
-                                                    result = "100Mbps";
-                                                    break;
-                                                case 1000000000:
-                                                    result = "1Gbps";
-                                                    break;
-                                                default:
-                                                    {
-                                                        if (sensor.Value < 1024)
-                                                            result = $"{sensor.Value:F0} bps";
-                                                        else if (sensor.Value < 1048576)
-                                                            result = $"{sensor.Value / 1024:0.#} Kbps";
-                                                        else if (sensor.Value < 1073741824)
-                                                            result = $"{sensor.Value / 1048576:0.#} Mbps";
-                                                        else
-                                                            result = $"{sensor.Value / 1073741824:0.#} Gbps";
-                                                    }
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    default:
-                                        {
-                                            if (sensor.Value < 1048576)
-                                                result = $"{sensor.Value / 1024:0.#} KB/s";
-                                            else
-                                                result = $"{sensor.Value / 1048576:0.#} MB/s";
-                                        }
-                                        break;
-                                }
-                                formatted = result;
-                            }
-                            else if (sensor.SensorType == SensorType.TimeSpan)
-                            {
-                                formatted = string.Format(format, TimeSpan.FromSeconds(sensor.Value.Value));
-                            }
-                            else
-                            {
-                                formatted = string.Format(format, sensor.Value);
-                            }
-                        }
-                        else
-                        {
-                            formatted = "-";
-                        }
+                        string formatted = SensorValueFormatter.FormatValue(sensor);
 
                         g.DrawString(formatted, _smallFont, _textBrush, new RectangleF(-1, y - 1, w - _rightMargin + 3, 0), _alignRightStringFormat);
 
