@@ -43,7 +43,7 @@ Motherboards, CPU, RAM and batteries are enabled by default. Other groups are di
 - **Hide Menu** (`View`) - hides the menu bar; press `Alt` to show it again.
 - **Update Interval** (`Options`) - how often sensors are polled, from 250 ms to 10 s.
 - **Throttle ATA Storage** (`Options`) - polls S.M.A.R.T. data of ATA drives less often to avoid slowing down disk access.
-- **Sensor Values Time Window** (`Options`) - how much sensor history (30 s to 24 h) is kept in memory.
+- **Sensor Values Time Window** (`Options`) - how much sensor history (30 s to 24 h, 10 minutes by default) is kept in memory.
 - **Show Plot** (`View`) - draws sensor history on a chart, see [Sensor plot](#sensor-plot).
 - **Save Report** (`File`) - saves a text report with full hardware and sensor information; attach it to bug reports and compatibility requests.
 
@@ -69,12 +69,12 @@ Enable `View > Show Plot` to draw sensor history on a chart. A checkbox appears 
 2. **Split Panel Scaling** (`View`) - for the docked plot, defines what happens on window resize: `Fixed Sensor` (default) keeps the tree size and resizes the plot, `Fixed Plot` keeps the plot size and resizes the sensor tree, `Percentage` resizes both panels proportionally.
 3. **Plot Line Thickness** (`View`) - from 1 to 4 pt.
 4. **Reset Plot** (`View`) - clears the collected history.
-5. The history length is set in `Options > Sensor Values Time Window`.
+5. The plot always shows the whole collected history, its length is set in `Options > Sensor Values Time Window` (10 minutes by default). Changing it clears the collected history.
 
 Right-click the plot for more options:
 
 1. `Stacked Axes` - one lane per sensor type, or all axes on one shared area; `Show Axes Labels`.
-2. `Time Axis` - `Enable Zoom`, and the visible window: `Auto` (all collected data) or the last 5 min - 24 h, which moves together with the current time. The X axis shows the real time of day, and the tooltip shows the exact time and value. Zooming or panning with the mouse switches the window to manual mode.
+2. `Time Axis` - `Enable Zoom` and `Autoscale` (fits the axis to all collected data until you zoom or pan with the mouse; select it again to return). The X axis shows the real time of day, and the tooltip shows the exact time and value.
 3. `Value Axes` - `Enable Zoom`, `Autoscale` (keeps the value axes fitted to the data until you zoom manually) and `Autoscale All` (fits them once).
 
 Sensors of different types get separate value axes with their units; temperatures follow the selected Celsius/Fahrenheit unit. The plot follows the current theme. Axis ranges, plot position and other plot options are saved between runs.

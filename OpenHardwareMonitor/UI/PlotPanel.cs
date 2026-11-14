@@ -26,10 +26,8 @@ internal class PlotPanel : UserControl
     private UserOption _timeAxisEnableZoom;
     private UserOption _yAxesEnableZoom;
     private UserOption _yAxesAutoscale;
-    private bool _updatingYAxes;
-    private readonly List<ToolStripMenuItem> _timeWindowMenuItems = new List<ToolStripMenuItem>();
-    private TimeSpan? _timeWindow;
-    private bool _updatingTimeAxis;
+    private UserOption _timeAxisAutoscale;
+    private readonly Dictionary<ISensor, List<SensorValue>> _history = new Dictionary<ISensor, List<SensorValue>>();
     private float _dpiX;
     private float _dpiY;
     private double _dpiXScale = 1;
@@ -59,9 +57,11 @@ internal class PlotPanel : UserControl
                 if (!_cancelContextMenu && e.Location.DistanceTo(_rightClickEnter) > 10.0f)
                 {
                     _cancelContextMenu = true;
+                    OnUserNavigated(true);
                 }
             }
         };
+        _plot.MouseWheel += (sender, e) => OnUserNavigated(false);
 
         UpdateAxesPosition();
 
@@ -154,7 +154,7 @@ internal class PlotPanel : UserControl
         _stackedAxes.Changed += (sender, e) =>
         {
             UpdateAxesPosition();
-            InvalidatePlot();
+            RefreshPlot();
         };
         menu.Items.Add(stackedAxesMenuItem);
 
@@ -170,32 +170,25 @@ internal class PlotPanel : UserControl
         menu.Items.Add(showAxesLabelsMenuItem);
 
         ToolStripMenuItem timeAxisMenuItem = new ToolStripMenuItem("Time Axis");
-        ToolStripMenuItem enableZoomMenuItem = new ToolStripMenuItem("Enable Zoom");
-        timeAxisMenuItem.DropDownItems.Add(enableZoomMenuItem);
+        ToolStripMenuItem[] timeAxisMenuItems =
+        { new ToolStripMenuItem("Enable Zoom"),
+            new ToolStripMenuItem("Autoscale") };
 
-        (string Title, double Seconds)[] windows =
-        {
-            ("Auto", 0), ("5 min", 5 * 60), ("10 min", 10 * 60), ("20 min", 20 * 60), ("30 min", 30 * 60), ("45 min", 45 * 60),
-            ("1 h", 60 * 60), ("1.5 h", 1.5 * 60 * 60), ("2 h", 2 * 60 * 60), ("3 h", 3 * 60 * 60), ("6 h", 6 * 60 * 60),
-            ("12 h", 12 * 60 * 60), ("24 h", 24 * 60 * 60)
-        };
-
-        foreach ((string title, double seconds) in windows)
-        {
-            ToolStripMenuItem item = new ToolStripRadioButtonMenuItem(title);
-            item.Tag = seconds;
-            item.Click += (_, _) => SetTimeWindow(seconds);
-            _timeWindowMenuItems.Add(item);
-            timeAxisMenuItem.DropDownItems.Add(item);
-        }
-
+        foreach (ToolStripItem mi in timeAxisMenuItems)
+            timeAxisMenuItem.DropDownItems.Add(mi);
         menu.Items.Add(timeAxisMenuItem);
-        UpdateTimeWindowMenu();
 
-        _timeAxisEnableZoom = new UserOption("timeAxisEnableZoom", true, enableZoomMenuItem, _settings);
+        _timeAxisEnableZoom = new UserOption("timeAxisEnableZoom", true, timeAxisMenuItems[0], _settings);
         _timeAxisEnableZoom.Changed += (sender, e) =>
         {
             _timeAxis.IsZoomEnabled = _timeAxisEnableZoom.Value;
+        };
+
+        _timeAxisAutoscale = new UserOption("timeAxisAutoscale", true, timeAxisMenuItems[1], _settings);
+        _timeAxisAutoscale.Changed += (sender, e) =>
+        {
+            if (_timeAxisAutoscale.Value)
+                AutoscaleTimeAxis();
         };
 
         ToolStripMenuItem yAxesMenuItem = new ToolStripMenuItem("Value Axes");
@@ -222,15 +215,6 @@ internal class PlotPanel : UserControl
                 AutoscaleAllYAxes();
         };
 
-        foreach (LinearAxis axis in _axes.Values)
-        {
-            axis.AxisChanged += (_, _) =>
-            {
-                if (!_updatingYAxes && _yAxesAutoscale.Value)
-                    _yAxesAutoscale.Value = false;
-            };
-        }
-
         return menu;
     }
 
@@ -246,20 +230,6 @@ internal class PlotPanel : UserControl
         _timeAxis.IntervalLength = 100 * _dpiXScale;
         _timeAxis.MinimumPadding = 0;
         _timeAxis.MaximumPadding = 0;
-        _timeAxis.AxisChanged += (_, _) =>
-        {
-            if (!_updatingTimeAxis)
-            {
-                _timeWindow = null;
-                UpdateTimeWindowMenu();
-            }
-        };
-        float timeWindow = _settings.GetValue("plotPanel.TimeWindow", 10.0f * 60);
-        _timeWindow = timeWindow > 0 ? TimeSpan.FromSeconds(timeWindow) : null;
-        ApplyTimeWindow();
-
-        if (_yAxesAutoscale != null && _yAxesAutoscale.Value)
-            AutoscaleAllYAxes();
 
         var units = new Dictionary<SensorType, string>
         {
@@ -371,25 +341,23 @@ internal class PlotPanel : UserControl
 
     public void SetSensors(List<ISensor> sensors, IDictionary<ISensor, Color> colors, double strokeThickness)
     {
+        List<ISensor> plotted = sensors.Where(x => _axes.ContainsKey(x.SensorType)).ToList();
+        foreach (ISensor removed in _history.Keys.Where(x => !plotted.Contains(x)).ToList())
+            _history.Remove(removed);
+
+        // A newly plotted sensor has no points of its own yet, so it starts from the history the sensor has collected.
+        foreach (ISensor sensor in plotted.Where(x => !_history.ContainsKey(x)))
+            _history[sensor] = sensor.Values.Select(x => new SensorValue(x.Value, x.Time.ToLocalTime())).ToList();
+
         _model.Series.Clear();
         var types = new HashSet<SensorType>();
 
 
-        DataPoint CreateDataPoint(SensorType type, SensorValue value)
-        {
-            float displayedValue = type == SensorType.Temperature && UnitManager.IsFahrenheitUsed
-                ? UnitManager.CelsiusToFahrenheit(value.Value).Value
-                : value.Value;
-
-            return new DataPoint(DateTimeAxis.ToDouble(value.Time.ToLocalTime()), displayedValue);
-        }
-
-
-        foreach (ISensor sensor in sensors.Where(x => _axes.ContainsKey(x.SensorType)))
+        foreach (ISensor sensor in plotted)
         {
             var series = new LineSeries
             {
-                ItemsSource = sensor.Values.Select(value => CreateDataPoint(sensor.SensorType, value)),
+                ItemsSource = GetPoints(sensor),
                 Color = colors[sensor].ToOxyColor(),
                 StrokeThickness = strokeThickness,
                 YAxisKey = _axes[sensor.SensorType].Key,
@@ -410,7 +378,25 @@ internal class PlotPanel : UserControl
         }
 
         UpdateAxesPosition();
-        InvalidatePlot();
+        RefreshPlot();
+    }
+
+    private IEnumerable<DataPoint> GetPoints(ISensor sensor)
+    {
+        if (!_history.TryGetValue(sensor, out List<SensorValue> points))
+            yield break;
+
+        foreach (SensorValue value in points)
+            yield return CreatePoint(sensor.SensorType, value.Time, value.Value);
+    }
+
+    private static DataPoint CreatePoint(SensorType type, DateTime time, float value)
+    {
+        float displayedValue = type == SensorType.Temperature && UnitManager.IsFahrenheitUsed
+            ? UnitManager.CelsiusToFahrenheit(value).Value
+            : value;
+
+        return new DataPoint(DateTimeAxis.ToDouble(time), displayedValue);
     }
 
     public void UpdateStrokeThickness(double strokeThickness)
@@ -419,7 +405,7 @@ internal class PlotPanel : UserControl
         {
             series.StrokeThickness = strokeThickness;
         }
-        InvalidatePlot();
+        RefreshPlot();
     }
 
     private void UpdateAxesPosition()
@@ -474,9 +460,46 @@ internal class PlotPanel : UserControl
         }
     }
 
+    // Called on every sensor update: records a point of its own for each plotted sensor, which is
+    // denser than the history kept by the sensor itself (it averages several updates into one point).
     public void InvalidatePlot()
     {
-        ApplyTimeWindow();
+        DateTime now = DateTime.Now;
+
+        foreach (KeyValuePair<ISensor, List<SensorValue>> pair in _history)
+        {
+            ISensor sensor = pair.Key;
+            List<SensorValue> points = pair.Value;
+            TimeSpan window = sensor.ValuesTimeWindow;
+
+            int stale = 0;
+            while (stale < points.Count && now - points[stale].Time > window)
+                stale++;
+            if (stale > 0)
+                points.RemoveRange(0, stale);
+
+            if (sensor.Value.HasValue)
+                points.Add(new SensorValue(sensor.Value.Value, now));
+        }
+
+        RefreshPlot();
+    }
+
+    public void ClearHistory()
+    {
+        foreach (List<SensorValue> points in _history.Values)
+            points.Clear();
+
+        RefreshPlot();
+    }
+
+    private void RefreshPlot()
+    {
+        if (_timeAxisAutoscale != null && _timeAxisAutoscale.Value)
+            AutoscaleTimeAxis();
+
+        if (_yAxesAutoscale != null && _yAxesAutoscale.Value)
+            AutoscaleAllYAxes();
 
         if (_axes != null)
         {
@@ -498,71 +521,49 @@ internal class PlotPanel : UserControl
         _plot?.InvalidatePlot(true);
     }
 
-    private void SetTimeWindow(double seconds)
+    // Only a real mouse pan or zoom switches the automatic modes off: a slight movement of the mouse
+    // while right-clicking to open the menu also shifts the axes, but is reverted on the next update.
+    private void OnUserNavigated(bool pan)
     {
-        _settings.SetValue("plotPanel.TimeWindow", (float)seconds);
-        _timeWindow = seconds > 0 ? TimeSpan.FromSeconds(seconds) : null;
-        if (_timeWindow == null)
-            ResetTimeAxis();
-        else
-            ApplyTimeWindow();
-        UpdateTimeWindowMenu();
-        _plot?.InvalidatePlot(false);
+        if (_yAxesAutoscale.Value)
+            _yAxesAutoscale.Value = false;
+
+        if (_timeAxisAutoscale.Value && (pan || _timeAxisEnableZoom.Value))
+            _timeAxisAutoscale.Value = false;
     }
 
-    private void UpdateTimeWindowMenu()
+    // The right edge is the current time rather than the last point, so the plot scrolls smoothly.
+    private void AutoscaleTimeAxis()
     {
-        double current = _timeWindow?.TotalSeconds ?? 0;
-        bool manual = _timeWindow == null && _settings.GetValue("plotPanel.TimeWindow", 10.0f * 60) > 0;
-        foreach (ToolStripMenuItem item in _timeWindowMenuItems)
-            item.Checked = !manual && (double)item.Tag == current;
-    }
-
-    private void ResetTimeAxis()
-    {
-        _updatingTimeAxis = true;
-        try
+        DateTime? first = null;
+        foreach (List<SensorValue> points in _history.Values)
         {
-            _timeAxis.Reset();
+            if (points.Count > 0 && (first == null || points[0].Time < first))
+                first = points[0].Time;
         }
-        finally
-        {
-            _updatingTimeAxis = false;
-        }
-    }
-
-    private void ApplyTimeWindow()
-    {
-        if (_timeWindow == null)
-            return;
 
         DateTime now = DateTime.Now;
-        bool isZoomEnabled = _timeAxis.IsZoomEnabled;
+        if (first == null || first.Value >= now)
+        {
+            _timeAxis.Reset();
+            return;
+        }
 
-        _updatingTimeAxis = true;
+        bool isZoomEnabled = _timeAxis.IsZoomEnabled;
         try
         {
             _timeAxis.IsZoomEnabled = true;
-            _timeAxis.Zoom(DateTimeAxis.ToDouble(now - _timeWindow.Value), DateTimeAxis.ToDouble(now));
+            _timeAxis.Zoom(DateTimeAxis.ToDouble(first.Value), DateTimeAxis.ToDouble(now));
         }
         finally
         {
             _timeAxis.IsZoomEnabled = isZoomEnabled;
-            _updatingTimeAxis = false;
         }
     }
 
     public void AutoscaleAllYAxes()
     {
-        _updatingYAxes = true;
-        try
-        {
-            foreach (LinearAxis axis in _axes.Values)
-                axis.Reset();
-        }
-        finally
-        {
-            _updatingYAxes = false;
-        }
+        foreach (LinearAxis axis in _axes.Values)
+            axis.Reset();
     }
 }

@@ -378,9 +378,9 @@ namespace OpenHardwareMonitor.UI
             this.hideMenuMenuItem,
             this.hiddenMenuItem,
             this.viewSeparator2MenuItem,
-            this.resetMinMaxMenuItem,
             this.temperatureUnitsMenuItem,
             this.columnsMenuItem,
+            this.resetMinMaxMenuItem,
             this.themeMenuItem});
       this.viewMenuItem.Name = "viewMenuItem";
       this.viewMenuItem.Size = new System.Drawing.Size(44, 22);

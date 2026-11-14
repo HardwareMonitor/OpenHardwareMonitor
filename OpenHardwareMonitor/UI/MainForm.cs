@@ -401,7 +401,7 @@ internal sealed partial class MainForm : Form
         };
 
         _sensorValuesTimeWindow = new UserRadioGroup("sensorValuesTimeWindow",
-                                                     10,
+                                                     4,
                                                      [
                                                          timeWindow30sMenuItem,
                                                          timeWindow1minMenuItem,
@@ -747,6 +747,8 @@ internal sealed partial class MainForm : Form
                     Width -= _plotPanelSize;
                 else
                     Height -= _plotPanelSize;
+
+                MainForm_MoveOrResize(this, EventArgs.Empty);
             }
 
             return;
@@ -760,6 +762,8 @@ internal sealed partial class MainForm : Form
                 Width += size;
             else
                 Height += size;
+
+            MainForm_MoveOrResize(this, EventArgs.Empty);
         }
 
         splitContainer.Panel2Collapsed = false;
@@ -843,6 +847,7 @@ internal sealed partial class MainForm : Form
     private void ResetPlotMenuItem_Click(object sender, EventArgs e)
     {
         _computer.Accept(new SensorVisitor(delegate(ISensor s) { s.ClearValues(); }));
+        _plotPanel.ClearHistory();
     }
 
     private void SubHardwareAdded(IHardware hardware, Node node)
