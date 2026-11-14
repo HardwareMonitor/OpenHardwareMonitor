@@ -13,6 +13,8 @@ internal class HardwareNode : Node, IExpandPersistNode
     private readonly string _expandedIdentifier;
     private bool _expanded;
 
+    public event EventHandler PlotSelectionChanged;
+
     public HardwareNode(IHardware hardware, PersistentSettings settings)
     {
         _settings = settings;
@@ -150,11 +152,14 @@ internal class HardwareNode : Node, IExpandPersistNode
                 }
                 if (sensorNode != null)
                 {
+                    sensorNode.PlotSelectionChanged -= SensorPlotSelectionChanged;
                     typeNode.Nodes.Remove(sensorNode);
                     UpdateNode(typeNode);
                 }
             }
         }
+
+        PlotSelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void InsertSorted(Node node, ISensor sensor)
@@ -164,7 +169,13 @@ internal class HardwareNode : Node, IExpandPersistNode
             i++;
 
         SensorNode sensorNode = new SensorNode(sensor, _settings);
+        sensorNode.PlotSelectionChanged += SensorPlotSelectionChanged;
         node.Nodes.Insert(i, sensorNode);
+    }
+
+    private void SensorPlotSelectionChanged(object sender, EventArgs e)
+    {
+        PlotSelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void SensorAdded(ISensor sensor)
@@ -178,5 +189,7 @@ internal class HardwareNode : Node, IExpandPersistNode
                 UpdateNode(typeNode);
             }
         }
+
+        PlotSelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -48,6 +48,16 @@ internal sealed partial class MainForm : Form
     private readonly UpdateVisitor _updateVisitor = new();
     private readonly WmiProvider _wmiProvider;
 
+    private readonly PlotPanel _plotPanel;
+    private readonly UserRadioGroup _strokeThickness;
+    private Form _plotForm;
+    private UserRadioGroup _plotLocation;
+    private UserOption _showPlot;
+    private IDictionary<ISensor, Color> _sensorPlotColors = new Dictionary<ISensor, Color>();
+    private double _plotStrokeThickness = 2;
+    private int _plotPanelSize;
+    private bool _plotLayoutReady;
+
     private int _delayCount;
     private bool _selectionDragging;
     private bool _resetting;
@@ -65,6 +75,15 @@ internal sealed partial class MainForm : Form
 
         _settings = new PersistentSettings();
         _settings.Load();
+
+        _plotPanel = new PlotPanel(_settings) { Font = SystemFonts.MessageBoxFont, Dock = DockStyle.Fill };
+        _strokeThickness = new UserRadioGroup("plotStroke", 1, [strokeThickness1ptMenuItem, strokeThickness2ptMenuItem, strokeThickness3ptMenuItem, strokeThickness4ptMenuItem], _settings);
+        _strokeThickness.Changed += (_, _) =>
+        {
+            _plotStrokeThickness = _strokeThickness.Value + 1;
+            _plotPanel.UpdateStrokeThickness(_plotStrokeThickness);
+        };
+        _plotStrokeThickness = _strokeThickness.Value + 1;
 
         MinimumSize = new Size(300, 200);
         Text = Updater.ApplicationTitle;
@@ -98,6 +117,7 @@ internal sealed partial class MainForm : Form
         nodeTextBoxMin.DrawText += NodeTextBoxText_DrawText;
         nodeTextBoxMax.DrawText += NodeTextBoxText_DrawText;
         nodeTextBoxText.EditorShowing += NodeTextBoxText_EditorShowing;
+        nodeCheckBox.IsVisibleValueNeeded += NodeCheckBox_IsVisibleValueNeeded;
 
         for (int i = 1; i < treeView.Columns.Count; i++)
         {
@@ -421,6 +441,9 @@ internal sealed partial class MainForm : Form
         };
 
         InitializeTheme();
+        InitializeSplitter();
+        InitializePlotForm();
+        Theme.OnCurrentChanged += () => PlotSelectionChanged(null, EventArgs.Empty);
 
         startupMenuItem.Visible = _startupManager.IsAvailable;
 
@@ -572,11 +595,262 @@ internal sealed partial class MainForm : Form
         nodes.Insert(i, node);
     }
 
+    private void InitializeSplitter()
+    {
+        splitContainer.SplitterDistance = Math.Max(splitContainer.Panel1MinSize, _settings.GetValue("splitContainer.SplitterDistance", 400));
+        splitContainer.SplitterMoved += delegate { _settings.SetValue("splitContainer.SplitterDistance", splitContainer.SplitterDistance); };
+    }
+
+    private void InitializePlotForm()
+    {
+        _plotForm = new Form { FormBorderStyle = FormBorderStyle.SizableToolWindow, ShowInTaskbar = false, StartPosition = FormStartPosition.Manual, Text = "Plot" };
+        AddOwnedForm(_plotForm);
+        _plotForm.Bounds = new Rectangle
+        {
+            X = _settings.GetValue("plotForm.Location.X", -100000),
+            Y = _settings.GetValue("plotForm.Location.Y", 100),
+            Width = _settings.GetValue("plotForm.Width", 600),
+            Height = _settings.GetValue("plotForm.Height", 400)
+        };
+
+        _showPlot = new UserOption("plotMenuItem", false, plotMenuItem, _settings);
+        _plotLocation = new UserRadioGroup("plotLocation", 0, [plotWindowMenuItem, plotBottomMenuItem, plotRightMenuItem], _settings);
+
+        _showPlot.Changed += delegate
+        {
+            if (_plotLocation.Value == 0)
+            {
+                if (_showPlot.Value && Visible)
+                {
+                    Theme.Current.Apply(_plotForm);
+                    _plotForm.Show();
+                }
+                else
+                    _plotForm.Hide();
+            }
+            else
+            {
+                TogglePlotPanel(_showPlot.Value);
+            }
+
+            treeView.Invalidate();
+        };
+
+        _plotLocation.Changed += delegate
+        {
+            switch (_plotLocation.Value)
+            {
+                case 0:
+                    TogglePlotPanel(false);
+                    splitContainer.Panel2.Controls.Clear();
+                    splitContainer.Panel2Collapsed = true;
+                    _plotForm.Controls.Add(_plotPanel);
+                    if (_showPlot.Value && Visible)
+                        _plotForm.Show();
+                    break;
+                case 1:
+                case 2:
+                    _plotForm.Controls.Clear();
+                    _plotForm.Hide();
+                    TogglePlotPanel(false);
+                    Orientation orientation = _plotLocation.Value == 1 ? Orientation.Horizontal : Orientation.Vertical;
+                    if (splitContainer.Orientation != orientation)
+                    {
+                        splitContainer.Orientation = orientation;
+                        _plotPanelSize = 0;
+                    }
+
+                    splitContainer.Panel2.Controls.Add(_plotPanel);
+                    TogglePlotPanel(_showPlot.Value);
+                    break;
+            }
+        };
+
+        UserRadioGroup splitPanelScaling = new("splitPanelScalingSetting", 0, [splitPanelFixedSensorScalingMenuItem, splitPanelFixedPlotScalingMenuItem, splitPanelPercentageScalingMenuItem], _settings);
+        splitPanelScaling.Changed += delegate { ApplySplitPanelScaling(splitPanelScaling.Value); };
+        ApplySplitPanelScaling(splitPanelScaling.Value);
+
+        _plotForm.FormClosing += (_, e) =>
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+
+            // just switch off the plotting when the user closes the form
+            if (_plotLocation.Value == 0)
+                _showPlot.Value = false;
+
+            e.Cancel = true;
+        };
+
+        void MoveOrResizePlotForm(object sender, EventArgs e)
+        {
+            if (_plotForm.WindowState == FormWindowState.Minimized)
+                return;
+
+            _settings.SetValue("plotForm.Location.X", _plotForm.Bounds.X);
+            _settings.SetValue("plotForm.Location.Y", _plotForm.Bounds.Y);
+            _settings.SetValue("plotForm.Width", _plotForm.Bounds.Width);
+            _settings.SetValue("plotForm.Height", _plotForm.Bounds.Height);
+        }
+
+        _plotForm.Move += MoveOrResizePlotForm;
+        _plotForm.Resize += MoveOrResizePlotForm;
+
+        _plotForm.VisibleChanged += delegate
+        {
+            Rectangle bounds = new(_plotForm.Location, _plotForm.Size);
+            Rectangle intersection = Rectangle.Empty;
+            foreach (Screen screen in Screen.AllScreens)
+                intersection = Rectangle.Union(intersection, Rectangle.Intersect(screen.Bounds, bounds));
+
+            if (intersection.Width < 20 || intersection.Height < 20 || !_settings.Contains("plotForm.Location.X"))
+            {
+                Rectangle area = Screen.PrimaryScreen.WorkingArea;
+                _plotForm.Location = new Point(area.Width / 2 - bounds.Width / 2, area.Height / 2 - bounds.Height / 2);
+            }
+        };
+
+        VisibleChanged += delegate
+        {
+            if (Visible && _showPlot.Value && _plotLocation.Value == 0)
+                _plotForm.Show();
+            else
+                _plotForm.Hide();
+        };
+
+        Theme.Current.Apply(_plotForm);
+        _plotLayoutReady = true;
+    }
+
+    // Resizes the window together with the docked plot, so hiding the plot looks like cutting that part off.
+    private void TogglePlotPanel(bool show)
+    {
+        if (show == !splitContainer.Panel2Collapsed)
+            return;
+
+        if (!_plotLayoutReady)
+        {
+            splitContainer.Panel2Collapsed = !show;
+            return;
+        }
+
+        bool sideBySide = splitContainer.Orientation == Orientation.Vertical;
+        bool resize = WindowState == FormWindowState.Normal && Visible;
+
+        if (!show)
+        {
+            _plotPanelSize = (sideBySide ? splitContainer.Panel2.Width : splitContainer.Panel2.Height) + splitContainer.SplitterWidth;
+            splitContainer.Panel2Collapsed = true;
+            if (resize)
+            {
+                if (sideBySide)
+                    Width -= _plotPanelSize;
+                else
+                    Height -= _plotPanelSize;
+            }
+
+            return;
+        }
+
+        int size = _plotPanelSize > 0 ? _plotPanelSize : (sideBySide ? 400 : 250);
+        int treeSize = sideBySide ? splitContainer.Panel1.Width : splitContainer.Panel1.Height;
+        if (resize)
+        {
+            if (sideBySide)
+                Width += size;
+            else
+                Height += size;
+        }
+
+        splitContainer.Panel2Collapsed = false;
+        splitContainer.SplitterDistance = Math.Max(splitContainer.Panel1MinSize, treeSize);
+    }
+
+    private void ApplySplitPanelScaling(int mode)
+    {
+        splitContainer.FixedPanel = mode switch
+        {
+            0 => FixedPanel.Panel1,
+            1 => FixedPanel.Panel2,
+            _ => FixedPanel.None,
+        };
+    }
+
+    private void PlotSelectionChanged(object sender, EventArgs e)
+    {
+        List<ISensor> selected = [];
+        Dictionary<ISensor, Color> colors = new();
+        Color[] palette = PlotPanel.Palette;
+        int colorIndex = 0;
+
+        foreach (TreeNodeAdv node in treeView.AllNodes)
+        {
+            if (node.Tag is not SensorNode sensorNode)
+                continue;
+
+            if (sensorNode.Plot)
+            {
+                if (!sensorNode.PenColor.HasValue)
+                    colors.Add(sensorNode.Sensor, palette[colorIndex % palette.Length]);
+
+                selected.Add(sensorNode.Sensor);
+            }
+
+            colorIndex++;
+        }
+
+        // Resolve duplicates only after the stable default colors are assigned,
+        // so colors jump around as little as possible when sensors are added or removed.
+        HashSet<Color> usedColors = [];
+        foreach (ISensor sensor in selected)
+        {
+            if (!colors.TryGetValue(sensor, out Color color))
+                continue;
+
+            if (usedColors.Contains(color))
+            {
+                foreach (Color candidate in palette)
+                {
+                    if (!colors.Values.Contains(candidate))
+                    {
+                        colors[sensor] = candidate;
+                        usedColors.Add(candidate);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                usedColors.Add(color);
+            }
+        }
+
+        foreach (TreeNodeAdv node in treeView.AllNodes)
+        {
+            if (node.Tag is SensorNode { Plot: true, PenColor: not null } sensorNode)
+                colors[sensorNode.Sensor] = sensorNode.PenColor.Value;
+        }
+
+        _sensorPlotColors = colors;
+        _plotPanel.SetSensors(selected, colors, _plotStrokeThickness);
+    }
+
+    private void NodeCheckBox_IsVisibleValueNeeded(object sender, NodeControlValueEventArgs e)
+    {
+        e.Value = e.Node.Tag is SensorNode sensorNode && sensorNode.Sensor.SensorType != SensorType.Text && plotMenuItem.Checked;
+    }
+
+    private void ResetPlotMenuItem_Click(object sender, EventArgs e)
+    {
+        _computer.Accept(new SensorVisitor(delegate(ISensor s) { s.ClearValues(); }));
+    }
+
     private void SubHardwareAdded(IHardware hardware, Node node)
     {
         if (node.Nodes.Any(x => x is HardwareNode hNode && hNode.Hardware.Identifier.ToString() == hardware.Identifier.ToString()))
             return;
         HardwareNode hardwareNode = new(hardware, _settings);
+        hardwareNode.PlotSelectionChanged += PlotSelectionChanged;
         InsertSorted(node.Nodes, hardwareNode);
         foreach (IHardware subHardware in hardware.SubHardware)
             SubHardwareAdded(subHardware, hardwareNode);
@@ -585,6 +859,7 @@ internal sealed partial class MainForm : Form
     private void HardwareAdded(IHardware hardware)
     {
         SubHardwareAdded(hardware, _root);
+        PlotSelectionChanged(this, EventArgs.Empty);
     }
 
     private void HardwareRemoved(IHardware hardware)
@@ -595,7 +870,10 @@ internal sealed partial class MainForm : Form
         foreach (var hardwareNode in nodesToRemove)
         {
             _root.Nodes.Remove(hardwareNode);
+            ((HardwareNode)hardwareNode).PlotSelectionChanged -= PlotSelectionChanged;
         }
+
+        PlotSelectionChanged(this, EventArgs.Empty);
     }
 
     private void NodeTextBoxText_DrawText(object sender, DrawEventArgs e)
@@ -604,7 +882,8 @@ internal sealed partial class MainForm : Form
         {
             if (node.IsVisible)
             {
-                //e.TextColor = color;
+                if (plotMenuItem.Checked && node is SensorNode sensorNode && _sensorPlotColors.TryGetValue(sensorNode.Sensor, out Color color))
+                    e.TextColor = color;
             }
             else
                 e.TextColor = Color.DarkGray;
@@ -622,6 +901,7 @@ internal sealed partial class MainForm : Form
         _systemTray.Redraw();
         _gadget?.Redraw();
         _wmiProvider?.Update();
+        _plotPanel.InvalidatePlot();
 
         if (!backgroundUpdater.IsBusy)
             backgroundUpdater.RunWorkerAsync();
@@ -642,6 +922,8 @@ internal sealed partial class MainForm : Form
 
         foreach (TreeColumn column in treeView.Columns)
             _settings.SetValue("treeView.Columns." + column.Header + ".Width", column.Width);
+
+        _plotPanel.SetCurrentSettings();
 
         _settings.SetValue("listenerIp", Server.ListenerIp);
         _settings.SetValue("listenerPort", Server.ListenerPort);
@@ -1054,16 +1336,6 @@ internal sealed partial class MainForm : Form
             sensorClick.ResetMin();
             sensorClick.ResetMax();
         }));
-    }
-
-    private void ExpandAllNodes_Click(object sender, EventArgs e)
-    {
-        treeView.ExpandAll();
-    }
-
-    private void CollapsepAllNodes_Click(object sender, EventArgs e)
-    {
-        treeView.CollapseAll();
     }
 
     private void MainForm_MoveOrResize(object sender, EventArgs e)

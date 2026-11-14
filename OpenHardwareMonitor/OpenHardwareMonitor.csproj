@@ -83,6 +83,10 @@
     <PackageReference Include="SergiyE.Common" Version="1.*" />
     <PackageReference Include="SergiyE.Common.UI" Version="1.*" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Core" Version="2.2.0" />
+    <PackageReference Include="OxyPlot.WindowsForms" Version="2.2.0" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="Costura.Fody" Version="4.1.0">
       <PrivateAssets>all</PrivateAssets>

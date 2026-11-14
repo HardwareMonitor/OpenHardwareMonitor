@@ -58,8 +58,6 @@ namespace OpenHardwareMonitor.UI
       this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.viewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.resetMinMaxMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.expandAllNodesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.collpaseAllNodesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.hiddenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gadgetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.hideMenuMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -132,6 +130,28 @@ namespace OpenHardwareMonitor.UI
       this.timer = new System.Windows.Forms.Timer(this.components);
       this.treeView = new Aga.Controls.Tree.TreeViewAdv();
       this.backgroundUpdater = new System.ComponentModel.BackgroundWorker();
+      this.plotWindowMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.plotBottomMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.plotRightMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.strokeThickness1ptMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.strokeThickness2ptMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.strokeThickness3ptMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.strokeThickness4ptMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.plotMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.plotLocationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.strokeThicknessMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.resetPlotMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.nodeCheckBox = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
+      this.splitContainer = new System.Windows.Forms.SplitContainer();
+      ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+      this.splitContainer.Panel1.SuspendLayout();
+      this.splitContainer.SuspendLayout();
+      this.splitPanelPercentageScalingMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.splitPanelFixedPlotScalingMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.splitPanelFixedSensorScalingMenuItem = new sergiye.Common.ToolStripRadioButtonMenuItem();
+      this.viewSeparator1MenuItem = new System.Windows.Forms.ToolStripSeparator();
+      this.viewSeparator2MenuItem = new System.Windows.Forms.ToolStripSeparator();
+      this.splitPanelScalingMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenu.SuspendLayout();
       this.SuspendLayout();
       //
@@ -348,18 +368,159 @@ namespace OpenHardwareMonitor.UI
       // viewMenuItem
       //
       this.viewMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hiddenMenuItem,
+            this.plotMenuItem,
+            this.plotLocationMenuItem,
+            this.splitPanelScalingMenuItem,
+            this.strokeThicknessMenuItem,
+            this.resetPlotMenuItem,
+            this.viewSeparator1MenuItem,
             this.gadgetMenuItem,
             this.hideMenuMenuItem,
-            this.temperatureUnitsMenuItem,
+            this.hiddenMenuItem,
+            this.viewSeparator2MenuItem,
             this.resetMinMaxMenuItem,
-            this.expandAllNodesMenuItem,
-            this.collpaseAllNodesMenuItem,
+            this.temperatureUnitsMenuItem,
             this.columnsMenuItem,
             this.themeMenuItem});
       this.viewMenuItem.Name = "viewMenuItem";
       this.viewMenuItem.Size = new System.Drawing.Size(44, 22);
       this.viewMenuItem.Text = "View";
+      //
+      //
+      // plotMenuItem
+      //
+      this.plotMenuItem.Name = "plotMenuItem";
+      this.plotMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+      this.plotMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.plotMenuItem.Text = "Show Plot";
+      //
+      // plotLocationMenuItem
+      //
+      this.plotLocationMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.plotWindowMenuItem,
+            this.plotBottomMenuItem,
+            this.plotRightMenuItem});
+      this.plotLocationMenuItem.Name = "plotLocationMenuItem";
+      this.plotLocationMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.plotLocationMenuItem.Text = "Plot Location";
+      //
+      // plotWindowMenuItem
+      //
+      this.plotWindowMenuItem.CheckOnClick = true;
+      this.plotWindowMenuItem.Name = "plotWindowMenuItem";
+      this.plotWindowMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.plotWindowMenuItem.Text = "Window";
+      //
+      // plotBottomMenuItem
+      //
+      this.plotBottomMenuItem.CheckOnClick = true;
+      this.plotBottomMenuItem.Name = "plotBottomMenuItem";
+      this.plotBottomMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.plotBottomMenuItem.Text = "Bottom";
+      //
+      // plotRightMenuItem
+      //
+      this.plotRightMenuItem.CheckOnClick = true;
+      this.plotRightMenuItem.Name = "plotRightMenuItem";
+      this.plotRightMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.plotRightMenuItem.Text = "Right";
+      //
+      // strokeThicknessMenuItem
+      //
+      this.strokeThicknessMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.strokeThickness1ptMenuItem,
+            this.strokeThickness2ptMenuItem,
+            this.strokeThickness3ptMenuItem,
+            this.strokeThickness4ptMenuItem});
+      this.strokeThicknessMenuItem.Name = "strokeThicknessMenuItem";
+      this.strokeThicknessMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.strokeThicknessMenuItem.Text = "Plot Line Thickness";
+      //
+      // strokeThickness1ptMenuItem
+      //
+      this.strokeThickness1ptMenuItem.CheckOnClick = true;
+      this.strokeThickness1ptMenuItem.Name = "strokeThickness1ptMenuItem";
+      this.strokeThickness1ptMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.strokeThickness1ptMenuItem.Text = "1 pt";
+      //
+      // strokeThickness2ptMenuItem
+      //
+      this.strokeThickness2ptMenuItem.CheckOnClick = true;
+      this.strokeThickness2ptMenuItem.Name = "strokeThickness2ptMenuItem";
+      this.strokeThickness2ptMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.strokeThickness2ptMenuItem.Text = "2 pt";
+      //
+      // strokeThickness3ptMenuItem
+      //
+      this.strokeThickness3ptMenuItem.CheckOnClick = true;
+      this.strokeThickness3ptMenuItem.Name = "strokeThickness3ptMenuItem";
+      this.strokeThickness3ptMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.strokeThickness3ptMenuItem.Text = "3 pt";
+      //
+      // strokeThickness4ptMenuItem
+      //
+      this.strokeThickness4ptMenuItem.CheckOnClick = true;
+      this.strokeThickness4ptMenuItem.Name = "strokeThickness4ptMenuItem";
+      this.strokeThickness4ptMenuItem.Size = new System.Drawing.Size(118, 22);
+      this.strokeThickness4ptMenuItem.Text = "4 pt";
+      //
+      // resetPlotMenuItem
+      //
+      this.resetPlotMenuItem.Name = "resetPlotMenuItem";
+      this.resetPlotMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.resetPlotMenuItem.Text = "Reset Plot";
+      this.resetPlotMenuItem.Click += new System.EventHandler(this.ResetPlotMenuItem_Click);
+      //
+      // nodeCheckBox
+      //
+      this.nodeCheckBox.DataPropertyName = "Plot";
+      this.nodeCheckBox.EditEnabled = true;
+      this.nodeCheckBox.LeftMargin = 3;
+      this.nodeCheckBox.ParentColumn = this.sensor;
+      //
+      // splitContainer
+      //
+      this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.splitContainer.Location = new System.Drawing.Point(0, 24);
+      this.splitContainer.Name = "splitContainer";
+      this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      this.splitContainer.Panel1.Controls.Add(this.treeView);
+      this.splitContainer.Panel2Collapsed = true;
+      this.splitContainer.Size = new System.Drawing.Size(418, 509);
+      this.splitContainer.SplitterDistance = 354;
+      this.splitContainer.SplitterWidth = 5;
+      this.splitContainer.TabIndex = 3;
+      //
+      // splitPanelScalingMenuItem
+      //
+      this.splitPanelScalingMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.splitPanelFixedSensorScalingMenuItem,
+            this.splitPanelFixedPlotScalingMenuItem,
+            this.splitPanelPercentageScalingMenuItem});
+      this.splitPanelScalingMenuItem.Name = "splitPanelScalingMenuItem";
+      this.splitPanelScalingMenuItem.Size = new System.Drawing.Size(188, 22);
+      this.splitPanelScalingMenuItem.Text = "Split Panel Scaling";
+      //
+      // splitPanelPercentageScalingMenuItem
+      //
+      this.splitPanelPercentageScalingMenuItem.CheckOnClick = true;
+      this.splitPanelPercentageScalingMenuItem.Name = "splitPanelPercentageScalingMenuItem";
+      this.splitPanelPercentageScalingMenuItem.Size = new System.Drawing.Size(150, 22);
+      this.splitPanelPercentageScalingMenuItem.Text = "Percentage";
+      //
+      // splitPanelFixedPlotScalingMenuItem
+      //
+      this.splitPanelFixedPlotScalingMenuItem.CheckOnClick = true;
+      this.splitPanelFixedPlotScalingMenuItem.Name = "splitPanelFixedPlotScalingMenuItem";
+      this.splitPanelFixedPlotScalingMenuItem.Size = new System.Drawing.Size(150, 22);
+      this.splitPanelFixedPlotScalingMenuItem.Text = "Fixed Plot";
+      //
+      // splitPanelFixedSensorScalingMenuItem
+      //
+      this.splitPanelFixedSensorScalingMenuItem.CheckOnClick = true;
+      this.splitPanelFixedSensorScalingMenuItem.Name = "splitPanelFixedSensorScalingMenuItem";
+      this.splitPanelFixedSensorScalingMenuItem.Size = new System.Drawing.Size(150, 22);
+      this.splitPanelFixedSensorScalingMenuItem.Text = "Fixed Sensor";
       //
       // resetMinMaxMenuItem
       //
@@ -368,37 +529,24 @@ namespace OpenHardwareMonitor.UI
       this.resetMinMaxMenuItem.Text = "Reset Min/Max";
       this.resetMinMaxMenuItem.Click += new System.EventHandler(this.ResetMinMaxMenuItem_Click);
       //
-      // expandAllNodesMenuItem
-      //
-      this.expandAllNodesMenuItem.Name = "expandAllNodesMenuItem";
-      this.expandAllNodesMenuItem.Size = new System.Drawing.Size(188, 22);
-      this.expandAllNodesMenuItem.Text = "Expand All Nodes";
-      this.expandAllNodesMenuItem.Click += new System.EventHandler(this.ExpandAllNodes_Click);
-      this.expandAllNodesMenuItem.Visible = false;
-      //
-      // collpaseAllNodesMenuItem
-      //
-      this.collpaseAllNodesMenuItem.Name = "collpaseAllNodesMenuItem";
-      this.collpaseAllNodesMenuItem.Size = new System.Drawing.Size(188, 22);
-      this.collpaseAllNodesMenuItem.Text = "Collapse All Nodes";
-      this.collpaseAllNodesMenuItem.Click += new System.EventHandler(this.CollapsepAllNodes_Click);
-      this.collpaseAllNodesMenuItem.Visible = false;
-      //
       // hiddenMenuItem
       //
       this.hiddenMenuItem.Name = "hiddenMenuItem";
+      this.hiddenMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
       this.hiddenMenuItem.Size = new System.Drawing.Size(188, 22);
       this.hiddenMenuItem.Text = "Show Hidden Sensors";
       //
       // gadgetMenuItem
       //
       this.gadgetMenuItem.Name = "gadgetMenuItem";
+      this.gadgetMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
       this.gadgetMenuItem.Size = new System.Drawing.Size(188, 22);
       this.gadgetMenuItem.Text = "Show Gadget";
       //
       // hideMenuMenuItem
       //
       this.hideMenuMenuItem.Name = "hideMenuMenuItem";
+      this.hideMenuMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
       this.hideMenuMenuItem.Size = new System.Drawing.Size(188, 22);
       this.hideMenuMenuItem.Text = "Hide Menu";
       //
@@ -938,16 +1086,17 @@ namespace OpenHardwareMonitor.UI
       this.treeView.FullRowSelect = true;
       this.treeView.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
       this.treeView.LineColor = System.Drawing.SystemColors.ControlDark;
-      this.treeView.Location = new System.Drawing.Point(0, 24);
+      this.treeView.Location = new System.Drawing.Point(0, 0);
       this.treeView.Model = null;
       this.treeView.Name = "treeView";
       this.treeView.NodeControls.Add(this.nodeImage);
+      this.treeView.NodeControls.Add(this.nodeCheckBox);
       this.treeView.NodeControls.Add(this.nodeTextBoxText);
       this.treeView.NodeControls.Add(this.nodeTextBoxValue);
       this.treeView.NodeControls.Add(this.nodeTextBoxMin);
       this.treeView.NodeControls.Add(this.nodeTextBoxMax);
       this.treeView.SelectedNode = null;
-      this.treeView.Size = new System.Drawing.Size(418, 509);
+      this.treeView.Size = new System.Drawing.Size(418, 354);
       this.treeView.TabIndex = 0;
       this.treeView.Text = "treeView";
       this.treeView.UseColumns = true;
@@ -965,7 +1114,7 @@ namespace OpenHardwareMonitor.UI
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(418, 533);
-      this.Controls.Add(this.treeView);
+      this.Controls.Add(this.splitContainer);
       this.Controls.Add(this.mainMenu);
       this.MainMenuStrip = this.mainMenu;
       this.Name = "MainForm";
@@ -973,6 +1122,9 @@ namespace OpenHardwareMonitor.UI
       this.Load += new System.EventHandler(this.MainForm_Load);
       this.ResizeEnd += new System.EventHandler(this.MainForm_MoveOrResize);
       this.Move += new System.EventHandler(this.MainForm_MoveOrResize);
+      this.splitContainer.Panel1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+      this.splitContainer.ResumeLayout(false);
       this.mainMenu.ResumeLayout(false);
       this.mainMenu.PerformLayout();
       this.ResumeLayout(false);
@@ -1022,8 +1174,6 @@ namespace OpenHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem fahrenheitMenuItem;
         private System.Windows.Forms.ToolStripSeparator MenuItem2;
         private System.Windows.Forms.ToolStripMenuItem resetMinMaxMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem expandAllNodesMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem collpaseAllNodesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gadgetMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideMenuMenuItem;
         private System.Windows.Forms.ToolStripMenuItem minCloseMenuItem;
@@ -1085,6 +1235,25 @@ namespace OpenHardwareMonitor.UI
         private ToolStripRadioButtonMenuItem perSessionFileRotationMenuItem;
         private ToolStripRadioButtonMenuItem dailyFileRotationMenuItem;
         private System.Windows.Forms.ToolStripMenuItem themeMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer;
+        private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox;
+        private System.Windows.Forms.ToolStripMenuItem plotMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem plotLocationMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem strokeThicknessMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetPlotMenuItem;
+        private System.Windows.Forms.ToolStripSeparator viewSeparator1MenuItem;
+        private System.Windows.Forms.ToolStripSeparator viewSeparator2MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem splitPanelScalingMenuItem;
+        private ToolStripRadioButtonMenuItem splitPanelPercentageScalingMenuItem;
+        private ToolStripRadioButtonMenuItem splitPanelFixedPlotScalingMenuItem;
+        private ToolStripRadioButtonMenuItem splitPanelFixedSensorScalingMenuItem;
+        private ToolStripRadioButtonMenuItem plotWindowMenuItem;
+        private ToolStripRadioButtonMenuItem plotBottomMenuItem;
+        private ToolStripRadioButtonMenuItem plotRightMenuItem;
+        private ToolStripRadioButtonMenuItem strokeThickness1ptMenuItem;
+        private ToolStripRadioButtonMenuItem strokeThickness2ptMenuItem;
+        private ToolStripRadioButtonMenuItem strokeThickness3ptMenuItem;
+        private ToolStripRadioButtonMenuItem strokeThickness4ptMenuItem;
     }
 }
 

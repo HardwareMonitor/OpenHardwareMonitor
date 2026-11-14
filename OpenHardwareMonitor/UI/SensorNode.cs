@@ -10,6 +10,7 @@ internal class SensorNode : Node
 {
     private readonly PersistentSettings _settings;
     private Color? _penColor;
+    private bool _plot;
 
     public SensorNode(ISensor sensor, PersistentSettings settings)
     {
@@ -44,11 +45,14 @@ internal class SensorNode : Node
 
         bool hidden = settings.GetValue(new Identifier(sensor.Identifier, "hidden").ToString(), sensor.IsDefaultHidden);
         base.IsVisible = !hidden;
+        _plot = settings.GetValue(new Identifier(sensor.Identifier, "plot").ToString(), false);
         string id = new Identifier(sensor.Identifier, "penColor").ToString();
 
         if (settings.Contains(id))
             PenColor = settings.GetValue(id, Color.Black);
     }
+
+    public event EventHandler PlotSelectionChanged;
 
     public string Format { get; set; } = "";
 
@@ -84,6 +88,19 @@ internal class SensorNode : Node
                 _settings.SetValue(id, value.Value);
             else
                 _settings.Remove(id);
+
+            PlotSelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public bool Plot
+    {
+        get { return _plot; }
+        set
+        {
+            _plot = value;
+            _settings.SetValue(new Identifier(Sensor.Identifier, "plot").ToString(), value);
+            PlotSelectionChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 

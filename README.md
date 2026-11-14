@@ -39,11 +39,12 @@ Motherboards, CPU, RAM and batteries are enabled by default. Other groups are di
 
 - **Sensor tree** - hardware devices are grouped by type; every sensor shows its current `Value`, `Min` and `Max`. Columns can be toggled in `View > Columns`.
 - **Reset Min/Max** (`View`) - restarts min/max tracking for all sensors.
-- **Expand/Collapse All Nodes** and **Show Hidden Sensors** (`View`).
+- **Show Hidden Sensors** (`View`).
 - **Hide Menu** (`View`) - hides the menu bar; press `Alt` to show it again.
 - **Update Interval** (`Options`) - how often sensors are polled, from 250 ms to 10 s.
 - **Throttle ATA Storage** (`Options`) - polls S.M.A.R.T. data of ATA drives less often to avoid slowing down disk access.
 - **Sensor Values Time Window** (`Options`) - how much sensor history (30 s to 24 h) is kept in memory.
+- **Show Plot** (`View`) - draws sensor history on a chart, see [Sensor plot](#sensor-plot).
 - **Save Report** (`File`) - saves a text report with full hardware and sensor information; attach it to bug reports and compatibility requests.
 
 ### Sensor actions
@@ -58,7 +59,25 @@ Right-click a sensor (or use a hotkey) to:
 6. `Graph in Gadget` (`Ctrl+Shift+G`) - show the sensor on the gadget graph; with the graph enabled, `Gadget Color...` and `Reset Gadget Color` set the line color.
 7. Open `Parameters` (`Ctrl+P`) - available for sensors with adjustable parameters.
 
-Other hotkeys: `F5` - reset, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project site, `Ctrl+U` - check for updates.
+Other hotkeys: `F5` - reset, `F6` - show/hide plot, `F7` - show/hide gadget, `Ctrl+W` - exit, `F1` - about, `Ctrl+F1` - project site, `Ctrl+U` - check for updates.
+
+### Sensor plot
+
+Enable `View > Show Plot` to draw sensor history on a chart. A checkbox appears next to every sensor in the tree; tick it to add the sensor to the plot. The sensor name uses the same color as its line, and the `Pen Color` of a sensor also sets its line color.
+
+1. **Plot Location** (`View`) - `Window` (a separate window), `Bottom` or `Right` (docked next to the sensor tree).
+2. **Split Panel Scaling** (`View`) - for the docked plot, defines what happens on window resize: `Fixed Sensor` (default) keeps the tree size and resizes the plot, `Fixed Plot` keeps the plot size and resizes the sensor tree, `Percentage` resizes both panels proportionally.
+3. **Plot Line Thickness** (`View`) - from 1 to 4 pt.
+4. **Reset Plot** (`View`) - clears the collected history.
+5. The history length is set in `Options > Sensor Values Time Window`.
+
+Right-click the plot for more options:
+
+1. `Stacked Axes` - one lane per sensor type, or all axes on one shared area; `Show Axes Labels`.
+2. `Time Axis` - `Enable Zoom`, and the visible window: `Auto` (all collected data) or the last 5 min - 24 h, which moves together with the current time. The X axis shows the real time of day, and the tooltip shows the exact time and value. Zooming or panning with the mouse switches the window to manual mode.
+3. `Value Axes` - `Enable Zoom`, `Autoscale` (keeps the value axes fitted to the data until you zoom manually) and `Autoscale All` (fits them once).
+
+Sensors of different types get separate value axes with their units; temperatures follow the selected Celsius/Fahrenheit unit. The plot follows the current theme. Axis ranges, plot position and other plot options are saved between runs.
 
 ### Tray icons and gadget
 
