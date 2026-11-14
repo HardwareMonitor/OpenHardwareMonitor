@@ -414,10 +414,14 @@ internal sealed class Amd17Cpu : AmdCpu
             if (Nodes == null || Nodes.Count == 0)
                 return;
 
-            double clock = Nodes.Average(x => x.CoreClock);
-            _avgClock.Value = (float)Math.Round(clock, 0);
+            // Core clocks need two counter samples. Do not record the initial
+            // placeholder zeros, or a partial average, in Min/Max and history.
+            if (Nodes.All(node => node.Cores.Count > 0 && node.Cores.All(core => core.HasCoreClock)))
+                _avgClock.Value = (float)Math.Round(Nodes.Average(x => x.CoreClock), 0);
+            else
+                _avgClock.Value = null;
 
-            clock = Nodes.Average(x => x.EffectiveClock);
+            double clock = Nodes.Average(x => x.EffectiveClock);
             _avgClockEffcetive.Value = (float)Math.Round(clock, 0);
         }
 
@@ -626,6 +630,7 @@ internal sealed class Amd17Cpu : AmdCpu
         private uint _lastPwrValue = 0;
 
         public double CoreClock { get; set; } = 0;
+        public bool HasCoreClock => _clock.Value.HasValue;
         public double EffectiveClock { get; set; } = 0;
 
         public Core(Amd17Cpu cpu, int id)
