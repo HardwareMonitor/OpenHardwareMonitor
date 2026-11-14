@@ -142,7 +142,7 @@ namespace OpenHardwareMonitor.UI
       this.strokeThicknessMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.resetPlotMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.nodeCheckBox = new Aga.Controls.Tree.NodeControls.NodeCheckBox();
-      this.splitContainer = new System.Windows.Forms.SplitContainer();
+      this.splitContainer = new sergiye.Common.SplitContainerAdv();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
       this.splitContainer.Panel1.SuspendLayout();
       this.splitContainer.SuspendLayout();
@@ -1235,7 +1235,7 @@ namespace OpenHardwareMonitor.UI
         private ToolStripRadioButtonMenuItem perSessionFileRotationMenuItem;
         private ToolStripRadioButtonMenuItem dailyFileRotationMenuItem;
         private System.Windows.Forms.ToolStripMenuItem themeMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainer;
+        private sergiye.Common.SplitContainerAdv splitContainer;
         private Aga.Controls.Tree.NodeControls.NodeCheckBox nodeCheckBox;
         private System.Windows.Forms.ToolStripMenuItem plotMenuItem;
         private System.Windows.Forms.ToolStripMenuItem plotLocationMenuItem;

@@ -68,6 +68,7 @@
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\PersistentSettings.cs" Link="Common\PersistentSettings.cs" />
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\ToolStripRadioButtonMenuItem.cs" Link="Common\ToolStripRadioButtonMenuItem.cs" />
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\NotifyIconAdv.cs" Link="Common\NotifyIconAdv.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\SplitContainerAdv.cs" Link="Common\SplitContainerAdv.cs" />
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\IconFactory.cs" Link="Common\IconFactory.cs" />
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\Themes\Theme.cs" Link="Common\Themes\Theme.cs" />
     <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\Themes\LightTheme.cs" Link="Common\Themes\LightTheme.cs" />
