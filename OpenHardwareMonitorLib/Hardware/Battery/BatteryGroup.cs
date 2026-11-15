@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHardwareMonitor.Interop;
+using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 
 namespace OpenHardwareMonitor.Hardware.Battery;
@@ -11,6 +12,7 @@ namespace OpenHardwareMonitor.Hardware.Battery;
 internal class BatteryGroup : IGroup
 {
     private readonly List<Battery> _hardware = [];
+    private bool _subscribed;
 
     private static bool QueryStringFromBatteryInfo(SafeFileHandle battery, Kernel32.BATTERY_QUERY_INFORMATION bqi, out string value)
     {
@@ -120,7 +122,7 @@ internal class BatteryGroup : IGroup
                                             bqi.InformationLevel = Kernel32.BATTERY_QUERY_INFORMATION_LEVEL.BatteryManufactureName;
                                             QueryStringFromBatteryInfo(battery, bqi, out string manufacturer);
 
-                                            _hardware.Add(new Battery(batteryName, manufacturer, battery, bi, bqi.BatteryTag, settings));
+                                            _hardware.Add(new Battery(batteryName, manufacturer, devicePath, battery, bi, bqi.BatteryTag, settings));
                                         }
                                     }
                                 }
@@ -134,6 +136,28 @@ internal class BatteryGroup : IGroup
 
             SetupApi.SetupDiDestroyDeviceInfoList(hdev);
         }
+
+        if (!OSHelper.IsUnix && _hardware.Count > 0)
+        {
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
+            _subscribed = true;
+        }
+    }
+
+    private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+    {
+        if (e.Mode != PowerModes.Resume && e.Mode != PowerModes.StatusChange)
+            return;
+
+        foreach (Battery battery in _hardware)
+        {
+            try
+            {
+                battery.Reopen();
+            }
+            catch
+            { }
+        }
     }
 
     /// <inheritdoc />
@@ -142,6 +166,12 @@ internal class BatteryGroup : IGroup
     /// <inheritdoc />
     public void Close()
     {
+        if (_subscribed)
+        {
+            SystemEvents.PowerModeChanged -= OnPowerModeChanged;
+            _subscribed = false;
+        }
+
         foreach (Battery battery in _hardware)
             battery.Close();
     }

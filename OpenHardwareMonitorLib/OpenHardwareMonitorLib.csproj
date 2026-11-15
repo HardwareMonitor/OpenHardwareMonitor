@@ -125,5 +125,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="11.0.0" />
   </ItemGroup>
 </Project>

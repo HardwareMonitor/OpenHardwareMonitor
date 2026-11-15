@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using OpenHardwareMonitor.Interop;
@@ -8,8 +9,10 @@ namespace OpenHardwareMonitor.Hardware.Battery;
 
 internal sealed class Battery : Hardware
 {
-    private readonly SafeFileHandle _batteryHandle;
-    private readonly uint _batteryTag;
+    private readonly object _handleLock = new();
+    private readonly string _devicePath;
+    private SafeFileHandle _batteryHandle;
+    private uint _batteryTag;
     private readonly Sensor _chargeDischargeCurrent;
     private readonly Sensor _chargeDischargeRate;
     private readonly Sensor _cycleCount;
@@ -26,6 +29,7 @@ internal sealed class Battery : Hardware
     (
         string name,
         string manufacturer,
+        string devicePath,
         SafeFileHandle batteryHandle,
         Kernel32.BATTERY_INFORMATION batteryInfo,
         uint batteryTag,
@@ -34,6 +38,7 @@ internal sealed class Battery : Hardware
     {
         Manufacturer = manufacturer;
 
+        _devicePath = devicePath;
         _batteryTag = batteryTag;
         _batteryHandle = batteryHandle;
 
@@ -120,9 +125,9 @@ internal sealed class Battery : Hardware
 
     public float? DegradationLevel => _degradationLevel.Value;
 
-    public float? DesignedCapacity { get; }
+    public float? DesignedCapacity { get; private set; }
 
-    public float? FullChargedCapacity { get; }
+    public float? FullChargedCapacity { get; private set; }
 
     public override HardwareType HardwareType => HardwareType.Battery;
 
@@ -144,7 +149,66 @@ internal sealed class Battery : Hardware
             DeactivateSensor(sensor);
     }
 
+    // The battery tag and the capacities change when the battery is swapped or the system resumes, so they are queried again.
+    public void Reopen()
+    {
+        lock (_handleLock)
+        {
+            SafeFileHandle handle = Kernel32.CreateFile(_devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, FileAttributes.Normal, IntPtr.Zero);
+            if (handle.IsInvalid)
+                return;
+
+            Kernel32.BATTERY_QUERY_INFORMATION bqi = default;
+            uint dwWait = 0;
+            Kernel32.BATTERY_INFORMATION bi = default;
+            if (!Kernel32.DeviceIoControl(handle,
+                                          Kernel32.IOCTL.IOCTL_BATTERY_QUERY_TAG,
+                                          ref dwWait,
+                                          Marshal.SizeOf(dwWait),
+                                          ref bqi.BatteryTag,
+                                          Marshal.SizeOf(bqi.BatteryTag),
+                                          out _,
+                                          IntPtr.Zero) ||
+                !Kernel32.DeviceIoControl(handle,
+                                          Kernel32.IOCTL.IOCTL_BATTERY_QUERY_INFORMATION,
+                                          ref bqi,
+                                          Marshal.SizeOf(bqi),
+                                          ref bi,
+                                          Marshal.SizeOf(bi),
+                                          out _,
+                                          IntPtr.Zero))
+            {
+                handle.Close();
+                return;
+            }
+
+            _batteryHandle.Close();
+            _batteryHandle = handle;
+            _batteryTag = bqi.BatteryTag;
+
+            if (bi.FullChargedCapacity is not Kernel32.BATTERY_UNKNOWN_CAPACITY &&
+                bi.DesignedCapacity is not Kernel32.BATTERY_UNKNOWN_CAPACITY)
+            {
+                _designedCapacity.Value = bi.DesignedCapacity;
+                _fullChargedCapacity.Value = bi.FullChargedCapacity;
+                _degradationLevel.Value = 100f - (bi.FullChargedCapacity * 100f / bi.DesignedCapacity);
+                DesignedCapacity = bi.DesignedCapacity;
+                FullChargedCapacity = bi.FullChargedCapacity;
+
+                ActivateSensor(_designedCapacity);
+                ActivateSensor(_fullChargedCapacity);
+                ActivateSensor(_degradationLevel);
+            }
+        }
+    }
+
     public override void Update()
+    {
+        lock (_handleLock)
+            UpdateCore();
+    }
+
+    private void UpdateCore()
     {
         Kernel32.BATTERY_WAIT_STATUS bws = default;
         bws.BatteryTag = _batteryTag;
@@ -281,6 +345,7 @@ internal sealed class Battery : Hardware
     public override void Close()
     {
         base.Close();
-        _batteryHandle.Close();
+        lock (_handleLock)
+            _batteryHandle.Close();
     }
 }
