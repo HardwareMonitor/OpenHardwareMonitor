@@ -40,6 +40,7 @@ internal sealed partial class MainForm : Form
     private readonly Node _root;
     private readonly UserOption _runWebServer;
     private readonly UserRadioGroup _sensorValuesTimeWindow;
+    private TimeSpan _sensorTimeWindow = TimeSpan.FromMinutes(10);
     private readonly PersistentSettings _settings;
     private readonly UserOption _showGadget;
     private readonly UserOption _hideMenu;
@@ -437,6 +438,7 @@ internal sealed partial class MainForm : Form
                 10 => new TimeSpan(24, 0, 0),
                 _ => TimeSpan.Zero,
             };
+            _sensorTimeWindow = timeWindow;
             _computer.Accept(new SensorVisitor(delegate(ISensor s) { s.ValuesTimeWindow = timeWindow; }));
         };
 
@@ -854,6 +856,11 @@ internal sealed partial class MainForm : Form
     {
         if (node.Nodes.Any(x => x is HardwareNode hNode && hNode.Hardware.Identifier.ToString() == hardware.Identifier.ToString()))
             return;
+        // Sensors are often activated after the startup visit, so they must pick up the selected window themselves.
+        foreach (ISensor sensor in hardware.Sensors)
+            sensor.ValuesTimeWindow = _sensorTimeWindow;
+        hardware.SensorAdded += sensor => sensor.ValuesTimeWindow = _sensorTimeWindow;
+
         HardwareNode hardwareNode = new(hardware, _settings);
         hardwareNode.PlotSelectionChanged += PlotSelectionChanged;
         InsertSorted(node.Nodes, hardwareNode);

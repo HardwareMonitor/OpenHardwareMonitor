@@ -15,7 +15,7 @@ internal class Sensor : ISensor
     private float? _currentValue;
     private string _name;
     private float _sum;
-    private TimeSpan _valuesTimeWindow = TimeSpan.FromDays(1.0);
+    private TimeSpan _valuesTimeWindow = TimeSpan.FromMinutes(10);
 
     public Sensor(string name, int index, SensorType sensorType, Hardware hardware, ISettings settings) :
         this(name, index, sensorType, hardware, null, settings)
