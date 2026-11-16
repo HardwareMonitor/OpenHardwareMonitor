@@ -535,15 +535,15 @@ internal class PlotPanel : UserControl
     // The right edge is the current time rather than the last point, so the plot scrolls smoothly.
     private void AutoscaleTimeAxis()
     {
-        DateTime? first = null;
-        foreach (List<SensorValue> points in _history.Values)
+        TimeSpan window = TimeSpan.Zero;
+        foreach (ISensor sensor in _history.Keys)
         {
-            if (points.Count > 0 && (first == null || points[0].Time < first))
-                first = points[0].Time;
+            if (sensor.ValuesTimeWindow > window)
+                window = sensor.ValuesTimeWindow;
         }
 
         DateTime now = DateTime.Now;
-        if (first == null || first.Value >= now)
+        if (window <= TimeSpan.Zero)
         {
             _timeAxis.Reset();
             return;
@@ -553,7 +553,7 @@ internal class PlotPanel : UserControl
         try
         {
             _timeAxis.IsZoomEnabled = true;
-            _timeAxis.Zoom(DateTimeAxis.ToDouble(first.Value), DateTimeAxis.ToDouble(now));
+            _timeAxis.Zoom(DateTimeAxis.ToDouble(now - window), DateTimeAxis.ToDouble(now));
         }
         finally
         {
